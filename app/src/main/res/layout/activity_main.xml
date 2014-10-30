@@ -6,7 +6,7 @@
 
     android:orientation="vertical"
 
-    tools:context=".MyActivity">
+    tools:context=".Main">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -34,8 +34,15 @@
 
             android:text="Search"
             android:onClick="querySearch"/>
+
     </LinearLayout>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="CLICK ME"
+        android:onClick="invokeSheetView"/>
 
 
 </LinearLayout>

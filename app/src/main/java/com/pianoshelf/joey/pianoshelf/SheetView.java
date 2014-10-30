@@ -1,6 +1,7 @@
 package com.pianoshelf.joey.pianoshelf;
 
 import android.app.Activity;
+import android.os.Bundle;
 
 /**
  * Created by joey on 24/10/14.
@@ -10,5 +11,9 @@ import android.app.Activity;
  * Goal: Intuitive back button
  */
 public class SheetView extends Activity {
-
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_sheetview);
+    }
 }
