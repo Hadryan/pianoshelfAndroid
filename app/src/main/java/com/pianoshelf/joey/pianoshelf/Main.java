@@ -1,11 +1,11 @@
 package com.pianoshelf.joey.pianoshelf;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 
 
 /**
@@ -18,7 +18,7 @@ public class Main extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_my);
+        setContentView(R.layout.activity_main);
     }
 
 
@@ -37,17 +37,21 @@ public class Main extends Activity {
         switch (item.getItemId()){
             case R.id.action_settings:
                 return true;
-            case R.id.actionBarSearch:
+            //case R.id.actionBarSearch:
                 // Process search keypress from action bar
-                return true;
+                //return true;
             default:
                return super.onOptionsItemSelected(item);
         }
     }
 
 
-    // Handle search button's query
-    public void querySearch(View view){
+    // Invoke SheetView
+    public void invokeSheetView(View view){
+        Intent intent = new Intent(this, SheetView.class);
 
+        intent.putExtra("sheetMusicUrl", "http://192.168.42.61:5000/api/sheetmusic/1/");
+
+        startActivity(intent);
     }
 }
