@@ -54,11 +54,9 @@ public class SheetView extends FragmentActivity {
                             sheetUrls = new String[pageTotal];
                             for (int i=0; i<pageTotal; i++) {
                                 JSONObject jsonSheet = jsonSheetMusicArray.getJSONObject(i);
-
-                                String sheetUniqueKey = jsonSheet.getString("unique_key");
-                                sheetUrls[i] = parseSheetUniqueKey(sheetUniqueKey);
+                                sheetUrls[i] = jsonSheet.getString("url");
                             }
-
+                            // Instantiate a ViewPager and a PagerAdapter.
                             viewPager = (ViewPager) findViewById(R.id.sheetViewPager);
                             pagerAdapter = new SheetViewPagerAdapter(getSupportFragmentManager());
                             // TODO BeginTransaction ?
@@ -76,9 +74,8 @@ public class SheetView extends FragmentActivity {
         // Make the actual request
         VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
 
-        // Instantiate a ViewPager and a PagerAdapter.
 
-        // TODO get current pageTotal via API calls
+
         /*
         // ony instantiate the fragment if this is not a state restore
         if (savedInstanceState == null) {
@@ -87,10 +84,6 @@ public class SheetView extends FragmentActivity {
             //(getSupportFragmentManager().beginTransaction()).add(sheetOne).commit();
 
         }*/
-    }
-
-    private String parseSheetUniqueKey(String sheetUniqueKey) {
-        return "http://static.classicpianosolos.com/sheetmusicimg/" + sheetUniqueKey + ".jpg";
     }
 
     private class SheetViewPagerAdapter extends FragmentStatePagerAdapter {
