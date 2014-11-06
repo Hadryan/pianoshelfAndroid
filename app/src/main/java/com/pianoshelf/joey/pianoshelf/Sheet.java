@@ -2,13 +2,14 @@ package com.pianoshelf.joey.pianoshelf;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
-import android.widget.TextView;
-
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 
 /**
  * This class receives a working URL and loads the URL
@@ -16,8 +17,9 @@ import com.android.volley.toolbox.NetworkImageView;
  */
 public class Sheet extends Fragment {
     private String sheetUrl;
-    private NetworkImageView networkImageView;
+    private ImageView imageView;
     private ImageLoader imageLoader;
+    private ProgressBar progressBar;
 
     // Default Constructor
     public Sheet() {}
@@ -32,13 +34,37 @@ public class Sheet extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.activity_sheet, container, false);
+        View view = (View) inflater.inflate(R.layout.activity_sheet, container, false);
 
-        ((TextView) view.findViewById(R.id.sheetText)).setText(sheetUrl);
-        networkImageView = (NetworkImageView) view.findViewById(R.id.sheetImage);
-        // getActivity here since Fragment is not a subclass of Context
+        progressBar = (ProgressBar) view.findViewById(R.id.sheetProgress);
+        // Need to set the progressbar to be visible here otherwise it will not display
+        progressBar.setVisibility(View.VISIBLE);
+
+        imageView = (ImageView) view.findViewById(R.id.sheetImage);
+
+        // getActivity used here since Fragment is not a subclass of Context
         imageLoader = VolleySingleton.getInstance(getActivity()).getImageLoader();
-        networkImageView.setImageUrl(sheetUrl, imageLoader);
+        imageLoader.get(sheetUrl, new ImageLoader.ImageListener() {
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                if (response.getBitmap() != null) {
+                    // Dismiss the progress animation
+                    progressBar.setVisibility(View.GONE);
+                    imageView.setImageBitmap(response.getBitmap());
+                } else {
+                    //TODO display error image or message
+                    progressBar.setVisibility(View.GONE);
+                    //imageView.setImageResource();
+                }
+            }
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
+                // TODO Load an error image or display an error dialog
+            }
+        // Set the height and width of the image here for resizing
+        }, imageView.getWidth(), imageView.getHeight());
 
         return view;
     }
