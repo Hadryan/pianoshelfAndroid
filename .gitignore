@@ -24,3 +24,9 @@ proguard/
 
 # Log Files
 *.log
+
+#Joey
+*.orig
+.idea
+*.*~
+
