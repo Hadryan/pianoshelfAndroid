@@ -13,7 +13,7 @@ import android.view.View;
  * This does not have to be the front page
  */
 public class Main extends Activity {
-    private String SERVER_ADDR = "http://192.168.1.10:5000/";
+    public static final String SERVER_ADDR = "http://192.168.1.10:5000";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +55,10 @@ public class Main extends Activity {
     }
 
     public void invokeComposerView(View view) {
-        Intent intent = new Intent(this, composerView.class);
-        intent.putExtra("composerUrl", (SERVER_ADDR + "api/composers"));
+        Intent intent = new Intent(this, ComposerView.class);
+        intent.putExtra("server", SERVER_ADDR);
+        intent.putExtra("composersEndpoint", "/api/composers/");
+        intent.putExtra("composersUrl", SERVER_ADDR + "/api/composers/");
         startActivity(intent);
     }
 }
