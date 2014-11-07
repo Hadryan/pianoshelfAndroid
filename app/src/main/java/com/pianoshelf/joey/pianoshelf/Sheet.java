@@ -2,12 +2,12 @@ package com.pianoshelf.joey.pianoshelf;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
@@ -27,7 +27,11 @@ public class Sheet extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sheetUrl = getArguments().getString("sheetUrl");
+        if (getArguments() != null) {
+            sheetUrl = getArguments().getString("sheetUrl");
+        } else {
+            //TODO load error img?
+        }
     }
 
     @Override
@@ -37,8 +41,6 @@ public class Sheet extends Fragment {
         View view = (View) inflater.inflate(R.layout.activity_sheet, container, false);
 
         progressBar = (ProgressBar) view.findViewById(R.id.sheetProgress);
-        // Need to set the progressbar to be visible here otherwise it will not display
-        progressBar.setVisibility(View.VISIBLE);
 
         imageView = (ImageView) view.findViewById(R.id.sheetImage);
 

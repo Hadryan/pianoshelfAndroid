@@ -41,8 +41,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="CLICK ME"
+        android:text="sheetView"
         android:onClick="invokeSheetView"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="composerView"
+        android:onClick="invokeComposerView"/>
 
 
 </LinearLayout>

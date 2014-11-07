@@ -73,17 +73,6 @@ public class SheetView extends FragmentActivity {
                 });
         // Make the actual request
         VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
-
-
-
-        /*
-        // ony instantiate the fragment if this is not a state restore
-        if (savedInstanceState == null) {
-            // 42 will be replaced with the location of the sheet music page
-            Sheet sheetOne = Sheet.newInstance(42);
-            //(getSupportFragmentManager().beginTransaction()).add(sheetOne).commit();
-
-        }*/
     }
 
     private class SheetViewPagerAdapter extends FragmentStatePagerAdapter {
