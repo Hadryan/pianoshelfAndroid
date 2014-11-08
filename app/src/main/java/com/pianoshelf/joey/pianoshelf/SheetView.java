@@ -19,6 +19,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by joey on 24/10/14.
  * Page/Activity for viewing sheet music
@@ -31,7 +34,7 @@ public class SheetView extends FragmentActivity {
     private PagerAdapter pagerAdapter;
     private int pageTotal;
     private String sheetMusicUrl;
-    private String[] sheetUrls;
+    private List<String> sheetUrls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +54,10 @@ public class SheetView extends FragmentActivity {
                             JSONArray jsonSheetMusicArray = response.getJSONArray("images");
                             // Assign the total number of pages here
                             pageTotal = jsonSheetMusicArray.length();
-                            sheetUrls = new String[pageTotal];
+                            sheetUrls = new ArrayList<String>();
                             for (int i=0; i<pageTotal; i++) {
                                 JSONObject jsonSheet = jsonSheetMusicArray.getJSONObject(i);
-                                sheetUrls[i] = jsonSheet.getString("url");
+                                sheetUrls.add(jsonSheet.getString("url"));
                             }
                             // Instantiate a ViewPager and a PagerAdapter.
                             viewPager = (ViewPager) findViewById(R.id.sheetViewPager);
@@ -82,7 +85,7 @@ public class SheetView extends FragmentActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return Sheet.newInstance(sheetUrls[position]);
+            return Sheet.newInstance(sheetUrls.get(position));
         }
 
         @Override
