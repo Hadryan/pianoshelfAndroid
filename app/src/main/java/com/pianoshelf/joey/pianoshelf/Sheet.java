@@ -33,17 +33,18 @@ public class Sheet extends Fragment {
             //TODO load error img?
         }
     }
-
+    // Currently the progressBar only shows upon first entering the Fragment
+    // Need to implement the onResume, onPaused, etc functions to display
+    // the spinning progressbar correctly 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         View view = (View) inflater.inflate(R.layout.activity_sheet, container, false);
 
         progressBar = (ProgressBar) view.findViewById(R.id.sheetProgress);
+        progressBar.setVisibility(View.VISIBLE);
 
         imageView = (ImageView) view.findViewById(R.id.sheetImage);
-
         // getActivity used here since Fragment is not a subclass of Context
         imageLoader = VolleySingleton.getInstance(getActivity()).getImageLoader();
         imageLoader.get(sheetUrl, new ImageLoader.ImageListener() {
@@ -51,23 +52,20 @@ public class Sheet extends Fragment {
             public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                 if (response.getBitmap() != null) {
                     // Dismiss the progress animation
-                    progressBar.setVisibility(View.GONE);
                     imageView.setImageBitmap(response.getBitmap());
+                    progressBar.setVisibility(View.GONE);
                 } else {
                     //TODO display error image or message
-                    progressBar.setVisibility(View.GONE);
                     //imageView.setImageResource();
                 }
             }
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                progressBar.setVisibility(View.GONE);
                 // TODO Load an error image or display an error dialog
             }
-        // Set the height and width of the image here for resizing
+            // Set the height and width of the image here for resizing
         }, imageView.getWidth(), imageView.getHeight());
-
         return view;
     }
 

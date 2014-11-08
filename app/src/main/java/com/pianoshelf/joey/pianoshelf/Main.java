@@ -54,9 +54,9 @@ public class Main extends Activity {
         startActivity(intent);
     }
 
-    public void invokeComposerView(View view) {
+    /*public void invokeComposerView(View view) {
         Intent intent = new Intent(this, composerView.class);
         intent.putExtra("composerUrl", (SERVER_ADDR + "api/composers"));
         startActivity(intent);
-    }
+    }*/
 }
