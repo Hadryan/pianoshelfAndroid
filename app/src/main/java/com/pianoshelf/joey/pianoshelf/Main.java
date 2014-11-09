@@ -50,7 +50,7 @@ public class Main extends Activity {
     // Invoke SheetView
     public void invokeSheetView(View view){
         Intent intent = new Intent(this, SheetView.class);
-        intent.putExtra("sheetMusicUrl", (SERVER_ADDR + "api/sheetmusic/1/"));
+        intent.putExtra("sheetMusicUrl", (SERVER_ADDR + "/api/sheetmusic/1/"));
         startActivity(intent);
     }
 
@@ -59,6 +59,7 @@ public class Main extends Activity {
         intent.putExtra("server", SERVER_ADDR);
         intent.putExtra("composersEndpoint", "/api/composers/");
         intent.putExtra("composersUrl", SERVER_ADDR + "/api/composers/");
+        intent.putExtra("sheetMusicEndPoint", "/api/sheetmusic/");
         startActivity(intent);
     }
 }
