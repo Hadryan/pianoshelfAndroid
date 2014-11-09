@@ -28,6 +28,10 @@
         <activity
             android:name=".ComposerView" >
         </activity>
+        <!-- A generic list of sheet music -->
+        <activity
+            android:name=".SheetListView" >
+        </activity>
     </application>
 
 </manifest>

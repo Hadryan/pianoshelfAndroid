@@ -49,4 +49,10 @@
         android:text="Composer View Entry Point"
         android:onClick="invokeComposerView"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SheetListView Entry Point"
+        android:onClick="invokeSheetList"/>
+
 </LinearLayout>

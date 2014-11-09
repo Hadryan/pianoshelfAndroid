@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="sheet_list_item_title" />
+    <item type="id" name="sheet_list_item_composer_name" />
+    <item type="id" name="sheet_list_item_music_info" />
+    <item type="id" name="sheet_list_item_style" />
+    <item type="id" name="sheet_list_item_key" />
+    <item type="id" name="sheet_list_item_date" />
+    <item type="id" name="sheet_list_item_download_count" />
+    <item type="id" name="sheet_list_item_difficulty" />
+</resources>

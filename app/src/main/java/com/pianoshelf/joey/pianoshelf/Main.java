@@ -13,12 +13,11 @@ import android.view.View;
  * This does not have to be the front page
  */
 public class Main extends Activity {
-    public static final String SERVER_ADDR = "http://192.168.1.10:5000";
+    public static final String SERVER_ADDR = "http://192.168.1.117:5000";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
     }
 
@@ -47,7 +46,7 @@ public class Main extends Activity {
     }
 
 
-    // Invoke SheetView
+    // Invoke CustomViews
     public void invokeSheetView(View view){
         Intent intent = new Intent(this, SheetView.class);
         intent.putExtra("sheetMusicUrl", (SERVER_ADDR + "/api/sheetmusic/1/"));
@@ -60,6 +59,13 @@ public class Main extends Activity {
         intent.putExtra("composersEndpoint", "/api/composers/");
         intent.putExtra("composersUrl", SERVER_ADDR + "/api/composers/");
         intent.putExtra("sheetMusicEndPoint", "/api/sheetmusic/");
+        startActivity(intent);
+    }
+
+    public void invokeSheetList(View view) {
+        Intent intent = new Intent(this, SheetListView.class);
+        intent.putExtra("server", SERVER_ADDR);
+        intent.putExtra("queryType", "popular");
         startActivity(intent);
     }
 }
