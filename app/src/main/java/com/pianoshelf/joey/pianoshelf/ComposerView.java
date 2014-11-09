@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -33,6 +34,7 @@ import java.util.List;
 public class ComposerView extends ListActivity {
     private String composerUrl;
     private String server;
+    private String sheetMusicEndpoint;
     private JSONArray composers;
     public static final String composerDescription = "A Romantic Composer born in Germany in 1885.";
 
@@ -41,10 +43,12 @@ public class ComposerView extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_composerview);
 
+        // Get information from intent
         Intent intent = getIntent();
-
         server = intent.getStringExtra("server");
         composerUrl = intent.getStringExtra("composersUrl");
+        sheetMusicEndpoint = intent.getStringExtra("sheetMusicEndpoint");
+
         final Context context = getListView().getContext();
 
         // Request to get the array of composers
@@ -62,6 +66,12 @@ public class ComposerView extends ListActivity {
                 });
         VolleySingleton.getInstance(this).addToRequestQueue(jsonArrayRequest);
     }
+
+    @Override
+    protected void onListItemClick (ListView listview, View view, int position, long id){
+        // Invoke a list of sheet music
+    }
+
 
     // Custom adapter class to handle populating each row
     private class ComposerAdapter extends BaseAdapter {
@@ -129,6 +139,7 @@ public class ComposerView extends ListActivity {
                         //imageView.setImageResource();
                     }
                 }
+
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     // TODO Load an error image or display an error dialog

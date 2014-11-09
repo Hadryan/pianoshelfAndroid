@@ -59,6 +59,7 @@ public class Main extends Activity {
         intent.putExtra("server", SERVER_ADDR);
         intent.putExtra("composersEndpoint", "/api/composers/");
         intent.putExtra("composersUrl", SERVER_ADDR + "/api/composers/");
+        intent.putExtra("sheetMusicEndPoint", "/api/sheetmusic/");
         startActivity(intent);
     }
 }
