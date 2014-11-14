@@ -18,7 +18,7 @@ import java.util.List;
  * Child classes should only need to override getView for a fully functional adapter
  * Created by root on 11/13/14.
  */
-public class JSONAdapter extends BaseAdapter {
+public abstract class JSONAdapter extends BaseAdapter {
     protected Context context;
     protected List<JSONObject> jsonArray;
     protected int layout;
@@ -58,13 +58,13 @@ public class JSONAdapter extends BaseAdapter {
         return jsonArray.get(position);
     }
 
-    @Override
     // There may not be a trivial 1 to 1 mapping between the itemId
     // in the adapter versus the backend storage, this is the mapping function
+    @Override
     public long getItemId(int position) {
         try {
-            JSONObject composer = jsonArray.get(position);
-            return composer.getInt("id");
+            JSONObject jsonObject = jsonArray.get(position);
+            return jsonObject.getInt("id");
         } catch (JSONException ex) {
             throw new RuntimeException(ex);
         }
