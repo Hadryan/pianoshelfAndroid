@@ -53,7 +53,7 @@ public class ComposerView extends ListActivity {
                             composerCount = response.getInt("count");
                             composers = response.getJSONArray("results");
                             setListAdapter(new ComposerAdapter(getListView().getContext(),
-                                    R.layout.activity_composerview_item, composers));
+                                    R.layout.adapter_composerview_item, composers));
                             ((ProgressBar) findViewById(R.id.composer_progress)).setVisibility(View.GONE);
                         } catch (JSONException ex) {
                             throw new RuntimeException(ex);
