@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Hard-coded text here to use with design preview mode -->
     <TextView
         android:id="@id/sheet_list_item_title"
         android:layout_width="0dp"

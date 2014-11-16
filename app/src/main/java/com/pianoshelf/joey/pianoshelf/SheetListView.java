@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -39,7 +40,8 @@ public class SheetListView extends ListActivity {
     private String nextPageUrl;
     private String prevPageUrl;
 
-    private String QUERY_PREFIX = "/api/sheetmusic/?";
+    private String SERVER_SHEETMUSIC_PREFIX = "/api/sheetmusic/";
+    private String QUERY_PREFIX = "?";
     private String QUERY_TYPE_PREFIX = "order_by=";
 
     private String QUERY_PAGE = "page";
@@ -91,7 +93,8 @@ public class SheetListView extends ListActivity {
                                     , R.layout.adapter_sheet_list_item
                                     , response.getJSONArray("results")));
                             // Cancel the progress bar
-                            ((ProgressBar) findViewById(R.id.sheet_list_progress)).setVisibility(View.GONE);
+                            ((ProgressBar) findViewById(R.id.sheet_list_progress))
+                                    .setVisibility(View.GONE);
                         } catch (JSONException ex) {
                             throw new RuntimeException(ex);
                         }
@@ -106,10 +109,22 @@ public class SheetListView extends ListActivity {
         VolleySingleton.getInstance(this).addToRequestQueue(getJsonSheetList);
     }
 
+    @Override
+    protected void onListItemClick (ListView l, View v, int position, long id) {
+        Intent openSheet = new Intent(this, SheetView.class);
+        openSheet.putExtra("sheetMusicUrl"
+                , SERVER + SERVER_SHEETMUSIC_PREFIX + Integer.toString((int) id));
+        startActivity(openSheet);
+    }
+
+    /**
+     * Helper Functions
+     */
     // Parse the query by type and page number
     // Example:  /api/sheetmusic/?order_by=popular&page_size=9
     private String parseQuery(String queryType, int page, int pageSize) {
-        return appendArguments(SERVER + QUERY_PREFIX + QUERY_TYPE_PREFIX + queryType
+        return appendArguments(SERVER + SERVER_SHEETMUSIC_PREFIX
+                + QUERY_PREFIX + QUERY_TYPE_PREFIX + queryType
                 , QUERY_PAGE + QUERY_ASSIGN + page
                 , QUERY_PAGE_SIZE + QUERY_ASSIGN + pageSize);
     }
@@ -130,7 +145,9 @@ public class SheetListView extends ListActivity {
         return prefix;
     }
 
-
+    /**
+     * Custom adapter for a list of sheet music
+     */
     private class SheetListAdapter extends JSONAdapter {
         public SheetListAdapter(Context context, int layout, JSONArray sheetList) {
             super(context, layout, sheetList);
@@ -165,13 +182,15 @@ public class SheetListView extends ListActivity {
 
             // Populate textViews with information
             ((TextView) parentView.findViewById(R.id.sheet_list_item_title)).setText(title);
-            ((TextView) parentView.findViewById(R.id.sheet_list_item_composer_name)).setText(composer);
+            ((TextView) parentView.findViewById(R.id.sheet_list_item_composer_name))
+                    .setText(composer);
             ((TextView) parentView.findViewById(R.id.sheet_list_item_style)).setText(style);
             ((TextView) parentView.findViewById(R.id.sheet_list_item_key)).setText(key);
             ((TextView) parentView.findViewById(R.id.sheet_list_item_date)).setText(date);
             ((TextView) parentView.findViewById(R.id.sheet_list_item_download_count))
                     .setText(parseDownloadCount(downloadCount));
-            TextView difficultyText = (TextView) parentView.findViewById(R.id.sheet_list_item_difficulty);
+            TextView difficultyText =
+                    (TextView) parentView.findViewById(R.id.sheet_list_item_difficulty);
             difficultyText.setText(parseDifficulty(difficulty));
             difficultyText.setTextColor(getDifficultyColor(difficulty));
             return parentView;
