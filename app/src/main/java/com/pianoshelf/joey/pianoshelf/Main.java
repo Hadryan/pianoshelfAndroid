@@ -65,7 +65,8 @@ public class Main extends Activity {
     public void invokeSheetList(View view) {
         Intent intent = new Intent(this, SheetListView.class);
         intent.putExtra("server", SERVER_ADDR);
-        intent.putExtra("queryType", "popular");
+        intent.putExtra("query", "popular");
+        intent.putExtra("queryType", "order_by");
         startActivity(intent);
     }
 }

@@ -32,6 +32,7 @@ public class ComposerView extends ListActivity {
     private int composerCount;
     private JSONArray composers;
     public static final String composerDescription = "A Romantic Composer born in Germany in 1885.";
+    private String QUERY_TYPE = "composer_name";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +71,14 @@ public class ComposerView extends ListActivity {
 
     @Override
     protected void onListItemClick (ListView listview, View view, int position, long id){
-        // Invoke a list of sheet music
+        // Example:  /api/sheetmusic/?composer_name=Chopin&page_size=200
+        Intent getSheetsByComposer = new Intent(this, SheetListView.class);
+        getSheetsByComposer.putExtra("server", server);
+        getSheetsByComposer.putExtra("query"
+                , ((TextView) view.findViewById(R.id.name)).getText());
+        getSheetsByComposer.putExtra("queryType", QUERY_TYPE);
+        //TODO order by popularity, not achievable currently
+        startActivity(getSheetsByComposer);
     }
 
 

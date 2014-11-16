@@ -30,8 +30,9 @@ import java.util.StringTokenizer;
 public class SheetListView extends ListActivity {
     // Information sent to the server
     private String SERVER;
-    private String query;
-    private String queryType;
+    private String query;       // A query (i.e. composers)
+    private String queryType;   // A type of query (i.e. order_by)
+    private int queryListBegin;
     private int queryListSize;
 
     // Information received from the server
@@ -50,6 +51,7 @@ public class SheetListView extends ListActivity {
     private String QUERY_ADD_ARG = "&";
     private String QUERY_ASSIGN = "=";
 
+    private String DEFAULT_QUERY_TYPE = "order_by";
     private int DEFAULT_PAGE_BEGIN = 1;
     private int DEFAULT_PAGE_SIZE = 20;
 
@@ -65,13 +67,22 @@ public class SheetListView extends ListActivity {
         //TODO write a function that computes this query
         query = intent.getStringExtra("query");
         queryType = intent.getStringExtra("queryType");
+        queryListBegin = intent.getIntExtra("pageBegin", DEFAULT_PAGE_BEGIN);
         queryListSize = intent.getIntExtra("pageSize", DEFAULT_PAGE_SIZE);
 
 
         final Context context = getListView().getContext();
+        String jsonQueryUrl = "";
+        // Compose the queryURL by parsing the extras from the intent
+        if (query.isEmpty()) {
+            throw new RuntimeException("Empty query given to SheetListView.java");
+        } else if (queryType.isEmpty()){
+            jsonQueryUrl = parseQuery(query, queryListBegin, queryListSize);
+        } else {
+            jsonQueryUrl = parseQuery(query, queryType, queryListBegin, queryListSize);
+        }
 
         // Making the JSON request
-        String jsonQueryUrl = parseQuery(queryType, DEFAULT_PAGE_BEGIN, queryListSize);
         JsonObjectRequest getJsonSheetList = new JsonObjectRequest
                 (Request.Method.GET, jsonQueryUrl, null, new Response.Listener<JSONObject>(){
                     public void onResponse(JSONObject response) {
@@ -122,19 +133,15 @@ public class SheetListView extends ListActivity {
      */
     // Parse the query by type and page number
     // Example:  /api/sheetmusic/?order_by=popular&page_size=9
-    private String parseQuery(String queryType, int page, int pageSize) {
+    private String parseQuery(String query, String queryType, int page, int pageSize) {
         return appendArguments(SERVER + SERVER_SHEETMUSIC_PREFIX
-                + QUERY_PREFIX + QUERY_TYPE_PREFIX + queryType
+                + QUERY_PREFIX + queryType + QUERY_ASSIGN + query
                 , QUERY_PAGE + QUERY_ASSIGN + page
                 , QUERY_PAGE_SIZE + QUERY_ASSIGN + pageSize);
     }
 
-    private String parseQuery(String queryType, int page) {
-        return parseQuery(queryType, page, DEFAULT_PAGE_SIZE);
-    }
-
-    private String parseQuery(String queryType) {
-        return parseQuery(queryType, DEFAULT_PAGE_BEGIN);
+    private String parseQuery(String query, int page, int pageSize) {
+        return parseQuery(query, DEFAULT_QUERY_TYPE, page, pageSize);
     }
 
     // Helper function to chain additional arguments
