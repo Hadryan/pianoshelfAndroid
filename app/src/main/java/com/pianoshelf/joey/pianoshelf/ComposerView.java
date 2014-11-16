@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -53,6 +54,7 @@ public class ComposerView extends ListActivity {
                             composers = response.getJSONArray("results");
                             setListAdapter(new ComposerAdapter(getListView().getContext(),
                                     R.layout.activity_composerview_item, composers));
+                            ((ProgressBar) findViewById(R.id.composer_progress)).setVisibility(View.GONE);
                         } catch (JSONException ex) {
                             throw new RuntimeException(ex);
                         }
