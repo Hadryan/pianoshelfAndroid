@@ -13,7 +13,7 @@ import android.view.View;
  * This does not have to be the front page
  */
 public class Main extends Activity {
-    public static final String SERVER_ADDR = "http://192.168.1.117:5000";
+    public static final String SERVER_ADDR = "http://192.168.42.61:5000";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

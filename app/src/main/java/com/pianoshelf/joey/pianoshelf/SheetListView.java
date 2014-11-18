@@ -36,14 +36,13 @@ public class SheetListView extends ListActivity {
     private int queryListSize;
 
     // Information received from the server
-    private int listSize;
+    private int sheetListCount;
 
     private String nextPageUrl;
     private String prevPageUrl;
 
-    private String SERVER_SHEETMUSIC_PREFIX = "/api/sheetmusic/";
+    private String SERVER_SHEETMUSIC_SUFFIX = "/api/sheetmusic/";
     private String QUERY_PREFIX = "?";
-    private String QUERY_TYPE_PREFIX = "order_by=";
 
     private String QUERY_PAGE = "page";
     private String QUERY_PAGE_SIZE = "page_size";
@@ -98,7 +97,7 @@ public class SheetListView extends ListActivity {
                             } else {
                                 prevPageUrl = null;
                             }
-                            listSize = response.getInt("count");
+                            sheetListCount = response.getInt("count");
                             //TODO implement thumbnailView
                             setListAdapter(new SheetListAdapter(context
                                     , R.layout.adapter_sheet_list_item
@@ -124,7 +123,7 @@ public class SheetListView extends ListActivity {
     protected void onListItemClick (ListView l, View v, int position, long id) {
         Intent openSheet = new Intent(this, SheetView.class);
         openSheet.putExtra("sheetMusicUrl"
-                , SERVER + SERVER_SHEETMUSIC_PREFIX + Integer.toString((int) id));
+                , SERVER + SERVER_SHEETMUSIC_SUFFIX + Integer.toString((int) id));
         startActivity(openSheet);
     }
 
@@ -134,7 +133,7 @@ public class SheetListView extends ListActivity {
     // Parse the query by type and page number
     // Example:  /api/sheetmusic/?order_by=popular&page_size=9
     private String parseQuery(String query, String queryType, int page, int pageSize) {
-        return appendArguments(SERVER + SERVER_SHEETMUSIC_PREFIX
+        return appendArguments(SERVER + SERVER_SHEETMUSIC_SUFFIX
                 + QUERY_PREFIX + queryType + QUERY_ASSIGN + query
                 , QUERY_PAGE + QUERY_ASSIGN + page
                 , QUERY_PAGE_SIZE + QUERY_ASSIGN + pageSize);
