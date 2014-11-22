@@ -2,24 +2,29 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/sheet_list_item_background" >
 
     <!-- Hard-coded text here to use with design preview mode -->
     <TextView
         android:id="@id/sheet_list_item_title"
+
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@id/sheet_list_item_composer_name"
+
         android:text="Op. 12 - Dream"
-        />
+        android:textSize="20sp" />
     <TextView
         android:id="@id/sheet_list_item_composer_name"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:text="Chopin"
         android:layout_alignParentRight="true"
-        android:gravity="center" />
+        android:gravity="center"
+
+        android:text="Chopin"
+        android:textSize="16sp" />
 
     <LinearLayout
         android:id="@id/sheet_list_item_music_info"

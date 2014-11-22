@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -54,6 +55,8 @@ public class SheetListView extends ListActivity {
     private int DEFAULT_PAGE_BEGIN = 1;
     private int DEFAULT_PAGE_SIZE = 20;
 
+    // Defaults
+    private int DEFAULT_LAYOUT = R.layout.adapter_sheet_list_item_2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +103,7 @@ public class SheetListView extends ListActivity {
                             sheetListCount = response.getInt("count");
                             //TODO implement thumbnailView
                             setListAdapter(new SheetListAdapter(context
-                                    , R.layout.adapter_sheet_list_item
+                                    , DEFAULT_LAYOUT
                                     , response.getJSONArray("results")));
                             // Cancel the progress bar
                             ((ProgressBar) findViewById(R.id.sheet_list_progress))
@@ -155,6 +158,7 @@ public class SheetListView extends ListActivity {
      * Custom adapter for a list of sheet music
      */
     private class SheetListAdapter extends JSONAdapter {
+        private boolean alternatingView = false;
         public SheetListAdapter(Context context, int layout, JSONArray sheetList) {
             super(context, layout, sheetList);
         }
@@ -187,12 +191,12 @@ public class SheetListView extends ListActivity {
             }
 
             // Populate textViews with information
-            ((TextView) parentView.findViewById(R.id.sheet_list_item_title)).setText(title);
+            ((TextView) parentView.findViewById(R.id.sheet_list_item_title)).setText(title.trim());
             ((TextView) parentView.findViewById(R.id.sheet_list_item_composer_name))
                     .setText(composer);
-            ((TextView) parentView.findViewById(R.id.sheet_list_item_style)).setText(style);
-            ((TextView) parentView.findViewById(R.id.sheet_list_item_key)).setText(key);
-            ((TextView) parentView.findViewById(R.id.sheet_list_item_date)).setText(date);
+            //((TextView) parentView.findViewById(R.id.sheet_list_item_style)).setText(style);
+            //((TextView) parentView.findViewById(R.id.sheet_list_item_key)).setText(key);
+            //((TextView) parentView.findViewById(R.id.sheet_list_item_date)).setText(date);
             ((TextView) parentView.findViewById(R.id.sheet_list_item_download_count))
                     .setText(parseDownloadCount(downloadCount));
             TextView difficultyText =
@@ -216,6 +220,8 @@ public class SheetListView extends ListActivity {
         }
 
         private int getDifficultyColor(int difficulty) {
+            return Color.GRAY;
+            /*
             switch (difficulty) {
                 case 0: return Color.GRAY;
                 case 1: return Color.GREEN;
@@ -224,7 +230,7 @@ public class SheetListView extends ListActivity {
                 case 4: return Color.MAGENTA;
                 case 5: return Color.RED;
                 default: throw new RuntimeException("Invalid difficulty");
-            }
+            }*/
         }
 
         private String parseDownloadCount(int downloadCount) {

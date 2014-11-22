@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="@drawable/sheet_list_item_background"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="3dp" >
+
+    <!-- Hard-coded text here to use with design preview mode -->
+    <TextView
+        android:id="@id/sheet_list_item_title"
+
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+
+        android:text="Op. 12 - Dream log log log log log log log asdfasdfasdf"
+        android:textSize="20sp"
+        android:maxLines="1"
+        android:gravity="center_vertical" />
+
+    <LinearLayout
+        android:id="@+id/sheet_list_item_bottom_row"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_below="@id/sheet_list_item_title" >
+
+        <TextView
+            android:id="@id/sheet_list_item_composer_name"
+
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+
+            android:text="Chopin"
+            android:textSize="16sp"
+
+            android:gravity="left" />
+
+
+        <TextView
+            android:id="@id/sheet_list_item_difficulty"
+
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+
+            android:text="Intermediate"
+            android:gravity="center" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+           />
+
+        <TextView
+            android:id="@id/sheet_list_item_download_count"
+
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+
+            android:text="30K"
+            android:gravity="center" />
+
+    </LinearLayout>
+    <!--
+    <LinearLayout
+        android:text="Intermediate"
+        android:id="@id/sheet_list_item_music_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sheet_list_item_title"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@id/sheet_list_item_difficulty"
+        android:layout_gravity="center" >
+        <TextView
+            android:id="@id/sheet_list_item_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ballade"
+            android:layout_weight="1"/>
+        <TextView
+            android:id="@id/sheet_list_item_key"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="G minor"
+            android:layout_weight="1"/>
+        <TextView
+            android:id="@id/sheet_list_item_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1842"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+    -->
+</RelativeLayout>
