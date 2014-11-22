@@ -2,15 +2,16 @@
 <!-- custom height value REQUIRED -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:orientation="horizontal"  >
+    android:layout_height="80dp"
+    android:orientation="horizontal" >
 
     <!-- NOTE All elements should respond to touch events -->
     <ImageView
         android:id="@+id/portrait"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_alignParentLeft="true" />
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:scaleType="centerCrop" />
 
     <!-- There should be left padding between the portrait an the two lines of text -->
     <TextView
