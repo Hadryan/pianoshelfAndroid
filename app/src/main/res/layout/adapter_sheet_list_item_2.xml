@@ -17,7 +17,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
 
-        android:text="Op. 12 - Dream log log log log log log log asdfasdfasdf"
+        android:text="Op. 12 - Dream log log"
         android:textSize="20sp"
         android:maxLines="1"
         android:gravity="center_vertical" />
@@ -31,14 +31,14 @@
         <TextView
             android:id="@id/sheet_list_item_composer_name"
 
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
 
             android:text="Chopin"
             android:textSize="16sp"
+            android:layout_weight="1"
 
-            android:gravity="left" />
+            android:gravity="start" />
 
 
         <TextView
@@ -49,20 +49,27 @@
 
             android:text="Intermediate"
             android:gravity="center" />
-        <ImageView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="65dp"
             android:layout_height="match_parent"
-           />
+            android:clickable="true" >
+            <ImageView
+                android:id="@+id/sheet_list_item_download_icon"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_action_download"/>
 
-        <TextView
-            android:id="@id/sheet_list_item_download_count"
+            <TextView
+                android:id="@id/sheet_list_item_download_count"
 
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
 
-            android:text="30K"
-            android:gravity="center" />
-
+                android:text="999M"
+                android:gravity="center" />
+        </LinearLayout>
     </LinearLayout>
     <!--
     <LinearLayout
