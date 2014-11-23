@@ -7,12 +7,13 @@
     <!-- Search Button -->
     <item android:id="@+id/myActionSearch"
         android:icon="@drawable/ic_action_search"
-        android:title="@string/searchActionTitle"
+        android:title="@string/search_title"
         android:showAsAction="always" />
 
     <!-- Settings, should always be in the overflow per android tutorial -->
-    <item android:id="@+id/action_settings"
+    <item
+        android:id="@+id/action_settings"
         android:title="@string/action_settings"
-        android:showAsAction="never" />
+        android:showAsAction="ifRoom" />
 
 </menu>

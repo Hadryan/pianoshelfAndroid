@@ -32,6 +32,10 @@
         <activity
             android:name=".SheetListView" >
         </activity>
+        <!-- The login page -->
+        <activity android:name=".AuthView">
+
+        </activity>
     </application>
 
 </manifest>

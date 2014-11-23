@@ -3,10 +3,10 @@ package com.pianoshelf.joey.pianoshelf;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
 
 /**
  * This is the main logic page
@@ -14,6 +14,20 @@ import android.view.View;
  */
 public class Main extends Activity {
     public static final String SERVER_ADDR = "http://198.46.142.228:5000/";
+
+    // Public Intent Constants
+    public static final int RESULT_FAILED = 1;
+    public static final String ACTION_LOGIN = "ACTION_LOGIN";
+    public static final String ACTION_LOGOUT = "ACTION_LOGOUT";
+    public static final String AUTHORIZATION_TOKEN = "AUTHORIZATION_TOKEN";
+    public static final String USERNAME = "USERNAME";
+    public static final String PASSWORD = "PASSWORD";
+
+    // Private Intent Constants
+    private static final int TOKEN_REQUEST = 1;
+    private static final int LOGOUT = 2;
+
+    private String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,5 +82,36 @@ public class Main extends Activity {
         intent.putExtra("query", "popular");
         intent.putExtra("queryType", "order_by");
         startActivity(intent);
+    }
+
+    public void invokeLogin(View view) {
+        Intent intent = new Intent(ACTION_LOGIN, null, this, AuthView.class);
+        //intent.putExtra(USERNAME, "hello");
+        //intent.putExtra(PASSWORD, "world");
+        startActivityForResult(intent, TOKEN_REQUEST);
+    }
+
+    public void invokeLogout(View view) {
+        (new LogoutTask()).execute(token);
+    }
+
+    @Override
+    protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case TOKEN_REQUEST:
+                switch (resultCode) {
+                    case RESULT_OK:
+                        token = data.getStringExtra(AUTHORIZATION_TOKEN);
+                        Log.i("token", token);
+                        break;
+                    case RESULT_CANCELED:
+                        // We don't care if the user has canceled the request
+                        break;
+                    case RESULT_FAILED:
+                        // Show a dialog prompting that the login has failed
+                        // if the activity has not finished
+                        break;
+                }
+        }
     }
 }

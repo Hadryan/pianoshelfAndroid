@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Input Fields -->
+    <EditText
+        android:id="@+id/loginview_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/input_username"/>
+
+    <EditText
+        android:id="@+id/loginview_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/input_password"
+        android:inputType="textPassword" />
+
+    <ProgressBar
+        android:id="@+id/loginview_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="invisible"/>
+
+    <!-- Action Buttons -->
+    <Button
+        android:id="@+id/loginview_login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/input_login"
+        android:onClick="invokeLogin" />
+
+    <Button
+        android:id="@+id/loginview_cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/cancel"/>
+
+    <TextView
+        android:id="@+id/loginview_warning_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/warning"/>
+
+    <TextView
+        android:id="@+id/loginview_error_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/error" />
+</LinearLayout>
