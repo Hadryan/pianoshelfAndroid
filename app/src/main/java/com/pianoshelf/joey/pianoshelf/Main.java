@@ -2,11 +2,13 @@ package com.pianoshelf.joey.pianoshelf;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 /**
  * This is the main logic page
@@ -29,10 +31,22 @@ public class Main extends Activity {
 
     private String token;
 
+    // Temporary variables. Needs to be removed before release
+    private TextView tokenText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        tokenText = (TextView) findViewById(R.id.main_token);
+
+        // Fetch the login token from shared preferences
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        String savedLoginToken = sharedPreferences.getString(AUTHORIZATION_TOKEN, null);
+        if (savedLoginToken != null) {
+            token = savedLoginToken;
+        }
+        tokenText.setText(token);
     }
 
 
@@ -93,6 +107,10 @@ public class Main extends Activity {
 
     public void invokeLogout(View view) {
         (new LogoutTask()).execute(token);
+        (getPreferences(MODE_PRIVATE).edit())
+                .remove(AUTHORIZATION_TOKEN).apply();
+        token = null;
+        tokenText.setText(token);
     }
 
     @Override
@@ -102,14 +120,21 @@ public class Main extends Activity {
                 switch (resultCode) {
                     case RESULT_OK:
                         token = data.getStringExtra(AUTHORIZATION_TOKEN);
+                        // Store the token in shared preferences, which is private
+                        (getPreferences(MODE_PRIVATE).edit())
+                                .putString(AUTHORIZATION_TOKEN, token).apply();
+                        tokenText.setText(token);
                         Log.i("token", token);
                         break;
                     case RESULT_CANCELED:
                         // We don't care if the user has canceled the request
+                        tokenText.setText(token);
                         break;
                     case RESULT_FAILED:
                         // Show a dialog prompting that the login has failed
                         // if the activity has not finished
+                        token = null;
+                        tokenText.setText(token);
                         break;
                 }
         }
