@@ -107,6 +107,8 @@ public class Main extends Activity {
 
     public void invokeLogout(View view) {
         (new LogoutTask()).execute(token);
+        // Remove the authorization token. If logout fails, we dont care as logging in again
+        // still returns the token
         (getPreferences(MODE_PRIVATE).edit())
                 .remove(AUTHORIZATION_TOKEN).apply();
         token = null;
