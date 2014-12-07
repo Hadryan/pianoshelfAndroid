@@ -8,35 +8,6 @@
 
     tools:context=".Main">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp">
-        <EditText
-            android:id="@+id/searchBar"
-
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-
-            android:layout_gravity="center_vertical"
-
-            android:hint="@string/search_hint"/>
-
-        <Button
-            android:id="@+id/searchButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-
-            android:text="Search"
-            android:onClick="querySearch"/>
-
-    </LinearLayout>
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -60,6 +31,10 @@
         android:layout_height="wrap_content"
         android:text="Login"
         android:onClick="invokeLogin"/>
+    <TextView
+        android:id="@+id/main_token"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
