@@ -7,8 +7,22 @@
 
     <string name="cancel">Cancel</string>
 
-    <!-- EditText -->
+    <!-- Authentication Input Fields -->
     <string name="input_username">Username</string>
     <string name="input_password">Password</string>
-    <string name="input_login">Login</string>
+    <string name="input_password_repeat">Password x2</string>
+    <string name="input_email">Email</string>
+
+    <!-- Authentication Other -->
+    <string name="button_login">Login</string>
+    <string name="button_register">Register</string>
+    <string name="signup_title">Sign Up</string>
+
+    <!-- Authentication messages -->
+    <string name="input_username_missing">Please enter an username.</string>
+    <string name="input_password_missing">Please enter a password.</string>
+    <string name="input_password_repeat_missing">Please repeat your password.</string>
+    <string name="input_password_mismatch">Passwords entered do not match.</string>
+    <string name="input_email_invalid">Invalid email address.</string>
+    <string name="input_login_failure">Login failed. Please verify your username and password.</string>
 </resources>

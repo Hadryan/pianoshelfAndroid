@@ -9,6 +9,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 /**
  * It seems impossible to execute two concurrent activities in android
  * Thus its only logical that either the login was done on the main activity or
@@ -22,39 +24,22 @@ import android.widget.TextView;
  * http://django-rest-auth.readthedocs.org/en/latest/api_endpoints.html
  * Created by root on 11/25/14.
  */
-public class AuthView extends Activity implements TaskDelegate {
+public class LoginView extends Activity implements TaskDelegate {
     private String token;
     private String username;
     private String password;
     private ProgressBar progressBar;
+    private TextView warningMessage;
+    private TextView errorMessage;
     private String LOG_TAG = "AuthView";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
-        String intentAction = intent.getAction();
-        // Originally this class was intended to house both login and logout, now they are separate
-        if (Main.ACTION_LOGIN.equals(intentAction)) {
-            //username = intent.getStringExtra(Main.USERNAME);
-            //password = intent.getStringExtra(Main.PASSWORD);
-            setContentView(R.layout.activity_loginview);
-            progressBar = (ProgressBar) findViewById(R.id.loginview_progress);
-        }
-    }
-
-    @Override
-    public void onBackPressed () {
-
-    }
-
-    /**
-     * Logout the current user, if user is logged in
-     * @param view
-     */
-    public void invokeLogout(View view) {
-        progressBar.setVisibility(View.VISIBLE);
-        // TODO add a logout asynctask and implement corresponding UI changes here
+        setContentView(R.layout.activity_loginview);
+        progressBar = (ProgressBar) findViewById(R.id.loginview_progress);
+        warningMessage = (TextView) findViewById(R.id.loginview_warning_message);
+        errorMessage = (TextView) findViewById(R.id.loginview_error_message);
     }
 
     /**
@@ -62,41 +47,19 @@ public class AuthView extends Activity implements TaskDelegate {
      * @param view layout for this class
      */
     public void invokeLogin(View view) {
+        // Clear the error and warning messages
+        warningMessage.setText("");
+        errorMessage.setText("");
+
         String username = ((EditText) findViewById(R.id.loginview_username)).getText().toString();
         String password = ((EditText) findViewById(R.id.loginview_password)).getText().toString();
-        TextView errorMessageTextView = (TextView) findViewById(R.id.loginview_warning_message);
-
-        String errorMessage = errorMessageTextView.getText().toString();
-        // Clear the error messages if there was any
-        if ((errorMessage != null) && !errorMessage.isEmpty()) {
-            errorMessageTextView.setText("");
-        }
 
         // Verify username and password
         // Short circuiting
         if (checkUsername(username) && checkPassword(password)) {
             progressBar.setVisibility(View.VISIBLE);
-            LoginTask login = new LoginTask(this);
-            login.execute(username, password);
+            (new LoginTask(this)).execute(username, password);
         }
-    }
-
-    private boolean checkUsername(String username) {
-        if (username == null || username.isEmpty()) {
-            ((TextView) findViewById(R.id.loginview_warning_message))
-                    .setText("Please enter an username");
-            return false;
-        }
-        return true;
-    }
-
-    private boolean checkPassword(String password) {
-        if (password == null || password.isEmpty()) {
-            ((TextView) findViewById(R.id.loginview_warning_message))
-                    .setText("Please enter a password");
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -116,10 +79,25 @@ public class AuthView extends Activity implements TaskDelegate {
             finish();
         } else {
             // Failed to fetch token, update view accordingly
-            ((TextView) view.findViewById(R.id.loginview_error_message))
-                    .setText("Login failed. Please verify your username and password");
+            errorMessage.setText(getString(R.string.input_login_failure));
             // TODO put a failure reason on returnIntent
             setResult(Main.RESULT_FAILED);
         }
+    }
+
+    private boolean checkUsername(String username) {
+        if (username == null || username.isEmpty()) {
+            warningMessage.setText(getString(R.string.input_username_missing));
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkPassword(String password) {
+        if (password == null || password.isEmpty()) {
+            warningMessage.setText(getString(R.string.input_password_missing));
+            return false;
+        }
+        return true;
     }
 }
