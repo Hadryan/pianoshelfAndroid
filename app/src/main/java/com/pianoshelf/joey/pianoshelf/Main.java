@@ -99,20 +99,23 @@ public class Main extends Activity {
     }
 
     public void invokeLogin(View view) {
-        Intent intent = new Intent(ACTION_LOGIN, null, this, AuthView.class);
-        //intent.putExtra(USERNAME, "hello");
-        //intent.putExtra(PASSWORD, "world");
+        Intent intent = new Intent(ACTION_LOGIN, null, this, LoginView.class);
         startActivityForResult(intent, TOKEN_REQUEST);
     }
 
     public void invokeLogout(View view) {
         (new LogoutTask()).execute(token);
-        // Remove the authorization token. If logout fails, we dont care as logging in again
+        // Remove the authorization token. If logout fails, we don't care as logging in again
         // still returns the token
         (getPreferences(MODE_PRIVATE).edit())
                 .remove(AUTHORIZATION_TOKEN).apply();
         token = null;
         tokenText.setText(token);
+    }
+
+    public void invokeRegistration(View view) {
+        Intent intent = new Intent(this, SignupView.class);
+        startActivity(intent);
     }
 
     @Override

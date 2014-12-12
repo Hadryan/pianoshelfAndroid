@@ -6,7 +6,6 @@ import android.util.Log;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -23,12 +22,13 @@ import java.util.List;
 
 /**
  * Uses the delegate design pattern instead of callbacks
+ * http://django-rest-auth.readthedocs.org/en/latest/api_endpoints.html
  * Created by joey on 11/23/14.
  */
 public class LoginTask extends AsyncTask<String, Void, String> {
     private String loginUrl = "/api-auth/login/";
-    private String userParamName = "username";
-    private String passParamName = "password";
+    private String usernameParam = "username";
+    private String passwordParam = "password";
     private TaskDelegate delegate;
     private final String LOG_TAG = "LoginTask";
 
@@ -49,8 +49,8 @@ public class LoginTask extends AsyncTask<String, Void, String> {
         HttpClient httpClient = new DefaultHttpClient();
         HttpPost loginRequest = new HttpPost(Main.SERVER_ADDR + loginUrl);
         List<NameValuePair> loginPostParams = new ArrayList<NameValuePair>(2);
-        loginPostParams.add(new BasicNameValuePair(userParamName, loginParams[0]));
-        loginPostParams.add(new BasicNameValuePair(passParamName, loginParams[1]));
+        loginPostParams.add(new BasicNameValuePair(usernameParam, loginParams[0]));
+        loginPostParams.add(new BasicNameValuePair(passwordParam, loginParams[1]));
 
         HttpResponse loginResponse;
         HttpEntity loginEntity;
