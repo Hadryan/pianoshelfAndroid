@@ -2,13 +2,12 @@ package com.pianoshelf.joey.pianoshelf;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -29,7 +28,7 @@ import java.util.List;
  * Goal: Auto-Hiding navigation buttons after some time {Left, Right, Page Number}
  * Goal: Intuitive back button
  */
-public class SheetView extends FragmentActivity {
+public class SheetURLView extends FragmentActivity {
     private ViewPager viewPager;
     private PagerAdapter pagerAdapter;
     private int pageTotal;
@@ -85,7 +84,7 @@ public class SheetView extends FragmentActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return Sheet.newInstance(sheetUrls.get(position));
+            return SheetFragment.newInstance(sheetUrls.get(position));
         }
 
         @Override

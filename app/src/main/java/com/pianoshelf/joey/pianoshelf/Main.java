@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.HashSet;
+
 /**
  * This is the main logic page
  * This does not have to be the front page
@@ -30,6 +32,9 @@ public class Main extends Activity {
     private static final int LOGOUT = 2;
 
     private String token;
+    private String LOG_TAG = "Main";
+    private String OFFLINE_COMPOSITIONS = "offline_compositions";
+    public HashSet<String> offlineCompositions;
 
     // Temporary variables. Needs to be removed before release
     private TextView tokenText;
@@ -40,13 +45,24 @@ public class Main extends Activity {
         setContentView(R.layout.activity_main);
         tokenText = (TextView) findViewById(R.id.main_token);
 
-        // Fetch the login token from shared preferences
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        // Fetch the login token from shared preferences
         String savedLoginToken = sharedPreferences.getString(AUTHORIZATION_TOKEN, null);
         if (savedLoginToken != null) {
             token = savedLoginToken;
         }
         tokenText.setText(token);
+
+        /**
+         * Fetch offline files from shared preferences
+         * OFFLINE_COMPOSITIONS point to a collection of keys that are also present in shared
+         * preferences. Theses keys unlock a serialized JSON object, the composition class.
+         */
+        offlineCompositions = (HashSet<String>) sharedPreferences
+                .getStringSet(OFFLINE_COMPOSITIONS, null);
+        if (offlineCompositions == null) {
+            offlineCompositions = new HashSet<String>();
+        }
     }
 
 
@@ -76,7 +92,7 @@ public class Main extends Activity {
 
     // Invoke CustomViews
     public void invokeSheetView(View view){
-        Intent intent = new Intent(this, SheetView.class);
+        Intent intent = new Intent(this, SheetURLView.class);
         intent.putExtra("sheetMusicUrl", (SERVER_ADDR + "/api/sheetmusic/1/"));
         startActivity(intent);
     }

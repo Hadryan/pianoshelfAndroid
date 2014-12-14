@@ -7,8 +7,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.awt.font.TextAttribute;
-
 /**
  * Created by joey on 12/6/14.
  */
@@ -47,8 +45,9 @@ public class SignupView extends Activity implements TaskDelegate {
 
     @Override
     public void taskCompleted(String message) {
+        // TODO If no email is required, signin the user.
         if (message == null || message.isEmpty()) {
-            // Display a toast message for the user to check email for confirmation.
+            // TODO Display a toast message for the user to check email for confirmation.
             finish();
         } else {
             errorMessage.setText(message);

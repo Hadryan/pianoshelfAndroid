@@ -1,10 +1,10 @@
 package com.pianoshelf.joey.pianoshelf;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.ViewGroup;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -15,14 +15,14 @@ import com.android.volley.toolbox.ImageLoader;
  * This class receives a working URL and loads the URL
  * Created by root on 10/29/14.
  */
-public class Sheet extends Fragment {
+public class SheetFragment extends Fragment {
     private String sheetUrl;
     private ImageView imageView;
     private ImageLoader imageLoader;
     private ProgressBar progressBar;
 
     // Default Constructor
-    public Sheet() {}
+    public SheetFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,12 +72,12 @@ public class Sheet extends Fragment {
     /**
      * We do not override the onCreate method for parameters, instead we use the
      * newInstance and Bundle static factory design pattern.
-     * We will pass in the url of the sheet (later) from SheetView
+     * We will pass in the url of the sheet (later) from SheetURLView
      * to specify which page to load
      * TODO Consider overloading this class with a Bundle parameter
      */
-    public static Sheet newInstance(String sheetUrl) {
-        Sheet sheet = new Sheet();
+    public static SheetFragment newInstance(String sheetUrl) {
+        SheetFragment sheet = new SheetFragment();
         Bundle args = new Bundle();
 
         args.putString("sheetUrl", sheetUrl);

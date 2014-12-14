@@ -9,19 +9,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.StringTokenizer;
 
 /**
  * Created by root on 11/8/14.
@@ -124,7 +122,7 @@ public class SheetListView extends ListActivity {
 
     @Override
     protected void onListItemClick (ListView l, View v, int position, long id) {
-        Intent openSheet = new Intent(this, SheetView.class);
+        Intent openSheet = new Intent(this, SheetURLView.class);
         openSheet.putExtra("sheetMusicUrl"
                 , SERVER + SERVER_SHEETMUSIC_SUFFIX + Integer.toString((int) id));
         startActivity(openSheet);
@@ -158,7 +156,6 @@ public class SheetListView extends ListActivity {
      * Custom adapter for a list of sheet music
      */
     private class SheetListAdapter extends JSONAdapter {
-        private boolean alternatingView = false;
         public SheetListAdapter(Context context, int layout, JSONArray sheetList) {
             super(context, layout, sheetList);
         }
@@ -167,42 +164,26 @@ public class SheetListView extends ListActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             View parentView = super.getView(position, convertView, parent);
             // Unwrap the JSONObject
-            JSONObject sheet;
-            int id, fileSize, downloadCount, difficulty;
-            String title, style, key, date, composer, submitter, thumbnailUrl, uniqueUrl;
+            JSONObject sheetJson = jsonArray.get(position);
 
             // Unwrapping the JSON object
-            try {
-                sheet = jsonArray.get(position);
-                id = sheet.getInt("id");
-                title = sheet.getString("title");
-                style = sheet.getString("style");
-                key = sheet.getString("key");
-                date = sheet.getString("date");
-                fileSize = sheet.getInt("file_size");
-                composer = sheet.getString("composer_name");
-                submitter = sheet.getString("submitted_by");
-                thumbnailUrl = sheet.getString("thumbnail_url");
-                downloadCount = sheet.getInt("pop");
-                uniqueUrl = sheet.getString("uniqueurl");
-                difficulty = sheet.getInt("difficulty");
-            } catch (JSONException ex) {
-                throw new RuntimeException(ex);
-            }
+            Gson gson = new Gson();
+            Composition composition = gson.fromJson(sheetJson.toString(), Composition.class);
 
             // Populate textViews with information
-            ((TextView) parentView.findViewById(R.id.sheet_list_item_title)).setText(title.trim());
+            ((TextView) parentView.findViewById(R.id.sheet_list_item_title))
+                    .setText(composition.getTitle().trim());
             ((TextView) parentView.findViewById(R.id.sheet_list_item_composer_name))
-                    .setText(composer);
+                    .setText(composition.getComposer_name());
             //((TextView) parentView.findViewById(R.id.sheet_list_item_style)).setText(style);
             //((TextView) parentView.findViewById(R.id.sheet_list_item_key)).setText(key);
             //((TextView) parentView.findViewById(R.id.sheet_list_item_date)).setText(date);
             ((TextView) parentView.findViewById(R.id.sheet_list_item_download_count))
-                    .setText(parseDownloadCount(downloadCount));
+                    .setText(parseDownloadCount(composition.getPop()));
             TextView difficultyText =
                     (TextView) parentView.findViewById(R.id.sheet_list_item_difficulty);
-            difficultyText.setText(parseDifficulty(difficulty));
-            difficultyText.setTextColor(getDifficultyColor(difficulty));
+            difficultyText.setText(parseDifficulty(composition.getDifficulty()));
+            difficultyText.setTextColor(getDifficultyColor(composition.getDifficulty()));
             return parentView;
         }
 
