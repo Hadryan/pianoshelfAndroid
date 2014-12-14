@@ -28,7 +28,7 @@ import java.util.List;
  * Goal: Auto-Hiding navigation buttons after some time {Left, Right, Page Number}
  * Goal: Intuitive back button
  */
-public class SheetURLView extends FragmentActivity {
+public class SheetURLFragment extends FragmentActivity {
     private ViewPager viewPager;
     private PagerAdapter pagerAdapter;
     private int pageTotal;

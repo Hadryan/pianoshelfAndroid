@@ -72,7 +72,7 @@ public class SheetFragment extends Fragment {
     /**
      * We do not override the onCreate method for parameters, instead we use the
      * newInstance and Bundle static factory design pattern.
-     * We will pass in the url of the sheet (later) from SheetURLView
+     * We will pass in the url of the sheet (later) from SheetURLFragment
      * to specify which page to load
      * TODO Consider overloading this class with a Bundle parameter
      */

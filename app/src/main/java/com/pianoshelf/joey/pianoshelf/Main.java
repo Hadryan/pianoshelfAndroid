@@ -92,7 +92,7 @@ public class Main extends Activity {
 
     // Invoke CustomViews
     public void invokeSheetView(View view){
-        Intent intent = new Intent(this, SheetURLView.class);
+        Intent intent = new Intent(this, SheetURLFragment.class);
         intent.putExtra("sheetMusicUrl", (SERVER_ADDR + "/api/sheetmusic/1/"));
         startActivity(intent);
     }
