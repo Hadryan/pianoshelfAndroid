@@ -21,7 +21,7 @@
 
         <!-- The activity to view sheet music -->
         <activity
-            android:name=".SheetURLView" >
+            android:name=".SheetView" >
         </activity>
         <!-- The activity to view a list of composers -->
         <activity

@@ -23,7 +23,6 @@ public class SharedPreferenceHelper {
     SharedPreferences.Editor preferenceEditor;
 
     public static final String PIANOSHELF = "pianoshelf";
-    public static final String SHEET_FILE_NAMES_KEY = "SHEET_FILE_NAME_KEY";
     public static final String COMPOSITION_JSON_KEY = "COMPOSITION_JSON_KEY";
     public static final String OFFLINE_COMPOSITIONS = "offline_compositions";
 

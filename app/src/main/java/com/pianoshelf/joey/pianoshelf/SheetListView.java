@@ -122,7 +122,7 @@ public class SheetListView extends ListActivity {
 
     @Override
     protected void onListItemClick (ListView l, View v, int position, long id) {
-        Intent openSheet = new Intent(this, SheetURLView.class);
+        Intent openSheet = new Intent(this, SheetView.class);
         openSheet.putExtra("sheetMusicUrl"
                 , SERVER + SERVER_SHEETMUSIC_SUFFIX + Integer.toString((int) id));
         startActivity(openSheet);

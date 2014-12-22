@@ -13,10 +13,11 @@ import com.android.volley.toolbox.ImageLoader;
 
 /**
  * This class receives a working URL and loads the URL
- * Created by root on 10/29/14.
+ * Created by joey on 10/29/14.
  */
 public class SheetURLFragment extends Fragment {
     private String sheetUrl;
+    private static final String SHEET_URL_ARGUMENT = "sheetUrl";
     private ImageView imageView;
     private ImageLoader imageLoader;
     private ProgressBar progressBar;
@@ -28,7 +29,7 @@ public class SheetURLFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            sheetUrl = getArguments().getString("sheetUrl");
+            sheetUrl = getArguments().getString(SHEET_URL_ARGUMENT);
         } else {
             //TODO load error img?
         }
@@ -72,7 +73,7 @@ public class SheetURLFragment extends Fragment {
     /**
      * We do not override the onCreate method for parameters, instead we use the
      * newInstance and Bundle static factory design pattern.
-     * We will pass in the url of the sheet (later) from SheetURLView
+     * We will pass in the url of the sheet (later) from SheetView
      * to specify which page to load
      * TODO Consider overloading this class with a Bundle parameter
      */
@@ -80,7 +81,7 @@ public class SheetURLFragment extends Fragment {
         SheetURLFragment sheet = new SheetURLFragment();
         Bundle args = new Bundle();
 
-        args.putString("sheetUrl", sheetUrl);
+        args.putString(SHEET_URL_ARGUMENT, sheetUrl);
         sheet.setArguments(args);
         return sheet;
     }

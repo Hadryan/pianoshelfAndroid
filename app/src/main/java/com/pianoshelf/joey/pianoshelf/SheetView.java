@@ -1,5 +1,6 @@
 package com.pianoshelf.joey.pianoshelf;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -46,14 +47,19 @@ import java.util.Set;
  * Goal: Swipe left/right to move pages (intuitive)
  * Goal: Auto-Hiding navigation buttons after some time {Left, Right, Page Number}
  */
-public class SheetURLView extends FragmentActivity {
-    private String LOG_TAG = "SheetURLView";
+public class SheetView extends FragmentActivity {
+    private String LOG_TAG = "SheetView";
     private ViewPager viewPager;
     private PagerAdapter pagerAdapter;
     private String sheetMusicUrl;
     private Composition composition;
 
-    MenuItem downloadAction;
+    private MenuItem downloadAction;
+
+    private String[] offlineImages;
+
+    private String offlineRootDirectory =
+            Environment.getExternalStorageDirectory() + File.separator + Main.PIANOSHELF;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +70,7 @@ public class SheetURLView extends FragmentActivity {
         Intent intent = getIntent();
         sheetMusicUrl = intent.getStringExtra("sheetMusicUrl");
 
+        final Context context = this;
         // Fetch the JSON object from the URL
         // Create the request object
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
@@ -72,6 +79,9 @@ public class SheetURLView extends FragmentActivity {
                         // Parse response into Java object with Gson
                         composition =
                                 (new Gson()).fromJson(response.toString(), Composition.class);
+
+                        offlineImages = (new SharedPreferenceHelper(context)).
+                                getOfflineCompositionImages(composition.getUniqueurl(), null);
 
                         // Make the download button visible
                         downloadAction.setVisible(true);
@@ -113,8 +123,7 @@ public class SheetURLView extends FragmentActivity {
         // Check composition folder, create it if it does not exist.
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
-            offlineSheetDirectory =
-                    new File(Environment.getExternalStorageDirectory() + File.separator + Main.PIANOSHELF, compositionFolderName);
+            offlineSheetDirectory = new File(offlineRootDirectory, compositionFolderName);
             if (!offlineSheetDirectory.mkdirs()) {
                 Log.e(LOG_TAG, "Directory not created or already present.");
             }
@@ -138,8 +147,6 @@ public class SheetURLView extends FragmentActivity {
             offlineImages = new String[onlineImages.length];
         } else {
             offlineImages = cachedOfflineImages;
-            Log.i(LOG_TAG, "cached offline images array.");
-            Log.i(LOG_TAG, Arrays.toString(cachedOfflineImages));
         }
         // Iterate over all sheetUrls and download each image
         for (int i=0; i<onlineImages.length; ++i) {
@@ -187,7 +194,9 @@ public class SheetURLView extends FragmentActivity {
                                     // Update offlineImages
                                     offlineImages[currentIndex] = sheetFileName;
                                     // Update offline content information
-                                    offlineFiles.setOfflineCompositionImages(compositionName, offlineImages);
+                                    offlineFiles.setOfflineCompositionImages(compositionName,
+                                            offlineImages);
+                                    setOfflineImages(offlineImages);
                                 } catch (FileNotFoundException ex) {
                                     Log.e(LOG_TAG, "File not found.");
                                 } catch (IOException ex) {
@@ -227,6 +236,14 @@ public class SheetURLView extends FragmentActivity {
         return true;
     }
 
+    private String parseSheetUrl(String sheetUrl) {
+        return sheetUrl.substring(sheetUrl.lastIndexOf('/') + 1);
+    }
+
+    private void setOfflineImages(String[] offlineImages) {
+        this.offlineImages = offlineImages;
+    }
+
     private class SheetViewPagerAdapter extends FragmentStatePagerAdapter {
         public SheetViewPagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
@@ -234,7 +251,17 @@ public class SheetURLView extends FragmentActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return SheetURLFragment.newInstance(composition.getImages()[position]);
+            String onlineImageUrl = composition.getImages()[position];
+            String offlineImageLocation = parseSheetUrl(onlineImageUrl);
+            if (offlineImages != null && (position < offlineImages.length) &&
+                    (offlineImageLocation.equals(offlineImages[position]))) {
+                Log.i(LOG_TAG, "Using offline image.");
+                return SheetOfflineFragment.newInstance(offlineRootDirectory + File.separator +
+                        composition.getUniqueurl() + File.separator + offlineImageLocation);
+            } else {
+                Log.i(LOG_TAG, "Fetching online image.");
+                return SheetURLFragment.newInstance(onlineImageUrl);
+            }
         }
 
         @Override
@@ -242,9 +269,5 @@ public class SheetURLView extends FragmentActivity {
             return composition.getImages().length;
         }
 
-    }
-
-    private String parseSheetUrl(String sheetUrl) {
-        return sheetUrl.substring(sheetUrl.lastIndexOf('/') + 1);
     }
 }
