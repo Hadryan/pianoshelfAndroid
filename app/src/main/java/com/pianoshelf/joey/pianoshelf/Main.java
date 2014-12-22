@@ -17,7 +17,9 @@ import java.util.HashSet;
  * This does not have to be the front page
  */
 public class Main extends Activity {
+    // Public Constants
     public static final String SERVER_ADDR = "http://198.46.142.228:5000/";
+    public static final String PIANOSHELF = "pianoshelf";
 
     // Public Intent Constants
     public static final int RESULT_FAILED = 1;
@@ -33,7 +35,6 @@ public class Main extends Activity {
 
     private String token;
     private String LOG_TAG = "Main";
-    private String OFFLINE_COMPOSITIONS = "offline_compositions";
     public HashSet<String> offlineCompositions;
 
     // Temporary variables. Needs to be removed before release
@@ -45,7 +46,7 @@ public class Main extends Activity {
         setContentView(R.layout.activity_main);
         tokenText = (TextView) findViewById(R.id.main_token);
 
-        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
         // Fetch the login token from shared preferences
         String savedLoginToken = sharedPreferences.getString(AUTHORIZATION_TOKEN, null);
         if (savedLoginToken != null) {
@@ -58,11 +59,11 @@ public class Main extends Activity {
          * OFFLINE_COMPOSITIONS point to a collection of keys that are also present in shared
          * preferences. Theses keys unlock a serialized JSON object, the composition class.
          */
-        offlineCompositions = (HashSet<String>) sharedPreferences
+        /*offlineCompositions = (HashSet<String>) sharedPreferences
                 .getStringSet(OFFLINE_COMPOSITIONS, null);
         if (offlineCompositions == null) {
             offlineCompositions = new HashSet<String>();
-        }
+        }*/
     }
 
 
@@ -94,6 +95,7 @@ public class Main extends Activity {
     public void invokeSheetView(View view){
         Intent intent = new Intent(this, SheetURLView.class);
         intent.putExtra("sheetMusicUrl", (SERVER_ADDR + "/api/sheetmusic/1/"));
+        intent.putExtra(AUTHORIZATION_TOKEN, token);
         startActivity(intent);
     }
 
@@ -103,6 +105,7 @@ public class Main extends Activity {
         intent.putExtra("composersEndpoint", "/api/composers/");
         intent.putExtra("composersUrl", SERVER_ADDR + "/api/composers/");
         intent.putExtra("sheetMusicEndPoint", "/api/sheetmusic/");
+        intent.putExtra(AUTHORIZATION_TOKEN, token);
         startActivity(intent);
     }
 
@@ -111,6 +114,7 @@ public class Main extends Activity {
         intent.putExtra("server", SERVER_ADDR);
         intent.putExtra("query", "popular");
         intent.putExtra("queryType", "order_by");
+        intent.putExtra(AUTHORIZATION_TOKEN, token);
         startActivity(intent);
     }
 
@@ -123,7 +127,7 @@ public class Main extends Activity {
         (new LogoutTask()).execute(token);
         // Remove the authorization token. If logout fails, we don't care as logging in again
         // still returns the token
-        (getPreferences(MODE_PRIVATE).edit())
+        (getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit())
                 .remove(AUTHORIZATION_TOKEN).apply();
         token = null;
         tokenText.setText(token);
@@ -142,7 +146,7 @@ public class Main extends Activity {
                     case RESULT_OK:
                         token = data.getStringExtra(AUTHORIZATION_TOKEN);
                         // Store the token in shared preferences, which is private
-                        (getPreferences(MODE_PRIVATE).edit())
+                        (getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit())
                                 .putString(AUTHORIZATION_TOKEN, token).apply();
                         tokenText.setText(token);
                         Log.i("token", token);

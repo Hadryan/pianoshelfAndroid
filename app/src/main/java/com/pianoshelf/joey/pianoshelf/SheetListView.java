@@ -167,8 +167,8 @@ public class SheetListView extends ListActivity {
             JSONObject sheetJson = jsonArray.get(position);
 
             // Unwrapping the JSON object
-            Gson gson = new Gson();
-            Composition composition = gson.fromJson(sheetJson.toString(), Composition.class);
+            Composition composition =
+                    (new Gson()).fromJson(sheetJson.toString(), Composition.class);
 
             // Populate textViews with information
             ((TextView) parentView.findViewById(R.id.sheet_list_item_title))

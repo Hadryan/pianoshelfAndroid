@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/sheet_download"
+        android:icon="@drawable/ic_action_download"
+        android:title="@string/download"
+        android:showAsAction="ifRoom"
+        android:onClick="invokeDownload"/>
+
+    <item android:id="@+id/sheet_overflow"
+        android:icon="@drawable/ic_menu_moreoverflow_normal_holo_light"
+        android:title="@string/overflow"
+        android:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/sheet_pdf_download"
+                android:title="@string/overflow_pdf_download"
+                android:onClick="invokePDFDownload"/>
+        </menu>
+    </item>
+</menu>
