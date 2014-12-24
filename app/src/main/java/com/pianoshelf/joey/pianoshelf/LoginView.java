@@ -39,6 +39,12 @@ public class LoginView extends Activity implements TaskDelegate {
         errorMessage = (TextView) findViewById(R.id.loginview_error_message);
     }
 
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_CANCELED);
+        finish();
+    }
+
     /**
      * POST login if username and password are valid
      * @param view layout for this class
@@ -97,4 +103,5 @@ public class LoginView extends Activity implements TaskDelegate {
         }
         return true;
     }
+
 }
