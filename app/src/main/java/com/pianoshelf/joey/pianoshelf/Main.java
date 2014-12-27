@@ -16,7 +16,7 @@ import java.util.HashSet;
  * This is the main logic page
  * This does not have to be the front page
  */
-public class Main extends Activity {
+public class Main extends BaseActivity {
     // Public Constants
     public static final String SERVER_ADDR = "http://198.46.142.228:5000/";
     public static final String PIANOSHELF = "pianoshelf";
@@ -140,6 +140,7 @@ public class Main extends Activity {
 
     @Override
     protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case TOKEN_REQUEST:
                 switch (resultCode) {
