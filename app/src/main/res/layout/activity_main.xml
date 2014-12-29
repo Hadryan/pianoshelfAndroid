@@ -44,5 +44,9 @@
         android:layout_height="wrap_content"
         android:text="Sign Up"
         android:onClick="invokeRegistration"/>
-
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Profile"
+        android:onClick="invokeProfile"/>
 </LinearLayout>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin_minor"
+    android:paddingRight="@dimen/activity_horizontal_margin_minor">
+
+
+    <ProgressBar
+        android:id="@+id/profile_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"
+        android:visibility="visible"/>
+
+    <ImageView
+        android:id="@+id/profile_avatar"
+        android:layout_width="@dimen/profile_avatar_width"
+        android:layout_height="@dimen/profile_avatar_height"
+        android:padding="@dimen/profile_avatar_padding"/>
+
+    <TextView
+        android:id="@+id/profile_fullname"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/profile_avatar"
+        android:paddingTop="@dimen/profile_name_top_padding"
+        android:paddingLeft="@dimen/profile_name_horizontal_padding"
+        android:paddingRight="@dimen/profile_name_horizontal_padding"
+
+        android:textSize="@dimen/font_title"/>
+
+    <TextView
+        android:id="@+id/profile_username"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/profile_avatar"
+        android:layout_below="@id/profile_fullname"
+        android:layout_marginTop="@dimen/profile_name_top_margin"
+        android:paddingLeft="@dimen/profile_name_horizontal_padding"
+        android:paddingRight="@dimen/profile_name_horizontal_padding"
+
+        android:textStyle="bold|italic"/>
+
+    <TextView
+        android:id="@+id/profile_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profile_avatar"
+
+        android:textSize="@dimen/font_title_minor"
+        android:gravity="center"/>
+
+    <!-- myShelf Fragment -->
+</RelativeLayout>

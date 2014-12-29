@@ -39,6 +39,10 @@
         <activity
             android:name=".SignupView">
         </activity>
+        <!-- The profile page -->
+        <activity
+            android:name=".ProfileView">
+        </activity>
     </application>
 
 </manifest>

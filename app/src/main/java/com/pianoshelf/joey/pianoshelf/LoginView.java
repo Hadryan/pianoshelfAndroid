@@ -2,6 +2,7 @@ package com.pianoshelf.joey.pianoshelf;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -22,13 +23,11 @@ import android.widget.TextView;
  * Created by root on 11/25/14.
  */
 public class LoginView extends Activity implements TaskDelegate {
-    private String token;
     private String username;
-    private String password;
     private ProgressBar progressBar;
     private TextView warningMessage;
     private TextView errorMessage;
-    private String LOG_TAG = "AuthView";
+    private String LOG_TAG = "LoginView";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +53,7 @@ public class LoginView extends Activity implements TaskDelegate {
         warningMessage.setText("");
         errorMessage.setText("");
 
-        String username = ((EditText) findViewById(R.id.loginview_username)).getText().toString();
+        username = ((EditText) findViewById(R.id.loginview_username)).getText().toString();
         String password = ((EditText) findViewById(R.id.loginview_password)).getText().toString();
 
         // Verify username and password
@@ -72,20 +71,23 @@ public class LoginView extends Activity implements TaskDelegate {
      */
     @Override
     public void taskCompleted(String token) {
-        View view = getWindow().getDecorView().findViewById(android.R.id.content);
         Intent returnIntent = new Intent();
+        SharedPreferences.Editor globalPreferenceEditor =
+                getSharedPreferences(Constants.PIANOSHELF, MODE_PRIVATE).edit();
         progressBar.setVisibility(View.INVISIBLE);
         if (token != null) {
-            this.token = token;
+            globalPreferenceEditor.putString(Constants.USERNAME, username);
             returnIntent.putExtra(Main.AUTHORIZATION_TOKEN, token);
             setResult(RESULT_OK, returnIntent);
             finish();
         } else {
             // Failed to fetch token, update view accordingly
+            globalPreferenceEditor.remove(Constants.USERNAME);
             errorMessage.setText(getString(R.string.input_login_failure));
             // TODO put a failure reason on returnIntent
             setResult(Main.RESULT_FAILED);
         }
+        globalPreferenceEditor.apply();
     }
 
     private boolean checkUsername(String username) {

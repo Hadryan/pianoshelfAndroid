@@ -18,7 +18,7 @@ import java.util.HashSet;
  */
 public class Main extends BaseActivity {
     // Public Constants
-    public static final String SERVER_ADDR = "http://198.46.142.228:5000/";
+    public static final String SERVER_ADDR = "http://104.236.120.16:5000/";
     public static final String PIANOSHELF = "pianoshelf";
 
     // Public Intent Constants
@@ -135,6 +135,12 @@ public class Main extends BaseActivity {
 
     public void invokeRegistration(View view) {
         Intent intent = new Intent(this, SignupView.class);
+        startActivity(intent);
+    }
+
+    public void invokeProfile(View view) {
+        Intent intent = new Intent(this, ProfileView.class);
+        intent.putExtra("username", "pianomaster");
         startActivity(intent);
     }
 

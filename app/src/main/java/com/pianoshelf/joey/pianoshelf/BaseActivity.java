@@ -40,9 +40,10 @@ public class BaseActivity extends Activity {
     private static final String LOG_TAG = "BaseActivity";
 
     // Protected Constants
-    protected static final String SERVER_ADDR = "http://198.46.142.228:5000/";
+    protected static final String SERVER_ADDR = "http://104.236.120.16:5000/";
     protected static final String PIANOSHELF = "pianoshelf";
     protected static final String AUTHORIZATION_TOKEN = "AUTHORIZATION_TOKEN";
+    protected static final String USERNAME = "USERNAME";
     protected static final String ACTION_LOGIN = "ACTION_LOGIN";
     protected static final int RESULT_FAILED = 1;
 
@@ -166,7 +167,14 @@ public class BaseActivity extends Activity {
             }
             firstItem.setText(getString(R.string.login));
         } else if (itemText.equals(getString(R.string.profile))) {
-            // TODO start intent for profile
+            SharedPreferences globalPreferences = getSharedPreferences(Constants.PIANOSHELF, MODE_PRIVATE);
+            if (globalPreferences.contains(Constants.USERNAME)) {
+                intent = new Intent(this, ProfileView.class);
+                intent.putExtra("username", globalPreferences.getString(Constants.USERNAME, null));
+                startActivity(intent);
+            } else {
+                throw new RuntimeException("No username found.");
+            }
         }
         drawerLayout.closeDrawers();
     }
