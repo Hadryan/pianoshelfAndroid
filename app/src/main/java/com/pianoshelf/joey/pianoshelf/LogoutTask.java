@@ -26,7 +26,6 @@ import java.io.IOException;
  */
 public class LogoutTask extends AsyncTask<String, Void, Void>{
     private String logoutUrl = "/api-auth/logout/";
-    private String TOKEN_PREFIX = "TOKEN "; // why is there a space? I don't fucking know man.
     private String LOG_TAG = "LogoutTask";
     private String LOGOUT_SUCCESS = "success";
 
@@ -38,13 +37,13 @@ public class LogoutTask extends AsyncTask<String, Void, Void>{
      */
     @Override
     protected Void doInBackground(String... logoutParams) {
-        if (logoutParams.length == 0) {
+        if (logoutParams.length < 1) {
             throw new RuntimeException("Insufficient parameters for logout.");
         }
 
         HttpClient httpClient = new DefaultHttpClient();
-        HttpPost logoutRequest = new HttpPost(Main.SERVER_ADDR + logoutUrl);
-        logoutRequest.setHeader("Authorization", TOKEN_PREFIX + logoutParams[0]);
+        HttpPost logoutRequest = new HttpPost(Constants.SERVER_ADDR + logoutUrl);
+        logoutRequest.setHeader("Authorization", Constants.TOKEN_PREFIX + logoutParams[0]);
 
         HttpResponse logoutResponse;
         HttpEntity logoutEntity;

@@ -1,5 +1,7 @@
 package com.pianoshelf.joey.pianoshelf;
 
+import com.google.gson.JsonArray;
+
 /**
  * Created by joey on 12/29/14.
  */
@@ -61,13 +63,13 @@ public class Profile {
 
 
     public class Sheetmusic {
-        Composition[] sheetmusic;
+        private JsonArray sheetmusic;
 
-        public Composition[] getSheetmusic() {
+        public JsonArray getSheetmusic() {
             return sheetmusic;
         }
 
-        public void setSheetmusic(Composition[] sheetmusic) {
+        public void setSheetmusic(JsonArray sheetmusic) {
             this.sheetmusic = sheetmusic;
         }
     }

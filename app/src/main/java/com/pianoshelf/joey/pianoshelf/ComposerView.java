@@ -73,7 +73,6 @@ public class ComposerView extends ListActivity {
     protected void onListItemClick (ListView listview, View view, int position, long id){
         // Example:  /api/sheetmusic/?composer_name=Chopin&page_size=200
         Intent getSheetsByComposer = new Intent(this, SheetListView.class);
-        getSheetsByComposer.putExtra("server", server);
         getSheetsByComposer.putExtra("query"
                 , ((TextView) view.findViewById(R.id.name)).getText());
         getSheetsByComposer.putExtra("queryType", QUERY_TYPE);

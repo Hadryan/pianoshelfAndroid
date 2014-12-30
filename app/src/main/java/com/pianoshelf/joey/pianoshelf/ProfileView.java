@@ -74,6 +74,10 @@ public class ProfileView extends BaseActivity {
                                 }
                             }
                             // TODO Give information to myShelf fragment
+                            SheetListFragment myShelf = SheetListFragment.newInstance(
+                                    profile.getShelf().getSheetmusic());
+                            getSupportFragmentManager().beginTransaction().replace(
+                                    R.id.profile_myshelf, myShelf).commit();
                         }
                     }, new Response.ErrorListener() {
                         @Override

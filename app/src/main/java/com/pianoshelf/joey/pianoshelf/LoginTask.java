@@ -47,7 +47,7 @@ public class LoginTask extends AsyncTask<String, Void, String> {
         }
 
         HttpClient httpClient = new DefaultHttpClient();
-        HttpPost loginRequest = new HttpPost(Main.SERVER_ADDR + loginUrl);
+        HttpPost loginRequest = new HttpPost(Constants.SERVER_ADDR + loginUrl);
         List<NameValuePair> loginPostParams = new ArrayList<NameValuePair>(2);
         loginPostParams.add(new BasicNameValuePair(usernameParam, loginParams[0]));
         loginPostParams.add(new BasicNameValuePair(passwordParam, loginParams[1]));

@@ -43,7 +43,7 @@ public class SignupTask extends AsyncTask<String, Void, String> {
             throw new RuntimeException("Insufficient number of parameters for registration");
         }
         HttpClient httpClient = new DefaultHttpClient();
-        HttpPost registrationRequest = new HttpPost(Main.SERVER_ADDR + registrationUrl);
+        HttpPost registrationRequest = new HttpPost(Constants.SERVER_ADDR + registrationUrl);
         List<NameValuePair> registrationPostParams = new ArrayList<NameValuePair>(4);
         registrationPostParams.add(new BasicNameValuePair(usernameParam, signupParams[0]));
         registrationPostParams.add(new BasicNameValuePair(passwordParam, signupParams[1]));

@@ -55,4 +55,11 @@
         android:gravity="center"/>
 
     <!-- myShelf Fragment -->
+    <FrameLayout
+        android:id="@+id/profile_myshelf"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/profile_description"
+        android:layout_marginTop="@dimen/title_top_margin"/>
+
 </RelativeLayout>

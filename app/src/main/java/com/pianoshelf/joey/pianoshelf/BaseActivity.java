@@ -1,12 +1,15 @@
 package com.pianoshelf.joey.pianoshelf;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -29,23 +32,21 @@ import java.util.List;
  * Base activity for the purpose of implementing left panel on all activities.
  * Created by joey on 12/26/14.
  */
-public class BaseActivity extends Activity {
+public class BaseActivity extends FragmentActivity {
     private String[] listItems; // Array of items in the drawer, excluding the first item
     private DrawerLayout drawerLayout;
     private android.support.v7.app.ActionBarDrawerToggle drawerToggle;
     private TextView firstItem;
 
-    // Constants
-    private static final int TOKEN_REQUEST = 1;
     private static final String LOG_TAG = "BaseActivity";
 
     // Protected Constants
     protected static final String SERVER_ADDR = "http://104.236.120.16:5000/";
     protected static final String PIANOSHELF = "pianoshelf";
     protected static final String AUTHORIZATION_TOKEN = "AUTHORIZATION_TOKEN";
-    protected static final String USERNAME = "USERNAME";
     protected static final String ACTION_LOGIN = "ACTION_LOGIN";
     protected static final int RESULT_FAILED = 1;
+    protected static final int TOKEN_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

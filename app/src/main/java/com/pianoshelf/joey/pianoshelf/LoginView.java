@@ -77,7 +77,7 @@ public class LoginView extends Activity implements TaskDelegate {
         progressBar.setVisibility(View.INVISIBLE);
         if (token != null) {
             globalPreferenceEditor.putString(Constants.USERNAME, username);
-            returnIntent.putExtra(Main.AUTHORIZATION_TOKEN, token);
+            returnIntent.putExtra(Constants.AUTHORIZATION_TOKEN, token);
             setResult(RESULT_OK, returnIntent);
             finish();
         } else {
@@ -85,7 +85,7 @@ public class LoginView extends Activity implements TaskDelegate {
             globalPreferenceEditor.remove(Constants.USERNAME);
             errorMessage.setText(getString(R.string.input_login_failure));
             // TODO put a failure reason on returnIntent
-            setResult(Main.RESULT_FAILED);
+            setResult(Constants.RESULT_FAILED);
         }
         globalPreferenceEditor.apply();
     }

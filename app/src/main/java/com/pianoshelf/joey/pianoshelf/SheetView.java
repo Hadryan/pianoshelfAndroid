@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -47,11 +48,10 @@ import java.util.Set;
  * Goal: Swipe left/right to move pages (intuitive)
  * Goal: Auto-Hiding navigation buttons after some time {Left, Right, Page Number}
  */
-public class SheetView extends FragmentActivity {
+public class SheetView extends BaseActivity {
     private String LOG_TAG = "SheetView";
     private ViewPager viewPager;
     private PagerAdapter pagerAdapter;
-    private String sheetMusicUrl;
     private Composition composition;
 
     private MenuItem downloadAction;
@@ -59,7 +59,7 @@ public class SheetView extends FragmentActivity {
     private String[] offlineImages;
 
     private String offlineRootDirectory =
-            Environment.getExternalStorageDirectory() + File.separator + Main.PIANOSHELF;
+            Environment.getExternalStorageDirectory() + File.separator + Constants.PIANOSHELF;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +68,7 @@ public class SheetView extends FragmentActivity {
 
         // fetches the url of the sheet music JSON object
         Intent intent = getIntent();
-        sheetMusicUrl = intent.getStringExtra("sheetMusicUrl");
+        String sheetMusicUrl = intent.getStringExtra("sheetMusicUrl");
 
         final Context context = this;
         // Fetch the JSON object from the URL
@@ -244,7 +244,7 @@ public class SheetView extends FragmentActivity {
         this.offlineImages = offlineImages;
     }
 
-    private class SheetViewPagerAdapter extends FragmentStatePagerAdapter {
+    private class SheetViewPagerAdapter extends FragmentPagerAdapter {
         public SheetViewPagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
         }

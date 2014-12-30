@@ -1,6 +1,5 @@
 package com.pianoshelf.joey.pianoshelf;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,25 +16,8 @@ import java.util.HashSet;
  * This does not have to be the front page
  */
 public class Main extends BaseActivity {
-    // Public Constants
-    public static final String SERVER_ADDR = "http://104.236.120.16:5000/";
-    public static final String PIANOSHELF = "pianoshelf";
-
-    // Public Intent Constants
-    public static final int RESULT_FAILED = 1;
-    public static final String ACTION_LOGIN = "ACTION_LOGIN";
-    public static final String ACTION_LOGOUT = "ACTION_LOGOUT";
-    public static final String AUTHORIZATION_TOKEN = "AUTHORIZATION_TOKEN";
-    public static final String USERNAME = "USERNAME";
-    public static final String PASSWORD = "PASSWORD";
-
-    // Private Intent Constants
-    private static final int TOKEN_REQUEST = 1;
-    private static final int LOGOUT = 2;
-
     private String token;
     private String LOG_TAG = "Main";
-    public HashSet<String> offlineCompositions;
 
     // Temporary variables. Needs to be removed before release
     private TextView tokenText;
@@ -53,17 +35,6 @@ public class Main extends BaseActivity {
             token = savedLoginToken;
         }
         tokenText.setText(token);
-
-        /**
-         * Fetch offline files from shared preferences
-         * OFFLINE_COMPOSITIONS point to a collection of keys that are also present in shared
-         * preferences. Theses keys unlock a serialized JSON object, the composition class.
-         */
-        /*offlineCompositions = (HashSet<String>) sharedPreferences
-                .getStringSet(OFFLINE_COMPOSITIONS, null);
-        if (offlineCompositions == null) {
-            offlineCompositions = new HashSet<String>();
-        }*/
     }
 
 
@@ -101,7 +72,6 @@ public class Main extends BaseActivity {
 
     public void invokeComposerView(View view) {
         Intent intent = new Intent(this, ComposerView.class);
-        intent.putExtra("server", SERVER_ADDR);
         intent.putExtra("composersEndpoint", "/api/composers/");
         intent.putExtra("composersUrl", SERVER_ADDR + "/api/composers/");
         intent.putExtra("sheetMusicEndPoint", "/api/sheetmusic/");
@@ -111,7 +81,6 @@ public class Main extends BaseActivity {
 
     public void invokeSheetList(View view) {
         Intent intent = new Intent(this, SheetListView.class);
-        intent.putExtra("server", SERVER_ADDR);
         intent.putExtra("query", "popular");
         intent.putExtra("queryType", "order_by");
         intent.putExtra(AUTHORIZATION_TOKEN, token);
