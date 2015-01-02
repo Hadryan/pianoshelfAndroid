@@ -37,8 +37,8 @@
     <!-- Overflow -->
     <string name="download">Download</string>
     <string name="overflow">Additional Actions</string>
-
     <string name="overflow_pdf_download">Download PDF</string>
+    <string name="overflow_add_to_shelf">Add to MyShelf</string>
 
 
     <!-- Drawer -->

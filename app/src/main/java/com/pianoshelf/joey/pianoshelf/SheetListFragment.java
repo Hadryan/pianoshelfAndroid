@@ -1,6 +1,5 @@
 package com.pianoshelf.joey.pianoshelf;
 
-import android.app.ListFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -10,13 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 

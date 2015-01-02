@@ -9,8 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.HashSet;
-
 /**
  * This is the main logic page
  * This does not have to be the front page

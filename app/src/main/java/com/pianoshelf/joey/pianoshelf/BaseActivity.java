@@ -1,17 +1,12 @@
 package com.pianoshelf.joey.pianoshelf;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,9 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,7 +25,7 @@ import java.util.List;
  * Base activity for the purpose of implementing left panel on all activities.
  * Created by joey on 12/26/14.
  */
-public class BaseActivity extends FragmentActivity {
+public class BaseActivity extends ActionBarActivity {
     private String[] listItems; // Array of items in the drawer, excluding the first item
     private DrawerLayout drawerLayout;
     private android.support.v7.app.ActionBarDrawerToggle drawerToggle;
@@ -52,6 +45,8 @@ public class BaseActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_base);
+
+        enableHttpResponseCache();
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
         firstItem = (TextView) findViewById(R.id.drawer_first_item);
@@ -78,19 +73,19 @@ public class BaseActivity extends FragmentActivity {
             @Override
             public void	onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                getActionBar().setTitle(R.string.drawer_title);
+                getSupportActionBar().setTitle(R.string.drawer_title);
                 //invalidateOptionsMenu();
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                getActionBar().setTitle(R.string.action_title);
+                getSupportActionBar().setTitle(R.string.action_title);
             }
         };
         drawerLayout.setDrawerListener(drawerToggle);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
     /**
@@ -238,6 +233,20 @@ public class BaseActivity extends FragmentActivity {
         @Override
         public int getCount() {
             return list.size();
+        }
+    }
+
+    // http://android-developers.blogspot.ca/2011/09/androids-http-clients.html
+    // Enables caching on Ice Cream Sandwich without affecting earlier releases.
+    private void enableHttpResponseCache() {
+        try {
+            long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
+            File httpCacheDir = new File(getCacheDir(), "http");
+            Class.forName("android.net.http.HttpResponseCache")
+                    .getMethod("install", File.class, long.class)
+                    .invoke(null, httpCacheDir, httpCacheSize);
+        } catch (Exception httpResponseCacheNotAvailable) {
+            Log.i(LOG_TAG, httpResponseCacheNotAvailable.toString());
         }
     }
 }

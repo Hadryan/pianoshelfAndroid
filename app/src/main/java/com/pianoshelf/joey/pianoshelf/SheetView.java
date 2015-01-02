@@ -7,40 +7,28 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOError;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Created by joey on 24/10/14.
@@ -84,7 +72,20 @@ public class SheetView extends BaseActivity {
                                 getOfflineCompositionImages(composition.getUniqueurl(), null);
 
                         // Make the download button visible
-                        downloadAction.setVisible(true);
+                        boolean disableDownloadButton = true;
+                        for (int i=0; i<composition.getImages().length && disableDownloadButton;++i) {
+                            String onlineImageUrl = composition.getImages()[i];
+                            String offlineImageLocation = parseSheetUrl(onlineImageUrl);
+                            disableDownloadButton = disableDownloadButton &&
+                                    (offlineImages != null) &&
+                                    (composition.getImages().length != offlineImages.length) &&
+                                    (offlineImageLocation.equals(offlineImages[i]));
+                        }
+                        // Only enable download button if the data in shared preferences are
+                        // incomplete
+                        if (!disableDownloadButton) {
+                            downloadAction.setVisible(true);
+                        }
 
                         // Instantiate a ViewPager and a PagerAdapter.
                         viewPager = (ViewPager) findViewById(R.id.sheetViewPager);
@@ -107,6 +108,11 @@ public class SheetView extends BaseActivity {
         inflater.inflate(R.menu.sheet_url_view, menu);
         downloadAction = menu.findItem(R.id.sheet_download);
         downloadAction.setVisible(false);
+        // Disable add to shelf when user is not logged in.
+        if (!getSharedPreferences(Constants.PIANOSHELF, MODE_PRIVATE).
+                contains(AUTHORIZATION_TOKEN)) {
+            (menu.findItem(R.id.sheet_add_to_shelf)).setEnabled(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -236,6 +242,16 @@ public class SheetView extends BaseActivity {
         return true;
     }
 
+    public boolean invokeAddToShelf(MenuItem item) {
+        SharedPreferences globalPreferences =
+                getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
+        if (globalPreferences.contains(AUTHORIZATION_TOKEN))
+        (new AddSheetToShelfTask()).execute(
+                globalPreferences.getString(AUTHORIZATION_TOKEN, null),
+                String.valueOf(composition.getId()));
+        return true;
+    }
+
     private String parseSheetUrl(String sheetUrl) {
         return sheetUrl.substring(sheetUrl.lastIndexOf('/') + 1);
     }
@@ -268,6 +284,5 @@ public class SheetView extends BaseActivity {
         public int getCount() {
             return composition.getImages().length;
         }
-
     }
 }
