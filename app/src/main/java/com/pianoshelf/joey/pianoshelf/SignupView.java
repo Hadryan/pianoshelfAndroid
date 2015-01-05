@@ -2,7 +2,6 @@ package com.pianoshelf.joey.pianoshelf;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -12,8 +11,8 @@ import android.widget.Toast;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
-import com.pianoshelf.joey.pianoshelf.REST_API.Register;
-import com.pianoshelf.joey.pianoshelf.REST_API.RegisterResponse;
+import com.pianoshelf.joey.pianoshelf.POJO.Register;
+import com.pianoshelf.joey.pianoshelf.POJO.RegisterResponse;
 import com.pianoshelf.joey.pianoshelf.REST_API.RegisterRequest;
 
 /**

@@ -15,6 +15,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.pianoshelf.joey.pianoshelf.POJO.Profile;
 
 import org.json.JSONObject;
 
@@ -27,7 +29,9 @@ import java.net.URL;
 public class ProfileView extends BaseActivity {
     private Profile profile;
     private ProgressBar progressBar;
-    private final String LOG_TAG = "ProfileView";
+    private String username;
+    private String LOG_TAG = "ProfileView";
+    private static final int PREVIEW_VALUE = 5;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +39,7 @@ public class ProfileView extends BaseActivity {
         progressBar = (ProgressBar) findViewById(R.id.profile_progress);
 
         Intent intent = getIntent();
-        String username = intent.getStringExtra("username");
+        username = intent.getStringExtra("username");
         if (username.isEmpty()) {
             throw new RuntimeException("Empty username given to ProfileView.");
         } else {
@@ -72,9 +76,11 @@ public class ProfileView extends BaseActivity {
                                     avatar.setImageResource(R.drawable.default_avatar);
                                 }
                             }
-                            // TODO Give information to myShelf fragment
+
+                            // Initialize myShelf
                             SheetListFragment myShelf = SheetListFragment.newInstance(
-                                    profile.getShelf().getSheetmusic());
+                                    shrinkJsonArray(profile.getShelf().getSheetmusic(),
+                                            PREVIEW_VALUE));
                             getSupportFragmentManager().beginTransaction().replace(
                                     R.id.profile_myshelf, myShelf).commit();
                         }
@@ -87,6 +93,17 @@ public class ProfileView extends BaseActivity {
 
             VolleySingleton.getInstance(this).addToRequestQueue(profileRequest);
         }
+    }
+
+    public void invokeShelfView(View view) {
+        Intent intent = new Intent(this, ShelfView.class);
+        if (profile != null) {
+            intent.putExtra(Constants.SHELF_CONTENT, profile.getShelf().getSheetmusic().toString());
+            intent.putExtra(Constants.SHELF_USER, username);
+        } else {
+            intent.putExtra(Constants.SHELF_URL, parseJsonRequestUrl(username));
+        }
+        startActivity(intent);
     }
 
     private void avatarImageRequest(Context context, String avatarUrl, final ImageView avatar) {
@@ -117,4 +134,22 @@ public class ProfileView extends BaseActivity {
     private String parseJsonRequestUrl(String username) {
         return SERVER_ADDR + "api/profile/?username=" + username;
     }
+
+    /**
+     * Shrinks a given JsonArray to newSize
+     * @param array
+     * @return
+     */
+    private JsonArray shrinkJsonArray(JsonArray array, int newSize) {
+        if (array.size() <= newSize) {
+            return array;
+        }
+        JsonArray shrunkenArray = new JsonArray();
+        for(int i=0; i<newSize; ++i) {
+            shrunkenArray.add(array.get(i));
+        }
+        return shrunkenArray;
+    }
+
+
 }

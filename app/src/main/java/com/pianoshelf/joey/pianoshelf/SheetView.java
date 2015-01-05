@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -28,9 +27,8 @@ import com.google.gson.Gson;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
+import com.pianoshelf.joey.pianoshelf.POJO.Composition;
 import com.pianoshelf.joey.pianoshelf.REST_API.AddSheetToShelfRequest;
-import com.pianoshelf.joey.pianoshelf.REST_API.Login;
-import com.pianoshelf.joey.pianoshelf.REST_API.LoginRequest;
 
 import org.json.JSONObject;
 

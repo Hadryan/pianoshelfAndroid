@@ -1,4 +1,4 @@
-package com.pianoshelf.joey.pianoshelf;
+package com.pianoshelf.joey.pianoshelf.POJO;
 
 import com.google.gson.JsonArray;
 

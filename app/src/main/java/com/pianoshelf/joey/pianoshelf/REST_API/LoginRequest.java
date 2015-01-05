@@ -2,6 +2,7 @@ package com.pianoshelf.joey.pianoshelf.REST_API;
 
 import com.octo.android.robospice.request.springandroid.SpringAndroidSpiceRequest;
 import com.pianoshelf.joey.pianoshelf.Constants;
+import com.pianoshelf.joey.pianoshelf.POJO.Login;
 
 /**
  * Uses the delegate design pattern instead of callbacks

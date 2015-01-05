@@ -48,6 +48,10 @@
         <activity
             android:name=".ProfileView">
         </activity>
+        <!-- Shelf Page -->
+        <activity
+            android:name=".ShelfView">
+        </activity>
     </application>
 
 </manifest>

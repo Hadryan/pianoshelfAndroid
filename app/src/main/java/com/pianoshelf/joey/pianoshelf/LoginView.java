@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
-import com.pianoshelf.joey.pianoshelf.REST_API.Login;
+import com.pianoshelf.joey.pianoshelf.POJO.Login;
 import com.pianoshelf.joey.pianoshelf.REST_API.LoginRequest;
 import com.pianoshelf.joey.pianoshelf.REST_API.LoginResponse;
 

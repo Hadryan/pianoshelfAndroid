@@ -1,4 +1,4 @@
-package com.pianoshelf.joey.pianoshelf.REST_API;
+package com.pianoshelf.joey.pianoshelf.POJO;
 
 /**
  * Created by joey on 03/07/15.
