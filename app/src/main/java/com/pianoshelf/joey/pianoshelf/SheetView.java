@@ -75,7 +75,7 @@ public class SheetView extends BaseActivity {
                         boolean disableDownloadButton = true;
                         for (int i=0; i<composition.getImages().length && disableDownloadButton;++i) {
                             String onlineImageUrl = composition.getImages()[i];
-                            String offlineImageLocation = parseSheetUrl(onlineImageUrl);
+                            String offlineImageLocation = parseSheetFileNameUrl(onlineImageUrl);
                             disableDownloadButton = disableDownloadButton &&
                                     (offlineImages != null) &&
                                     (composition.getImages().length != offlineImages.length) &&
@@ -157,10 +157,10 @@ public class SheetView extends BaseActivity {
         // Iterate over all sheetUrls and download each image
         for (int i=0; i<onlineImages.length; ++i) {
             final int currentIndex = i;
-            final String sheetUrl = onlineImages[i];
+            final String sheetUrl = parseOnlineSheetUrl(onlineImages[i]);
             final boolean writeSheetToFile;
             final File offlineSheet;
-            final String sheetFileName = parseSheetUrl(sheetUrl);
+            final String sheetFileName = parseSheetFileNameUrl(sheetUrl);
             // Store the image to external storage
             // Check composition file, skip this write if file exists
             state = Environment.getExternalStorageState();
@@ -185,7 +185,8 @@ public class SheetView extends BaseActivity {
             Log.i(LOG_TAG, String.valueOf(writeSheetToFile));
             // Update offlineCompositions
             if (writeSheetToFile) {
-                ImageRequest downloadRequest = new ImageRequest(sheetUrl,
+                ImageRequest downloadRequest = new ImageRequest(
+                        sheetUrl,
                         new Response.Listener<Bitmap>() {
                             @Override
                             public void onResponse(Bitmap bitmap) {
@@ -252,8 +253,12 @@ public class SheetView extends BaseActivity {
         return true;
     }
 
-    private String parseSheetUrl(String sheetUrl) {
+    private String parseSheetFileNameUrl(String sheetUrl) {
         return sheetUrl.substring(sheetUrl.lastIndexOf('/') + 1);
+    }
+
+    private String parseOnlineSheetUrl(String sheetUrl) {
+        return "https:" + sheetUrl;
     }
 
     private void setOfflineImages(String[] offlineImages) {
@@ -267,8 +272,8 @@ public class SheetView extends BaseActivity {
 
         @Override
         public Fragment getItem(int position) {
-            String onlineImageUrl = composition.getImages()[position];
-            String offlineImageLocation = parseSheetUrl(onlineImageUrl);
+            String onlineImageUrl = parseOnlineSheetUrl(composition.getImages()[position]);
+            String offlineImageLocation = parseSheetFileNameUrl(onlineImageUrl);
             if (offlineImages != null && (position < offlineImages.length) &&
                     (offlineImageLocation.equals(offlineImages[position]))) {
                 Log.i(LOG_TAG, "Using offline image.");

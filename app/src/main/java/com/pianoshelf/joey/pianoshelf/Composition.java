@@ -12,7 +12,7 @@ public class Composition {
     private String style;
     private String key;
     private String date;
-    private int file_size;
+    private String file_size;
     private String composer_name;
     private String description;
     private int pop;
@@ -68,11 +68,11 @@ public class Composition {
         this.date = date;
     }
 
-    public int getFile_size() {
+    public String getFile_size() {
         return file_size;
     }
 
-    public void setFile_size(int file_size) {
+    public void setFile_size(String file_size) {
         this.file_size = file_size;
     }
 

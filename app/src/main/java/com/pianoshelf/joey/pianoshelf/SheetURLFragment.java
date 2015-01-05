@@ -2,6 +2,7 @@ package com.pianoshelf.joey.pianoshelf;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,9 @@ import android.widget.ProgressBar;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  * This class receives a working URL and loads the URL
  * Created by joey on 10/29/14.
@@ -18,8 +22,8 @@ import com.android.volley.toolbox.ImageLoader;
 public class SheetURLFragment extends Fragment {
     private String sheetUrl;
     private static final String SHEET_URL_ARGUMENT = "sheetUrl";
+    private static final String LOG_TAG = "SheetURLFragment";
     private ImageView imageView;
-    private ImageLoader imageLoader;
     private ProgressBar progressBar;
 
     // Default Constructor
@@ -42,12 +46,19 @@ public class SheetURLFragment extends Fragment {
         super.onCreate(savedInstanceState);
         View view = (View) inflater.inflate(R.layout.fragment_sheet, container, false);
 
+        try {
+            URL sheetUrlTest = new URL(sheetUrl);
+        } catch (MalformedURLException ex) {
+            Log.e(LOG_TAG, ex.toString());
+            // TODO display error image
+        }
+
         progressBar = (ProgressBar) view.findViewById(R.id.sheetProgress);
         progressBar.setVisibility(View.VISIBLE);
 
         imageView = (ImageView) view.findViewById(R.id.sheetImage);
         // getActivity used here since Fragment is not a subclass of Context
-        imageLoader = VolleySingleton.getInstance(getActivity()).getImageLoader();
+        ImageLoader imageLoader = VolleySingleton.getInstance(getActivity()).getImageLoader();
         imageLoader.get(sheetUrl, new ImageLoader.ImageListener() {
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
