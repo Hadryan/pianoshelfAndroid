@@ -34,7 +34,7 @@ public class BaseActivity extends ActionBarActivity {
     private static final String LOG_TAG = "BaseActivity";
 
     // Protected Constants
-    protected static final String SERVER_ADDR = "http://104.236.120.16:5000/";
+    protected static final String SERVER_ADDR = Constants.SERVER_ADDR;
     protected static final String PIANOSHELF = "pianoshelf";
     protected static final String AUTHORIZATION_TOKEN = "AUTHORIZATION_TOKEN";
     protected static final String ACTION_LOGIN = "ACTION_LOGIN";
