@@ -11,24 +11,56 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="150px"
-        android:background="@color/list_item_background_normal">
+        android:background="@drawable/border">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sheetmusic"
-            android:id="@+id/sheetmusic_tab"
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight=".5"
-            android:onClick="loadSheetmusic"/>
+            android:gravity="center|right">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Composers"
-            android:id="@+id/composer_tab"
-            android:layout_weight=".5"
-            android:onClick="loadComposer"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/sheetmusic_tab"
+                android:text="SheetMusic"
+                android:gravity="center|right"
+                android:paddingRight="15px"
+                android:textSize="20dp"
+                android:onClick="loadSheetmusic"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="10px"
+            android:layout_height="match_parent"
+            android:id="@+id/divider"
+            android:text="|"
+            android:gravity="center"
+            android:textSize="30dp" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight=".5">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/composer_tab"
+
+                android:text="Composers"
+                android:gravity="center|left"
+                android:paddingLeft="15px"
+                android:textSize="20dp"
+                android:onClick="loadComposer"/>
+        </LinearLayout>
+
     </LinearLayout>
+
 
     <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"

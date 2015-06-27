@@ -44,7 +44,7 @@ public class SheetOfflineFragment extends Fragment {
 
         progressBar = (ProgressBar) view.findViewById(R.id.sheetProgress);
         progressBar.setVisibility(View.VISIBLE);
-        
+
         sheetImageView = (ImageView) view.findViewById(R.id.sheetImage);
 
         File imageBitmap = new File(offlineImageLocation);

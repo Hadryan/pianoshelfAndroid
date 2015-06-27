@@ -1,11 +1,13 @@
 package com.pianoshelf.joey.pianoshelf;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -48,15 +50,7 @@ public class SheetListView extends BaseActivity {
     private int DEFAULT_PAGE_BEGIN = 1;
     private int DEFAULT_PAGE_SIZE = 20;
 
-
     private String composerUrl;
-    private String server;
-    private String sheetMusicEndpoint;
-
-    private int composerCount;
-    private JSONArray composers;
-    public static final String composerDescription = "A Romantic Composer born in Germany in 1885.";
-    private String QUERY_TYPE = "composer_name";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +63,7 @@ public class SheetListView extends BaseActivity {
         queryType = intent.getStringExtra("queryType");
         queryListBegin = intent.getIntExtra("pageBegin", DEFAULT_PAGE_BEGIN);
         queryListSize = intent.getIntExtra("pageSize", DEFAULT_PAGE_SIZE);
-
-        server = intent.getStringExtra("server");
         composerUrl = intent.getStringExtra("composersUrl");
-        sheetMusicEndpoint = intent.getStringExtra("sheetMusicEndpoint");
 
         loadSheetmusicList(query, queryType, queryListBegin, queryListSize);
     }
@@ -93,7 +84,6 @@ public class SheetListView extends BaseActivity {
         }
 
         // Making the JSON request
-        Log.e("RyanLog", jsonQueryUrl);
         JsonObjectRequest getJsonSheetList = new JsonObjectRequest
                 (Request.Method.GET, jsonQueryUrl, null, new Response.Listener<JSONObject>(){
                     @Override
@@ -112,8 +102,6 @@ public class SheetListView extends BaseActivity {
                             }
                             sheetListCount = response.getInt("count");
 
-                            ((ProgressBar) findViewById(R.id.single_frame_progress))
-                                    .setVisibility(View.GONE);
                             SheetListFragment sheetList = SheetListFragment.newInstance(
                                     response.getJSONArray("results"));
                             getSupportFragmentManager().beginTransaction().
@@ -144,11 +132,6 @@ public class SheetListView extends BaseActivity {
                     public void onResponse(JSONArray response) {
                         //Populate the list with JSON objects
                         try {
-                            Log.e("RyanLog", "test2");
-                            System.out.println(response);
-
-                            ((ProgressBar) findViewById(R.id.single_frame_progress))
-                                    .setVisibility(View.GONE);
                             ComposerListFragment composerList = ComposerListFragment.newInstance(
                                     response);
                             getSupportFragmentManager().beginTransaction().
@@ -192,15 +175,19 @@ public class SheetListView extends BaseActivity {
     }
 
     public void loadSheetmusic(View view){
-        Log.e("Test", "loadSheetmusic");
-        Button button = (Button) view.findViewById(R.id.sheetmusic_tab);
         loadSheetmusicList(query, queryType, queryListBegin, queryListSize);
+        TextView sheetMusicView = (TextView) findViewById(R.id.sheetmusic_tab);
+        sheetMusicView.setTypeface(Typeface.DEFAULT_BOLD, Typeface.BOLD);
+        TextView composer = (TextView) findViewById(R.id.composer_tab);
+        composer.setTypeface(Typeface.DEFAULT);
     }
 
     public void loadComposer(View view){
-        Log.e("Test", "loadComposer");
-        // Load SheetList Fragment
         loadComposerList();
+        TextView sheetMusicView = (TextView) findViewById(R.id.sheetmusic_tab);
+        sheetMusicView.setTypeface(Typeface.DEFAULT);
+        TextView composer = (TextView) findViewById(R.id.composer_tab);
+        composer.setTypeface(Typeface.DEFAULT_BOLD);
     }
 
 }
