@@ -42,6 +42,9 @@ public class SheetOfflineFragment extends Fragment {
         super.onCreate(savedInstanceState);
         View view = (View) inflater.inflate(R.layout.fragment_sheet, container, false);
 
+        progressBar = (ProgressBar) view.findViewById(R.id.sheetProgress);
+        progressBar.setVisibility(View.VISIBLE);
+        
         sheetImageView = (ImageView) view.findViewById(R.id.sheetImage);
 
         File imageBitmap = new File(offlineImageLocation);
