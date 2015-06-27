@@ -24,9 +24,9 @@
             android:layout_height="@dimen/list_item_height"
             android:paddingLeft="@dimen/drawer_horizontal_padding"
             android:paddingRight="@dimen/drawer_horizontal_padding"
-            android:background="@color/dark_background"
+            android:background="@color/list_item_background_normal"
             android:gravity="center_vertical"
-            android:textColor="@color/list_item_text_light"
+            android:textColor="@color/list_item_text_dark"
             android:textSize="@dimen/drawer_text_size"
             android:clickable="true"
             android:onClick="invokeFirstItem"/>
@@ -41,8 +41,11 @@
             android:id="@+id/drawer_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/dark_background"
+            android:background="@color/list_item_background_normal"
+            android:textColor="@color/list_item_text_dark"
             android:divider="@android:color/darker_gray"
-            android:dividerHeight="@dimen/drawer_divider_height"/>
+            android:dividerHeight="@dimen/drawer_divider_height"
+            android:touchscreenBlocksFocus="false"
+            android:textFilterEnabled="false" />
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

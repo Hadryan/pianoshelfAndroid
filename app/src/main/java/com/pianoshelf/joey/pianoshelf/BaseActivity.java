@@ -73,7 +73,7 @@ public class BaseActivity extends ActionBarActivity {
             @Override
             public void	onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle(R.string.drawer_title);
+                //getSupportActionBar().setTitle(R.string.drawer_title);
                 //invalidateOptionsMenu();
             }
 

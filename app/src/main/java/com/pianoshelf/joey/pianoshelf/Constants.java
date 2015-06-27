@@ -6,7 +6,7 @@ package com.pianoshelf.joey.pianoshelf;
 public class Constants {
     public static final String
             PIANOSHELF = "pianoshelf",
-            SERVER_ADDR = "http://www.pianoshelf.com/",
+            SERVER_ADDR = "https://www.pianoshelf.com/",
             USERNAME = "USERNAME",
             TOKEN_PREFIX = "TOKEN ",
             AUTHORIZATION_TOKEN = "AUTHORIZATION_TOKEN",

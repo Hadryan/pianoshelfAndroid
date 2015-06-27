@@ -1,84 +1,72 @@
 package com.pianoshelf.joey.pianoshelf;
 
-import android.app.ListActivity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Each list item within the listActivity should have a constant height in dp
- * Created by root on 11/6/14.
+ * Created by Ryan on 2015-06-26.
  */
-public class ComposerView extends ListActivity {
-    private String composerUrl;
-    private String server;
-    private String sheetMusicEndpoint;
-    private int composerCount;
+public class ComposerListFragment extends android.support.v4.app.ListFragment {
     private JSONArray composers;
-    public static final String composerDescription = "A Romantic Composer born in Germany in 1885.";
-    private String QUERY_TYPE = "composer_name";
+    private String server;
+    private static final String JSON_ARRAY = "JSONARRAY";
+    private static final String LOG_TAG = "ComposerListFragment";
+    private JSONArray jsonArray;
+
+    public ComposerListFragment() {}
+
+    public static ComposerListFragment newInstance(JSONArray jsonArray) {
+        ComposerListFragment sheetList = new ComposerListFragment();
+        Bundle args = new Bundle();
+
+        args.putString(JSON_ARRAY, jsonArray.toString());
+        sheetList.setArguments(args);
+        return sheetList;
+    }
+
+    public static ComposerListFragment newInstance(JsonArray jsonArray) {
+        ComposerListFragment sheetList = new ComposerListFragment();
+        Bundle args = new Bundle();
+
+        args.putString(JSON_ARRAY, jsonArray.toString());
+        sheetList.setArguments(args);
+        return sheetList;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_composerview);
-
-        // Get information from intent
-        Intent intent = getIntent();
-        server = intent.getStringExtra("server");
-        composerUrl = intent.getStringExtra("composersUrl");
-        sheetMusicEndpoint = intent.getStringExtra("sheetMusicEndpoint");
-
-        // Request to get the array of composers
-        JsonObjectRequest composersRequest = new JsonObjectRequest
-                (composerUrl, null, new Response.Listener<JSONObject>(){
-                    public void onResponse(JSONObject response){
-                        try {
-                            //TODO implement infinite scrolling for next/prev pages
-                            composerCount = response.getInt("count");
-                            composers = response.getJSONArray("results");
-                            setListAdapter(new ComposerAdapter(getListView().getContext(),
-                                    R.layout.adapter_composerview_item, composers));
-                        } catch (JSONException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //TODO Something Here
-                    }
-                });
-        VolleySingleton.getInstance(this).addToRequestQueue(composersRequest);
+        if (getArguments() != null) {
+            try {
+                jsonArray = new JSONArray(getArguments().getString(JSON_ARRAY));
+                System.out.println(jsonArray);
+            } catch (JSONException ex) {
+                Log.d(LOG_TAG, ex.toString());
+            }
+        }
     }
 
     @Override
-    protected void onListItemClick (ListView listview, View view, int position, long id){
-        // Example:  /api/sheetmusic/?composer_name=Chopin&page_size=200
-        Intent getSheetsByComposer = new Intent(this, SheetListView.class);
-        getSheetsByComposer.putExtra("query"
-                , ((TextView) view.findViewById(R.id.name)).getText());
-        getSheetsByComposer.putExtra("queryType", QUERY_TYPE);
-        //TODO order by popularity, not achievable currently
-        startActivity(getSheetsByComposer);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_composerview, container, false);
+        setListAdapter(new ComposerAdapter(getActivity(), R.layout.adapter_composerview_item,
+                jsonArray));
+        return view;
     }
-
 
     // Custom adapter class to handle populating each row
     private class ComposerAdapter extends JSONAdapter {
@@ -95,7 +83,7 @@ public class ComposerView extends ListActivity {
             String composerName;
             try {
                 composer = jsonArray.get(position);
-                composerPortraitUrl = server + composer.getString("thumbnail_path");
+                composerPortraitUrl = Constants.SERVER_ADDR + composer.getString("thumbnail_path");
                 Log.i("URL", composerPortraitUrl);
                 composerName = composer.getString("full_name");
             } catch (JSONException ex) {

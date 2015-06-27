@@ -59,8 +59,6 @@ public class Main extends BaseActivity {
         }
     }
 
-
-    // Invoke CustomViews
     public void invokeSheetView(View view){
         Intent intent = new Intent(this, SheetView.class);
         intent.putExtra("sheetMusicUrl", (SERVER_ADDR + "/api/sheetmusic/1/"));
@@ -81,6 +79,11 @@ public class Main extends BaseActivity {
         Intent intent = new Intent(this, SheetListView.class);
         intent.putExtra("query", "popular");
         intent.putExtra("queryType", "order_by");
+
+        intent.putExtra("composersEndpoint", "/api/composers/");
+        intent.putExtra("composersUrl", SERVER_ADDR + "api/composers/");
+        intent.putExtra("sheetMusicEndPoint", "/api/sheetmusic/");
+
         intent.putExtra(AUTHORIZATION_TOKEN, token);
         startActivity(intent);
     }
