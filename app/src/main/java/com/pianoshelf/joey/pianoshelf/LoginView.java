@@ -49,6 +49,12 @@ public class LoginView extends BaseActivity {
         errorMessage = (TextView) findViewById(R.id.loginview_error_message);
     }
 
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_CANCELED);
+        super.onBackPressed();
+    }
+
     /**
      * POST login if username and password are valid
      * @param view layout for this class
@@ -113,11 +119,13 @@ public class LoginView extends BaseActivity {
                     getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit();
             if (loginResponse == null) {
                 globalPreferenceEditor.remove(Constants.USERNAME);
+                setResult(RESULT_FAILED);
             } else {
                 globalPreferenceEditor.putString(Constants.USERNAME, username);
                 globalPreferenceEditor.putString(AUTHORIZATION_TOKEN,
                         loginResponse.getAuth_token());
                 Log.i(LOG_TAG, loginResponse.getAuth_token());
+                setResult(RESULT_OK);
                 quit = true;
             }
             globalPreferenceEditor.apply();
