@@ -100,7 +100,7 @@ public class Main extends BaseActivity {
         (getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit())
                 .remove(AUTHORIZATION_TOKEN).apply();
         token = null;
-        tokenText.setText(token);
+        tokenText.setText(null);
     }
 
     public void invokeRegistration(View view) {
@@ -110,7 +110,7 @@ public class Main extends BaseActivity {
 
     public void invokeProfile(View view) {
         Intent intent = new Intent(this, ProfileView.class);
-        intent.putExtra("username", "pianomaster");
+        intent.putExtra("username", "hello");
         startActivity(intent);
     }
 
@@ -136,7 +136,7 @@ public class Main extends BaseActivity {
                         // Show a dialog prompting that the login has failed
                         // if the activity has not finished
                         token = null;
-                        tokenText.setText(token);
+                        tokenText.setText(null);
                         break;
                 }
         }

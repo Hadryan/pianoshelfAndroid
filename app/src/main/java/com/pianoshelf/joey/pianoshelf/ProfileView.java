@@ -27,7 +27,7 @@ import java.net.URL;
 public class ProfileView extends BaseActivity {
     private Profile profile;
     private ProgressBar progressBar;
-    private String LOG_TAG = "ProfileView";
+    private final String LOG_TAG = "ProfileView";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

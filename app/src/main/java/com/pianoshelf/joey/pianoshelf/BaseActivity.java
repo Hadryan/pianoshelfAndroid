@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -25,7 +25,7 @@ import java.util.List;
  * Base activity for the purpose of implementing left panel on all activities.
  * Created by joey on 12/26/14.
  */
-public class BaseActivity extends ActionBarActivity {
+public class BaseActivity extends AppCompatActivity {
     private String[] listItems; // Array of items in the drawer, excluding the first item
     private DrawerLayout drawerLayout;
     private android.support.v7.app.ActionBarDrawerToggle drawerToggle;
@@ -80,14 +80,14 @@ public class BaseActivity extends ActionBarActivity {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                getSupportActionBar().setTitle(R.string.action_title);
+                //getSupportActionBar().setTitle(R.string.action_title);
             }
         };
         drawerLayout.setDrawerListener(drawerToggle);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setHomeButtonEnabled(true);
+        //getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     @Override
@@ -203,9 +203,9 @@ public class BaseActivity extends ActionBarActivity {
     }
 
     private class DrawerAdapter extends BaseAdapter {
-        private Context context;
-        private int layout;
-        private List<String> list;
+        private final Context context;
+        private final int layout;
+        private final List<String> list;
         public DrawerAdapter(Context context, int layout, List<String> list) {
             this.context = context;
             this.layout = layout;

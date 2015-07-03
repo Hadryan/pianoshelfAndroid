@@ -26,10 +26,10 @@ import java.util.List;
  * Created by joey on 11/23/14.
  */
 public class LoginTask extends AsyncTask<String, Void, String> {
-    private String loginUrl = "api-auth/login/";
-    private String usernameParam = "username";
-    private String passwordParam = "password";
-    private TaskDelegate delegate;
+    private final String loginUrl = "api-auth/login/";
+    private final String usernameParam = "username";
+    private final String passwordParam = "password";
+    private final TaskDelegate delegate;
     private final String LOG_TAG = "LoginTask";
 
     public LoginTask(TaskDelegate delegate) {
@@ -48,7 +48,7 @@ public class LoginTask extends AsyncTask<String, Void, String> {
 
         HttpClient httpClient = new DefaultHttpClient();
         HttpPost loginRequest = new HttpPost(Constants.SERVER_ADDR + loginUrl);
-        List<NameValuePair> loginPostParams = new ArrayList<NameValuePair>(2);
+        List<NameValuePair> loginPostParams = new ArrayList<>(2);
         loginPostParams.add(new BasicNameValuePair(usernameParam, loginParams[0]));
         loginPostParams.add(new BasicNameValuePair(passwordParam, loginParams[1]));
 

@@ -3,34 +3,19 @@ package com.pianoshelf.joey.pianoshelf;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
-
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by joey on 1/2/15.
  */
 public class RemoveSheetFromShelfTask extends AsyncTask<String, Void, Void> {
-    private String additionUrlSuffix = "api/shelf/";
-    private String sheetMusicParam = "sheetmusic";
-    private String LOG_TAG = "RemoveSheetFromShelfTask";
+    private final String additionUrlSuffix = "api/shelf/";
+    private final String sheetMusicParam = "sheetmusic";
+    private final String LOG_TAG = "RemoveSheetFromShelfTask";
 
 
     @Override

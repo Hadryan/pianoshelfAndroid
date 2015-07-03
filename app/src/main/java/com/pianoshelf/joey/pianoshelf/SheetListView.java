@@ -3,10 +3,7 @@ package com.pianoshelf.joey.pianoshelf;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -37,18 +34,18 @@ public class SheetListView extends BaseActivity {
     private String nextPageUrl;
     private String prevPageUrl;
 
-    private String SERVER_SHEETMUSIC_SUFFIX = "api/sheetmusic/";
-    private String QUERY_PREFIX = "?";
+    private final String SERVER_SHEETMUSIC_SUFFIX = "api/sheetmusic/";
+    private final String QUERY_PREFIX = "?";
 
-    private String QUERY_PAGE = "page";
-    private String QUERY_PAGE_SIZE = "page_size";
+    private final String QUERY_PAGE = "page";
+    private final String QUERY_PAGE_SIZE = "page_size";
 
-    private String QUERY_ADD_ARG = "&";
-    private String QUERY_ASSIGN = "=";
+    private final String QUERY_ADD_ARG = "&";
+    private final String QUERY_ASSIGN = "=";
 
-    private String DEFAULT_QUERY_TYPE = "order_by";
-    private int DEFAULT_PAGE_BEGIN = 1;
-    private int DEFAULT_PAGE_SIZE = 20;
+    private final String DEFAULT_QUERY_TYPE = "order_by";
+    private final int DEFAULT_PAGE_BEGIN = 1;
+    private final int DEFAULT_PAGE_SIZE = 20;
 
     private String composerUrl;
 
@@ -73,7 +70,7 @@ public class SheetListView extends BaseActivity {
         getSupportFragmentManager().beginTransaction().
                 replace(R.id.single_frame, progressFragment).commit();
 
-        String jsonQueryUrl = "";
+        String jsonQueryUrl;
         // Compose the queryURL by parsing the extras from the intent
         if (query.isEmpty()) {
             throw new RuntimeException("Empty query given to SheetListView.java");
