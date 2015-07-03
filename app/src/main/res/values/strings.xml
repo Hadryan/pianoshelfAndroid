@@ -34,6 +34,7 @@
     <string name="input_email_invalid">Invalid email address.</string>
     <string name="input_login_failure">Login failed. Please verify your username and password.</string>
     <string name="add_shelf_success">Added to myShelf.</string>
+    <string name="registration_success">Registration Success!</string>
 
     <!-- Overflow -->
     <string name="download">Download</string>

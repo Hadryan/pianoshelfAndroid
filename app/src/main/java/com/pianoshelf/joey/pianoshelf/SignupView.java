@@ -1,19 +1,32 @@
 package com.pianoshelf.joey.pianoshelf;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.octo.android.robospice.persistence.DurationInMillis;
+import com.octo.android.robospice.persistence.exception.SpiceException;
+import com.octo.android.robospice.request.listener.RequestListener;
+import com.pianoshelf.joey.pianoshelf.REST_API.Register;
+import com.pianoshelf.joey.pianoshelf.REST_API.RegisterResponse;
+import com.pianoshelf.joey.pianoshelf.REST_API.RegisterRequest;
 
 /**
  * Created by joey on 12/6/14.
  */
-public class SignupView extends Activity implements TaskDelegate {
+public class SignupView extends BaseActivity {
     private ProgressBar progressBar;
     private TextView errorMessage;
     private TextView warningMessage;
+    protected String lastRequestCacheKey;
+    private final String LOG_TAG = "SignupView";
+
+    private static final String KEY_LAST_REQUEST_CACHE_KEY = "lastRequestCacheKey";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,56 +49,84 @@ public class SignupView extends Activity implements TaskDelegate {
         boolean signupCheck = checkUsername(username) && checkPassword(password, passwordRepeat)
                 && checkEmail(email);
         if (signupCheck) {
-            // Do POST registration
-            progressBar.setVisibility(View.VISIBLE);
-            (new SignupTask(this)).execute(username, password, passwordRepeat, email);
+            Register credentials = new Register(username, password, passwordRepeat, email);
+            performRequest(credentials);
         }
-
+    }
+    private void performRequest(Register credentials) {
+        progressBar.setVisibility(View.VISIBLE);
+        RegisterRequest request = new RegisterRequest(credentials);
+        lastRequestCacheKey = request.createCacheKey();
+        spiceManager.execute(request, lastRequestCacheKey, DurationInMillis.ONE_MINUTE,
+                new SignupRequestListener());
     }
 
     @Override
-    public void taskCompleted(String message) {
-        // TODO If no email is required, signin the user.
-        if (message == null || message.isEmpty()) {
-            // TODO Display a toast message for the user to check email for confirmation.
-            finish();
-        } else {
-            errorMessage.setText(message);
+    protected void onSaveInstanceState(Bundle outState) {
+        if (!TextUtils.isEmpty(lastRequestCacheKey)) {
+            outState.putString(KEY_LAST_REQUEST_CACHE_KEY, lastRequestCacheKey);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState.containsKey(KEY_LAST_REQUEST_CACHE_KEY)) {
+            lastRequestCacheKey = savedInstanceState
+                    .getString(KEY_LAST_REQUEST_CACHE_KEY);
+            spiceManager.getFromCache(RegisterResponse.class,
+                    lastRequestCacheKey, DurationInMillis.ALWAYS_EXPIRED,
+                    new SignupRequestListener());
         }
     }
+
+    private class SignupRequestListener implements RequestListener<RegisterResponse> {
+        @Override
+        public void onRequestFailure(SpiceException spiceException) {
+            progressBar.setVisibility(View.GONE);
+            errorMessage.setText(spiceException.getCause().getMessage());
+        }
+
+        @Override
+        public void onRequestSuccess(RegisterResponse registerResponse) {
+            progressBar.setVisibility(View.INVISIBLE);
+            Toast.makeText(SignupView.this, R.string.registration_success, Toast.LENGTH_LONG).show();
+            finish();
+        }
+    }
+
 
     private boolean checkUsername(String username) {
         if (username == null || username.isEmpty()) {
             warningMessage.setText(getString(R.string.input_username_missing));
             return false;
+        } else {
+            return true;
         }
-        return true;
     }
 
     private boolean checkPassword(String password, String passwordRepeat) {
-        if (password == null || password.isEmpty()) {
+        if (TextUtils.isEmpty(password)) {
             warningMessage.setText(getString(R.string.input_password_missing));
-            return false;
-        }
-        if (passwordRepeat == null || passwordRepeat.isEmpty()) {
+        } else if (TextUtils.isEmpty(passwordRepeat)) {
             warningMessage.setText(getString(R.string.input_password_repeat_missing));
-            return false;
-        }
-        if (!password.equals(passwordRepeat)) {
+        } else if (!password.equals(passwordRepeat)) {
             errorMessage.setText(getString(R.string.input_password_mismatch));
-            return false;
+        } else {
+            return true;
         }
-        return true;
+        return false;
     }
 
     private boolean checkEmail(String email) {
-        if (email != null && !email.isEmpty()) {
-            if (email.contains("@")) {
-                return true;
-            }
+        if (!TextUtils.isEmpty(email) && email.contains("@")) {
+            return true;
+        } else {
+            warningMessage.setText(getString(R.string.input_email_invalid));
+            return false;
         }
-        warningMessage.setText(getString(R.string.input_email_invalid));
-        return false;
+
     }
 
 }
