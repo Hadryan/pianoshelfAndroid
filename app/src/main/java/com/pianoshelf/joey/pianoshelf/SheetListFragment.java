@@ -24,7 +24,7 @@ import org.json.JSONObject;
  * This class reacts in a query format
  */
 public class SheetListFragment extends android.support.v4.app.ListFragment {
-    private String SERVER_SHEETMUSIC_SUFFIX = "api/sheetmusic/";
+    private final String SERVER_SHEETMUSIC_SUFFIX = "api/sheetmusic/";
 
     private static final String JSON_ARRAY = "JSONARRAY";
     private static final String LOG_TAG = "SheetListFragment";

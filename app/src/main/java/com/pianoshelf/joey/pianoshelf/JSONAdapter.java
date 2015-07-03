@@ -19,14 +19,14 @@ import java.util.List;
  * Created by root on 11/13/14.
  */
 public abstract class JSONAdapter extends BaseAdapter {
-    protected Context context;
-    protected List<JSONObject> jsonArray;
-    protected int layout;
+    protected final Context context;
+    protected final List<JSONObject> jsonArray;
+    protected final int layout;
 
     public JSONAdapter(Context context, int layout, JSONArray composers) {
         this.context = context;
         this.layout = layout;
-        this.jsonArray = new ArrayList<JSONObject>();
+        this.jsonArray = new ArrayList<>();
         for(int i=0;i<composers.length();++i) {
             try {
                 this.jsonArray.add(composers.getJSONObject(i));

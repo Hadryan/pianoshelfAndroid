@@ -24,14 +24,14 @@ import java.util.List;
  * Created by joey on 12/8/14.
  */
 public class SignupTask extends AsyncTask<String, Void, String> {
-    private String registrationUrl = "/api-auth/register/";
-    private TaskDelegate delegate;
-    private String usernameParam = "username";
-    private String passwordParam = "password1";
-    private String passwordRepeatParam = "password2";
-    private String emailParam = "email";
-    private String generalError = "__all__";
-    private String LOG_TAG = "SignupTask";
+    private final String registrationUrl = "/api-auth/register/";
+    private final TaskDelegate delegate;
+    private final String usernameParam = "username";
+    private final String passwordParam = "password1";
+    private final String passwordRepeatParam = "password2";
+    private final String emailParam = "email";
+    private final String generalError = "__all__";
+    private final String LOG_TAG = "SignupTask";
 
     public SignupTask(TaskDelegate delegate) {
         this.delegate = delegate;
@@ -44,7 +44,7 @@ public class SignupTask extends AsyncTask<String, Void, String> {
         }
         HttpClient httpClient = new DefaultHttpClient();
         HttpPost registrationRequest = new HttpPost(Constants.SERVER_ADDR + registrationUrl);
-        List<NameValuePair> registrationPostParams = new ArrayList<NameValuePair>(4);
+        List<NameValuePair> registrationPostParams = new ArrayList<>(4);
         registrationPostParams.add(new BasicNameValuePair(usernameParam, signupParams[0]));
         registrationPostParams.add(new BasicNameValuePair(passwordParam, signupParams[1]));
         registrationPostParams.add(new BasicNameValuePair(passwordRepeatParam, signupParams[2]));

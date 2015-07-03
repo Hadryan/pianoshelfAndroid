@@ -19,9 +19,8 @@ public class ProgressFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view = (View) inflater.inflate(R.layout.progress_bar, container, false);
 
-        return view;
+        return inflater.inflate(R.layout.progress_bar, container, false);
     }
 
 }

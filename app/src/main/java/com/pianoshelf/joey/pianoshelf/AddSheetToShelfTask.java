@@ -20,9 +20,9 @@ import java.util.List;
  * Created by joey on 12/29/14.
  */
 public class AddSheetToShelfTask extends AsyncTask<String, Void, Void> {
-    private String additionUrlSuffix = "api/shelf/";
-    private String sheetMusicParam = "sheetmusic";
-    private String LOG_TAG = "AddSheetToShelfTask";
+    private final String additionUrlSuffix = "api/shelf/";
+    private final String sheetMusicParam = "sheetmusic";
+    private final String LOG_TAG = "AddSheetToShelfTask";
 
     @Override
     protected Void doInBackground(String... param) {
@@ -35,7 +35,7 @@ public class AddSheetToShelfTask extends AsyncTask<String, Void, Void> {
         addToMyShelfRequest.setHeader(Constants.AUTHORIZATION_HEADER,
                 Constants.TOKEN_PREFIX + param[0]);
 
-        List<NameValuePair> postParams = new ArrayList<NameValuePair>(1);
+        List<NameValuePair> postParams = new ArrayList<>(1);
         postParams.add(new BasicNameValuePair(sheetMusicParam, param[1]));
 
         int responseStatusCode;

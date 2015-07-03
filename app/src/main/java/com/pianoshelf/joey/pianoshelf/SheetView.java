@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -37,7 +38,7 @@ import java.io.IOException;
  * Goal: Auto-Hiding navigation buttons after some time {Left, Right, Page Number}
  */
 public class SheetView extends BaseActivity {
-    private String LOG_TAG = "SheetView";
+    private final String LOG_TAG = "SheetView";
     private ViewPager viewPager;
     private PagerAdapter pagerAdapter;
     private Composition composition;
@@ -46,7 +47,7 @@ public class SheetView extends BaseActivity {
 
     private String[] offlineImages;
 
-    private String offlineRootDirectory =
+    private final String offlineRootDirectory =
             Environment.getExternalStorageDirectory() + File.separator + Constants.PIANOSHELF;
 
     @Override
@@ -76,10 +77,7 @@ public class SheetView extends BaseActivity {
                         for (int i=0; i<composition.getImages().length && disableDownloadButton;++i) {
                             String onlineImageUrl = composition.getImages()[i];
                             String offlineImageLocation = parseSheetFileNameUrl(onlineImageUrl);
-                            disableDownloadButton = disableDownloadButton &&
-                                    (offlineImages != null) &&
-                                    (composition.getImages().length != offlineImages.length) &&
-                                    (offlineImageLocation.equals(offlineImages[i]));
+                            disableDownloadButton = (offlineImages != null) && (composition.getImages().length != offlineImages.length) && (offlineImageLocation.equals(offlineImages[i]));
                         }
                         // Only enable download button if the data in shared preferences are
                         // incomplete
@@ -210,7 +208,7 @@ public class SheetView extends BaseActivity {
                                     Log.e(LOG_TAG, "File output stream not closed.");
                                 }
                             }
-                        }, 0, 0, null,
+                        }, 0, 0, ImageView.ScaleType.CENTER, null,
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError volleyError) {

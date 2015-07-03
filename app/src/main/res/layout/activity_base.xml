@@ -45,7 +45,6 @@
             android:textColor="@color/list_item_text_dark"
             android:divider="@android:color/darker_gray"
             android:dividerHeight="@dimen/drawer_divider_height"
-            android:touchscreenBlocksFocus="false"
             android:textFilterEnabled="false" />
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

@@ -25,9 +25,9 @@ import java.io.IOException;
  * Created by joey on 12/1/14.
  */
 public class LogoutTask extends AsyncTask<String, Void, Void>{
-    private String logoutUrl = "/api-auth/logout/";
-    private String LOG_TAG = "LogoutTask";
-    private String LOGOUT_SUCCESS = "success";
+    private final String logoutUrl = "/api-auth/logout/";
+    private final String LOG_TAG = "LogoutTask";
+    private final String LOGOUT_SUCCESS = "success";
 
     /**
      * Impossible to return a primitive type in Java. Thus we use the BOOLEAN CLASS FUCK YEAH.

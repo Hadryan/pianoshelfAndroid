@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -32,7 +31,7 @@ public class ComposerView extends ListActivity {
     private int composerCount;
     private JSONArray composers;
     public static final String composerDescription = "A Romantic Composer born in Germany in 1885.";
-    private String QUERY_TYPE = "composer_name";
+    private final String QUERY_TYPE = "composer_name";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

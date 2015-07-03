@@ -13,9 +13,9 @@ import java.util.Set;
  * Created by joey on 12/21/14.
  */
 public class SharedPreferenceHelper {
-    Context context;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor preferenceEditor;
+    final Context context;
+    final SharedPreferences sharedPreferences;
+    final SharedPreferences.Editor preferenceEditor;
 
     public static final String PIANOSHELF = "pianoshelf";
     public static final String COMPOSITION_JSON_KEY = "COMPOSITION_JSON_KEY";
@@ -37,7 +37,7 @@ public class SharedPreferenceHelper {
                 (HashSet<String>) sharedPreferences.getStringSet(OFFLINE_COMPOSITIONS, null);
         if (offlineCompositionKeysSet == null) {
             // Add an empty set of keys
-            offlineCompositionKeysSet = new HashSet<String>();
+            offlineCompositionKeysSet = new HashSet<>();
             preferenceEditor.putStringSet(OFFLINE_COMPOSITIONS, offlineCompositionKeysSet);
             preferenceEditor.apply();
         }
@@ -54,7 +54,7 @@ public class SharedPreferenceHelper {
             return defaultValue;
         } else {
             SharedPreferences compositionPreference = context.
-                    getSharedPreferences(compositionName, context.MODE_PRIVATE);
+                    getSharedPreferences(compositionName, Context.MODE_PRIVATE);
             String compositionJsonString = compositionPreference.getString(COMPOSITION_JSON_KEY, null);
             if (compositionJsonString == null) {
                 return defaultValue;
