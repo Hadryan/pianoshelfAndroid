@@ -62,7 +62,7 @@ public class SheetView extends BaseActivity {
         // Fetch the JSON object from the URL
         // Create the request object
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, sheetMusicUrl, null, new Response.Listener<JSONObject>() {
+                (Request.Method.GET, sheetMusicUrl, (String) null, new Response.Listener<JSONObject>() {
                     public void onResponse(JSONObject response) {
                         // Parse response into Java object with Gson
                         composition =

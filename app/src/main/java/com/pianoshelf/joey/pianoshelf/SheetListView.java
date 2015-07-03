@@ -85,7 +85,7 @@ public class SheetListView extends BaseActivity {
 
         // Making the JSON request
         JsonObjectRequest getJsonSheetList = new JsonObjectRequest
-                (Request.Method.GET, jsonQueryUrl, null, new Response.Listener<JSONObject>(){
+                (Request.Method.GET, jsonQueryUrl, (String) null, new Response.Listener<JSONObject>(){
                     @Override
                     public void onResponse(JSONObject response) {
                         //Populate the list with JSON objects
@@ -127,7 +127,7 @@ public class SheetListView extends BaseActivity {
                 replace(R.id.single_frame, progressFragment).commit();
 
         JsonArrayRequest composersRequest = new JsonArrayRequest
-                (Request.Method.GET, composerUrl, null, new Response.Listener<JSONArray>(){
+                (Request.Method.GET, composerUrl, (String) null, new Response.Listener<JSONArray>(){
                     @Override
                     public void onResponse(JSONArray response) {
                         //Populate the list with JSON objects
