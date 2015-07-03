@@ -17,6 +17,9 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.octo.android.robospice.GsonSpringAndroidSpiceService;
+import com.octo.android.robospice.SpiceManager;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -30,16 +33,29 @@ public class BaseActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private android.support.v7.app.ActionBarDrawerToggle drawerToggle;
     private TextView firstItem;
+    protected SpiceManager spiceManager = new SpiceManager(GsonSpringAndroidSpiceService.class);
 
     private static final String LOG_TAG = "BaseActivity";
 
     // Protected Constants
     protected static final String SERVER_ADDR = Constants.SERVER_ADDR;
-    protected static final String PIANOSHELF = "pianoshelf";
+    protected static final String PIANOSHELF = Constants.PIANOSHELF;
     protected static final String AUTHORIZATION_TOKEN = "AUTHORIZATION_TOKEN";
     protected static final String ACTION_LOGIN = "ACTION_LOGIN";
     protected static final int RESULT_FAILED = 1;
     protected static final int TOKEN_REQUEST = 1;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        spiceManager.start(this);
+    }
+
+    @Override
+    protected void onStop() {
+        spiceManager.shouldStop();
+        super.onStop();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

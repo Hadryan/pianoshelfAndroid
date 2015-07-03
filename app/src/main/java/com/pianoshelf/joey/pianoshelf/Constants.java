@@ -10,6 +10,7 @@ public class Constants {
             USERNAME = "USERNAME",
             TOKEN_PREFIX = "TOKEN ",
             AUTHORIZATION_TOKEN = "AUTHORIZATION_TOKEN",
+
             AUTHORIZATION_HEADER = "Authorization";
 
     public static final int
