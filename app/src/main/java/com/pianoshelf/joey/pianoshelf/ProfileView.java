@@ -41,7 +41,7 @@ public class ProfileView extends BaseActivity {
         } else {
             final Context context = this;
             JsonObjectRequest profileRequest = new JsonObjectRequest(
-                    Request.Method.GET, parseJsonRequestUrl(username), null,
+                    Request.Method.GET, parseJsonRequestUrl(username), (String) null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
