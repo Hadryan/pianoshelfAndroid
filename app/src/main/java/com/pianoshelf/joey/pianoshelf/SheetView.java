@@ -15,7 +15,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -23,6 +25,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
+import com.octo.android.robospice.persistence.DurationInMillis;
+import com.octo.android.robospice.persistence.exception.SpiceException;
+import com.octo.android.robospice.request.listener.RequestListener;
+import com.pianoshelf.joey.pianoshelf.REST_API.AddSheetToShelfRequest;
+import com.pianoshelf.joey.pianoshelf.REST_API.Login;
+import com.pianoshelf.joey.pianoshelf.REST_API.LoginRequest;
 
 import org.json.JSONObject;
 
@@ -244,11 +252,31 @@ public class SheetView extends BaseActivity {
     public boolean invokeAddToShelf(MenuItem item) {
         SharedPreferences globalPreferences =
                 getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
-        if (globalPreferences.contains(AUTHORIZATION_TOKEN))
-        (new AddSheetToShelfTask()).execute(
-                globalPreferences.getString(AUTHORIZATION_TOKEN, null),
-                String.valueOf(composition.getId()));
+        //TODO Add a check to see if the sheet is already present in the user's shelf
+        if (globalPreferences.contains(AUTHORIZATION_TOKEN)) {
+            performRequest(composition.getId(),
+                    globalPreferences.getString(AUTHORIZATION_TOKEN, null));
+        }
         return true;
+    }
+
+    private void performRequest(int id, String authToken) {
+        AddSheetToShelfRequest request = new AddSheetToShelfRequest(id, authToken);
+        spiceManager.execute(request, null, DurationInMillis.ONE_MINUTE,
+                new AddSheetToShelfRequestListener());
+    }
+
+    private class AddSheetToShelfRequestListener implements RequestListener<Void> {
+        @Override
+        public void onRequestFailure(SpiceException spiceException) {
+            Toast.makeText(SheetView.this, "Error during request: " +
+                    spiceException.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onRequestSuccess(Void aVoid) {
+            Toast.makeText(SheetView.this, R.string.add_shelf_success, Toast.LENGTH_LONG).show();
+        }
     }
 
     private String parseSheetFileNameUrl(String sheetUrl) {
