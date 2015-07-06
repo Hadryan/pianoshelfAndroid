@@ -17,6 +17,11 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.octo.android.robospice.GsonSpringAndroidSpiceService;
+import com.octo.android.robospice.SpiceManager;
+import com.octo.android.robospice.persistence.DurationInMillis;
+import com.pianoshelf.joey.pianoshelf.REST_API.LogoutRequest;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -30,16 +35,29 @@ public class BaseActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private android.support.v7.app.ActionBarDrawerToggle drawerToggle;
     private TextView firstItem;
+    protected SpiceManager spiceManager = new SpiceManager(GsonSpringAndroidSpiceService.class);
 
     private static final String LOG_TAG = "BaseActivity";
 
     // Protected Constants
     protected static final String SERVER_ADDR = Constants.SERVER_ADDR;
-    protected static final String PIANOSHELF = "pianoshelf";
+    protected static final String PIANOSHELF = Constants.PIANOSHELF;
     protected static final String AUTHORIZATION_TOKEN = "AUTHORIZATION_TOKEN";
     protected static final String ACTION_LOGIN = "ACTION_LOGIN";
     protected static final int RESULT_FAILED = 1;
     protected static final int TOKEN_REQUEST = 1;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        spiceManager.start(this);
+    }
+
+    @Override
+    protected void onStop() {
+        spiceManager.shouldStop();
+        super.onStop();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,21 +142,12 @@ public class BaseActivity extends AppCompatActivity {
                 Log.i(LOG_TAG, "Result Code:" + String.valueOf(resultCode));
                 switch (resultCode) {
                     case RESULT_OK:
-                        String token = data.getStringExtra(AUTHORIZATION_TOKEN);
-                        // Store the token in shared preferences, which is private
-                        (getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit())
-                                .putString(AUTHORIZATION_TOKEN, token).apply();
                         firstItem.setText(getString(R.string.profile));
                         break;
                     case RESULT_CANCELED:
-                        // We don't care if the user has canceled the request
                         firstItem.setText(getString(R.string.login));
                         break;
                     case RESULT_FAILED:
-                        // Show a dialog prompting that the login has failed
-                        // if the activity has not finished
-                        (getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit())
-                                .remove(AUTHORIZATION_TOKEN).apply();
                         firstItem.setText(getString(R.string.login));
                         break;
                     default:
@@ -164,10 +173,9 @@ public class BaseActivity extends AppCompatActivity {
             SharedPreferences sharedPreferences =
                     getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
             if (sharedPreferences.contains(AUTHORIZATION_TOKEN)) {
-                (new LogoutTask()).execute(sharedPreferences.
-                        getString(AUTHORIZATION_TOKEN, null));
-                // Remove the authorization token. If logout fails, we don't care as
-                // logging in again still returns the token
+                String authToken = sharedPreferences.getString(AUTHORIZATION_TOKEN, null);
+                LogoutRequest request = new LogoutRequest(authToken);
+                spiceManager.execute(request, null, DurationInMillis.ONE_MINUTE, null);
                 (sharedPreferences.edit()).remove(AUTHORIZATION_TOKEN).apply();
             }
             firstItem.setText(getString(R.string.login));

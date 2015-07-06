@@ -1,13 +1,21 @@
 package com.pianoshelf.joey.pianoshelf;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.octo.android.robospice.persistence.DurationInMillis;
+import com.octo.android.robospice.persistence.exception.SpiceException;
+import com.octo.android.robospice.request.listener.RequestListener;
+import com.pianoshelf.joey.pianoshelf.REST_API.Login;
+import com.pianoshelf.joey.pianoshelf.REST_API.LoginRequest;
+import com.pianoshelf.joey.pianoshelf.REST_API.LoginResponse;
 
 /**
  * It seems impossible to execute two concurrent activities in android
@@ -22,12 +30,15 @@ import android.widget.TextView;
  * http://django-rest-auth.readthedocs.org/en/latest/api_endpoints.html
  * Created by root on 11/25/14.
  */
-public class LoginView extends Activity implements TaskDelegate {
+public class LoginView extends BaseActivity {
     private String username;
     private ProgressBar progressBar;
     private TextView warningMessage;
     private TextView errorMessage;
-    private String LOG_TAG = "LoginView";
+    private final String LOG_TAG = "LoginView";
+    protected String lastRequestCacheKey;
+
+    private static final String KEY_LAST_REQUEST_CACHE_KEY = "lastRequestCacheKey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +52,7 @@ public class LoginView extends Activity implements TaskDelegate {
     @Override
     public void onBackPressed() {
         setResult(RESULT_CANCELED);
-        finish();
+        super.onBackPressed();
     }
 
     /**
@@ -56,54 +67,92 @@ public class LoginView extends Activity implements TaskDelegate {
         username = ((EditText) findViewById(R.id.loginview_username)).getText().toString();
         String password = ((EditText) findViewById(R.id.loginview_password)).getText().toString();
 
+        Login login = new Login(username, password);
+
         // Verify username and password
         // Short circuiting
         if (checkUsername(username) && checkPassword(password)) {
-            progressBar.setVisibility(View.VISIBLE);
-            (new LoginTask(this)).execute(username, password);
+            performRequest(login);
         }
     }
 
-    /**
-     * Required by delegate
-     * Update views and set Token if login has succeeded
-     * @param token Authorization token returned by POST login
-     */
-    @Override
-    public void taskCompleted(String token) {
-        Intent returnIntent = new Intent();
-        SharedPreferences.Editor globalPreferenceEditor =
-                getSharedPreferences(Constants.PIANOSHELF, MODE_PRIVATE).edit();
-        progressBar.setVisibility(View.INVISIBLE);
-        if (token != null) {
-            globalPreferenceEditor.putString(Constants.USERNAME, username);
-            returnIntent.putExtra(Constants.AUTHORIZATION_TOKEN, token);
-            setResult(RESULT_OK, returnIntent);
-            finish();
-        } else {
-            // Failed to fetch token, update view accordingly
-            globalPreferenceEditor.remove(Constants.USERNAME);
-            errorMessage.setText(getString(R.string.input_login_failure));
-            // TODO put a failure reason on returnIntent
-            setResult(Constants.RESULT_FAILED);
-        }
-        globalPreferenceEditor.apply();
+    private void performRequest(Login login) {
+        progressBar.setVisibility(View.VISIBLE);
+        LoginRequest request = new LoginRequest(login);
+        lastRequestCacheKey = request.createCacheKey();
+        spiceManager.execute(request, lastRequestCacheKey, DurationInMillis.ONE_MINUTE,
+                new LoginRequestListener());
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (!TextUtils.isEmpty(lastRequestCacheKey)) {
+            outState.putString(KEY_LAST_REQUEST_CACHE_KEY, lastRequestCacheKey);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState.containsKey(KEY_LAST_REQUEST_CACHE_KEY)) {
+            lastRequestCacheKey = savedInstanceState
+                    .getString(KEY_LAST_REQUEST_CACHE_KEY);
+            spiceManager.getFromCache(LoginResponse.class,
+                    lastRequestCacheKey, DurationInMillis.ONE_MINUTE,
+                    new LoginRequestListener());
+        }
+    }
+
+    private class LoginRequestListener implements RequestListener<LoginResponse> {
+        @Override
+        public void onRequestFailure(SpiceException spiceException) {
+            Toast.makeText(LoginView.this, "Error during request: " +
+                    spiceException.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            progressBar.setVisibility(View.INVISIBLE);
+        }
+
+        @Override
+        public void onRequestSuccess(LoginResponse loginResponse) {
+            boolean quit = false;
+            SharedPreferences.Editor globalPreferenceEditor =
+                    getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit();
+            if (loginResponse == null) {
+                globalPreferenceEditor.remove(Constants.USERNAME);
+                setResult(RESULT_FAILED);
+            } else {
+                globalPreferenceEditor.putString(Constants.USERNAME, username);
+                globalPreferenceEditor.putString(AUTHORIZATION_TOKEN,
+                        loginResponse.getAuth_token());
+                Log.i(LOG_TAG, loginResponse.getAuth_token());
+                setResult(RESULT_OK);
+                quit = true;
+            }
+            globalPreferenceEditor.apply();
+            progressBar.setVisibility(View.INVISIBLE);
+            if (quit) {
+                finish();
+            }
+        }
+    }
+
 
     private boolean checkUsername(String username) {
-        if (username == null || username.isEmpty()) {
+        if (TextUtils.isEmpty(username)) {
             warningMessage.setText(getString(R.string.input_username_missing));
             return false;
+        } else {
+            return true;
         }
-        return true;
     }
 
     private boolean checkPassword(String password) {
-        if (password == null || password.isEmpty()) {
+        if (TextUtils.isEmpty(password)) {
             warningMessage.setText(getString(R.string.input_password_missing));
             return false;
+        } else {
+            return true;
         }
-        return true;
     }
 
 }

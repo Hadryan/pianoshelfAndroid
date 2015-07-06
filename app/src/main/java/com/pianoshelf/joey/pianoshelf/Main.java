@@ -9,30 +9,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.octo.android.robospice.persistence.DurationInMillis;
+import com.pianoshelf.joey.pianoshelf.REST_API.LogoutRequest;
+
 /**
  * This is the main logic page
  * This does not have to be the front page
  */
 public class Main extends BaseActivity {
-    private String token;
     private String LOG_TAG = "Main";
-
-    // Temporary variables. Needs to be removed before release
-    private TextView tokenText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tokenText = (TextView) findViewById(R.id.main_token);
 
         SharedPreferences sharedPreferences = getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
-        // Fetch the login token from shared preferences
-        String savedLoginToken = sharedPreferences.getString(AUTHORIZATION_TOKEN, null);
-        if (savedLoginToken != null) {
-            token = savedLoginToken;
-        }
-        tokenText.setText(token);
     }
 
 
@@ -62,7 +54,7 @@ public class Main extends BaseActivity {
     public void invokeSheetView(View view){
         Intent intent = new Intent(this, SheetView.class);
         intent.putExtra("sheetMusicUrl", (SERVER_ADDR + "/api/sheetmusic/1/"));
-        intent.putExtra(AUTHORIZATION_TOKEN, token);
+        intent.putExtra(AUTHORIZATION_TOKEN, getAuthToken());
         startActivity(intent);
     }
 
@@ -71,7 +63,7 @@ public class Main extends BaseActivity {
         intent.putExtra("composersEndpoint", "/api/composers/");
         intent.putExtra("composersUrl", SERVER_ADDR + "/api/composers/");
         intent.putExtra("sheetMusicEndPoint", "/api/sheetmusic/");
-        intent.putExtra(AUTHORIZATION_TOKEN, token);
+        intent.putExtra(AUTHORIZATION_TOKEN, getAuthToken());
         startActivity(intent);
     }
 
@@ -84,7 +76,7 @@ public class Main extends BaseActivity {
         intent.putExtra("composersUrl", SERVER_ADDR + "api/composers/");
         intent.putExtra("sheetMusicEndPoint", "/api/sheetmusic/");
 
-        intent.putExtra(AUTHORIZATION_TOKEN, token);
+        intent.putExtra(AUTHORIZATION_TOKEN, getAuthToken());
         startActivity(intent);
     }
 
@@ -94,13 +86,13 @@ public class Main extends BaseActivity {
     }
 
     public void invokeLogout(View view) {
-        (new LogoutTask()).execute(token);
+        SharedPreferences sharedPreferences = getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
+        String authToken = sharedPreferences.getString(AUTHORIZATION_TOKEN, null);
+        LogoutRequest request = new LogoutRequest(authToken);
+        spiceManager.execute(request, null, DurationInMillis.ONE_MINUTE, null);
         // Remove the authorization token. If logout fails, we don't care as logging in again
         // still returns the token
-        (getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit())
-                .remove(AUTHORIZATION_TOKEN).apply();
-        token = null;
-        tokenText.setText(null);
+        sharedPreferences.edit().remove(AUTHORIZATION_TOKEN).apply();
     }
 
     public void invokeRegistration(View view) {
@@ -109,8 +101,10 @@ public class Main extends BaseActivity {
     }
 
     public void invokeProfile(View view) {
+        SharedPreferences sharedPreferences = getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
+        String username =  sharedPreferences.getString(Constants.USERNAME, null);
         Intent intent = new Intent(this, ProfileView.class);
-        intent.putExtra("username", "hello");
+        intent.putExtra("username", username);
         startActivity(intent);
     }
 
@@ -118,27 +112,11 @@ public class Main extends BaseActivity {
     protected void onActivityResult (int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case TOKEN_REQUEST:
-                switch (resultCode) {
-                    case RESULT_OK:
-                        token = data.getStringExtra(AUTHORIZATION_TOKEN);
-                        // Store the token in shared preferences, which is private
-                        (getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit())
-                                .putString(AUTHORIZATION_TOKEN, token).apply();
-                        tokenText.setText(token);
-                        Log.i("token", token);
-                        break;
-                    case RESULT_CANCELED:
-                        // We don't care if the user has canceled the request
-                        tokenText.setText(token);
-                        break;
-                    case RESULT_FAILED:
-                        // Show a dialog prompting that the login has failed
-                        // if the activity has not finished
-                        token = null;
-                        tokenText.setText(null);
-                        break;
-                }
         }
+    }
+
+    private String getAuthToken() {
+        SharedPreferences sharedPreferences = getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
+        return sharedPreferences.getString(AUTHORIZATION_TOKEN, null);
     }
 }
