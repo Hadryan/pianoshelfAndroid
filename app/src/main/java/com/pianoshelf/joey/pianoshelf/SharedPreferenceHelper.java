@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.pianoshelf.joey.pianoshelf.composition.Composition;
 
 import java.util.HashSet;
 import java.util.Set;
