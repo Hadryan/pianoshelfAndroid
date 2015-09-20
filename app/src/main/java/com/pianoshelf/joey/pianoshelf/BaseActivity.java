@@ -20,9 +20,10 @@ import android.widget.TextView;
 import com.octo.android.robospice.GsonSpringAndroidSpiceService;
 import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
-import com.pianoshelf.joey.pianoshelf.REST_API.LogoutRequest;
+import com.pianoshelf.joey.pianoshelf.authentication.LoginView;
+import com.pianoshelf.joey.pianoshelf.profile.ProfileView;
+import com.pianoshelf.joey.pianoshelf.rest_api.LogoutRequest;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,8 +64,6 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_base);
-
-        enableHttpResponseCache();
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
         firstItem = (TextView) findViewById(R.id.drawer_first_item);
@@ -199,7 +198,7 @@ public class BaseActivity extends AppCompatActivity {
             Intent intent;
             String currentString = listItems[position];
             if(currentString.equals(getString(R.string.home))) {
-                intent = new Intent(context, Main.class);
+                intent = new Intent(context, MainActivity.class);
                 startActivity(intent);
             } else if(currentString.equals(getString(R.string.myshelf))) {
 
@@ -250,20 +249,6 @@ public class BaseActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             return list.size();
-        }
-    }
-
-    // http://android-developers.blogspot.ca/2011/09/androids-http-clients.html
-    // Enables caching on Ice Cream Sandwich without affecting earlier releases.
-    private void enableHttpResponseCache() {
-        try {
-            long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
-            File httpCacheDir = new File(getCacheDir(), "http");
-            Class.forName("android.net.http.HttpResponseCache")
-                    .getMethod("install", File.class, long.class)
-                    .invoke(null, httpCacheDir, httpCacheSize);
-        } catch (Exception httpResponseCacheNotAvailable) {
-            Log.i(LOG_TAG, httpResponseCacheNotAvailable.toString());
         }
     }
 }
