@@ -33,6 +33,7 @@ public class SheetListFragment extends android.support.v4.app.ListFragment {
     private static final String JSON_ARRAY = "JSONARRAY";
     private static final String LOG_TAG = "SheetListFragment";
     private JSONArray jsonArray;
+    private int deleteButtonVisibility;
 
     public SheetListFragment() {}
 
@@ -54,6 +55,16 @@ public class SheetListFragment extends android.support.v4.app.ListFragment {
         return sheetList;
     }
 
+    public static SheetListFragment newInstance(String jsonArray) {
+        SheetListFragment sheetList = new SheetListFragment();
+        Bundle args = new Bundle();
+
+        args.putString(JSON_ARRAY, jsonArray);
+        sheetList.setArguments(args);
+        return sheetList;
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +80,7 @@ public class SheetListFragment extends android.support.v4.app.ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_sheet_listview, container, false);
-        setListAdapter(new SheetListAdapter(getActivity(), R.layout.adapter_sheet_list_item_2,
+        setListAdapter(new SheetListAdapter(getActivity(), R.layout.adapter_sheet_list_item_3,
                 jsonArray));
         return view;
     }
@@ -78,8 +89,17 @@ public class SheetListFragment extends android.support.v4.app.ListFragment {
     public void onListItemClick (ListView l, View v, int position, long id) {
         Intent openSheet = new Intent(getActivity(), SheetView.class);
         openSheet.putExtra("sheetMusicUrl",
-                Constants.SERVER_ADDR + SERVER_SHEETMUSIC_SUFFIX + Integer.toString((int) id));
+                Constants.SERVER_ADDR + SERVER_SHEETMUSIC_SUFFIX + String.valueOf(id));
         startActivity(openSheet);
+    }
+
+
+    public void setDeleteButtonVisibility(int visibility) {
+        if (visibility == View.GONE || visibility == View.VISIBLE || visibility == View.INVISIBLE) {
+            deleteButtonVisibility = visibility;
+        } else {
+            throw new RuntimeException("Invalid visibility passed to setDeleteButtonVisibility");
+        }
     }
 
     /**
@@ -115,6 +135,11 @@ public class SheetListFragment extends android.support.v4.app.ListFragment {
             difficultyText.setText(parseDifficulty(composition.getDifficulty()));
             difficultyText.setTextColor(getDifficultyColor(composition.getDifficulty()));
             return parentView;
+        }
+
+
+        public void invokeDelete(View view) {
+            // TODO Send a DELETE request to server
         }
 
         // Parse a difficulty integer to a difficulty string

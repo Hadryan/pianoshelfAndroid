@@ -20,7 +20,8 @@
         android:id="@+id/profile_avatar"
         android:layout_width="@dimen/profile_avatar_width"
         android:layout_height="@dimen/profile_avatar_height"
-        android:padding="@dimen/profile_avatar_padding"/>
+        android:padding="@dimen/profile_avatar_padding"
+        android:contentDescription="@string/profile_avatar_description"/>
 
     <TextView
         android:id="@+id/profile_fullname"
@@ -54,12 +55,45 @@
         android:textSize="@dimen/font_title_minor"
         android:gravity="center"/>
 
+    <RelativeLayout
+        android:id="@+id/profile_myshelf_banner"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/content_min_height"
+        android:layout_marginTop="@dimen/title_top_margin"
+        android:layout_below="@+id/profile_description"
+        android:clickable="true">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/separator_dark"/>
+        <TextView
+            android:id="@+id/profile_myshelf_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:gravity="center_vertical"
+            android:text="@string/myshelf"
+            android:textSize="@dimen/font_title_minor"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:gravity="center_vertical"
+            android:text="@string/more"
+            android:textColor="@color/clickable_text"
+            android:textSize="@dimen/font_title_minor"
+            android:clickable="true"
+            android:onClick="invokeShelfView"/>
+    </RelativeLayout>
+
+
     <!-- myShelf Fragment -->
     <FrameLayout
         android:id="@+id/profile_myshelf"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@+id/profile_description"
-        android:layout_marginTop="@dimen/title_top_margin"/>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profile_myshelf_banner"/>
 
 </RelativeLayout>

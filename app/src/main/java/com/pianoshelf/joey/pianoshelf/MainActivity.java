@@ -108,7 +108,7 @@ public class MainActivity extends BaseActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
         String username =  sharedPreferences.getString(Constants.USERNAME, null);
         Intent intent = new Intent(this, ProfileView.class);
-        intent.putExtra("username", username);
+        intent.putExtra("username", "hello");
         startActivity(intent);
     }
 

@@ -10,6 +10,8 @@
 
     <string name="search_title">Search</string>
     <string name="cancel">Cancel</string>
+    <string name="more">More</string>
+    <string name="edit">Edit</string>
 
     <!-- Authentication Input Fields -->
     <string name="input_username">Username</string>
@@ -22,6 +24,7 @@
     <string name="register">Register</string>
     <string name="signup_title">Sign Up</string>
     <string name="profile">Profile</string>
+    <string name="profile_avatar_description">User Profile Avatar</string>
     <string name="logout">Logout</string>
     <string name="logging_in">Logging In</string>
     <string name="logging_out">Logging Out</string>

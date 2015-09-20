@@ -50,6 +50,10 @@
         <activity
             android:name=".profile.ProfileView">
         </activity>
+        <!-- Shelf Page -->
+        <activity
+            android:name=".ShelfView">
+        </activity>
     </application>
 
 </manifest>

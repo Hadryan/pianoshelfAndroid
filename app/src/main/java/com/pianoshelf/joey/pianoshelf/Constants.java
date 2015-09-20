@@ -10,7 +10,10 @@ public class Constants {
             USERNAME = "USERNAME",
             TOKEN_PREFIX = "TOKEN ",
             AUTHORIZATION_TOKEN = "AUTHORIZATION_TOKEN",
-            AUTHORIZATION_HEADER = "Authorization";
+            AUTHORIZATION_HEADER = "Authorization",
+            SHELF_CONTENT = "SHELF_CONTENT",
+            SHELF_URL = "SHELF_URL",
+            SHELF_USER = "SHELF_USER";
 
     public static final int
             RESULT_FAILED = 1;
