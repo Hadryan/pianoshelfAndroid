@@ -13,7 +13,7 @@
         android:visibility="visible"/>
 
     <!-- Actual sheet music image -->
-    <com.ortiz.touch.TouchImageView
+    <ImageView
         android:id="@+id/sheetImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

@@ -7,8 +7,10 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,10 +24,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
+import com.octo.android.robospice.GsonSpringAndroidSpiceService;
+import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
-import com.ortiz.touch.ExtendedViewPager;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
 import com.pianoshelf.joey.pianoshelf.Constants;
@@ -46,17 +49,21 @@ import java.io.IOException;
  * Page/Activity for viewing sheet music
  * Goal: Swipe left/right to move pages (intuitive)
  * Goal: Auto-Hiding navigation buttons after some time {Left, Right, Page Number}
+ * SheeView cannot extend BaseActivity currently due to a bug in the PhotoView library
  */
-public class SheetView extends BaseActivity {
+public class SheetView extends FragmentActivity {
     private final String LOG_TAG = "SheetView";
     private Composition composition;
 
-    private MenuItem downloadAction;
+    // Menu button to download sheetmusic
+    //private MenuItem downloadAction;
 
     private String[] offlineImages;
 
     private final String offlineRootDirectory =
             Environment.getExternalStorageDirectory() + File.separator + Constants.PIANOSHELF;
+
+    protected SpiceManager mSpiceManager = new SpiceManager(GsonSpringAndroidSpiceService.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,11 +97,11 @@ public class SheetView extends BaseActivity {
                         // Only enable download button if the data in shared preferences are
                         // incomplete
                         if (!disableDownloadButton) {
-                            downloadAction.setVisible(true);
+                            //downloadAction.setVisible(true);
                         }
 
                         // Instantiate a ViewPager and a PagerAdapter.
-                        ExtendedViewPager viewPager = (ExtendedViewPager)
+                        ViewPager viewPager = (ViewPager)
                                 findViewById(R.id.sheetViewPager);
                         // TODO BeginTransaction ?
                         viewPager.setAdapter(new SheetViewPagerAdapter(getSupportFragmentManager()));
@@ -112,14 +119,26 @@ public class SheetView extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.sheet_url_view, menu);
-        downloadAction = menu.findItem(R.id.sheet_download);
-        downloadAction.setVisible(false);
+        //downloadAction = menu.findItem(R.id.sheet_download);
+        //downloadAction.setVisible(false);
         // Disable add to shelf when user is not logged in.
         if (!getSharedPreferences(Constants.PIANOSHELF, MODE_PRIVATE).
-                contains(AUTHORIZATION_TOKEN)) {
+                contains(Constants.AUTHORIZATION_TOKEN)) {
             (menu.findItem(R.id.sheet_add_to_shelf)).setEnabled(false);
         }
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mSpiceManager.start(this);
+    }
+
+    @Override
+    protected void onStop() {
+        mSpiceManager.shouldStop();
+        super.onStop();
     }
 
     /**
@@ -251,18 +270,18 @@ public class SheetView extends BaseActivity {
 
     public boolean invokeAddToShelf(MenuItem item) {
         SharedPreferences globalPreferences =
-                getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
+                getSharedPreferences(Constants.PIANOSHELF, MODE_PRIVATE);
         //TODO Add a check to see if the sheet is already present in the user's shelf
-        if (globalPreferences.contains(AUTHORIZATION_TOKEN)) {
+        if (globalPreferences.contains(Constants.AUTHORIZATION_TOKEN)) {
             performRequest(composition.getId(),
-                    globalPreferences.getString(AUTHORIZATION_TOKEN, null));
+                    globalPreferences.getString(Constants.AUTHORIZATION_TOKEN, null));
         }
         return true;
     }
 
     private void performRequest(int id, String authToken) {
         AddSheetToShelfRequest request = new AddSheetToShelfRequest(id, authToken);
-        spiceManager.execute(request, null, DurationInMillis.ONE_MINUTE,
+        mSpiceManager.execute(request, null, DurationInMillis.ONE_MINUTE,
                 new AddSheetToShelfRequestListener());
     }
 
@@ -306,7 +325,7 @@ public class SheetView extends BaseActivity {
                 return SheetOfflineFragment.newInstance(offlineRootDirectory + File.separator +
                         composition.getUniqueurl() + File.separator + offlineImageLocation);
             } else {
-                Log.i(LOG_TAG, "Fetching online image.");
+                Log.i(LOG_TAG, "Fetching online image. " + onlineImageUrl);
                 return SheetURLFragment.newInstance(onlineImageUrl);
             }
         }
