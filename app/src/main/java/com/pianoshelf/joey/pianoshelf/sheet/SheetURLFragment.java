@@ -1,21 +1,24 @@
 package com.pianoshelf.joey.pianoshelf.sheet;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.ortiz.touch.TouchImageView;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.VolleySingleton;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * This class receives a working URL and loads the URL
@@ -25,8 +28,9 @@ public class SheetURLFragment extends Fragment {
     private String sheetUrl;
     private static final String SHEET_URL_ARGUMENT = "sheetUrl";
     private static final String LOG_TAG = "SheetURLFragment";
-    private TouchImageView imageView;
     private ProgressBar progressBar;
+    private ImageView mImageView;
+    private PhotoViewAttacher mAttacher;
 
     // Default Constructor
     public SheetURLFragment() {}
@@ -48,35 +52,43 @@ public class SheetURLFragment extends Fragment {
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_sheet, container, false);
 
+
+        // Try to parse the URL to see if it is malformed
         try {
             URL sheetUrlTest = new URL(sheetUrl);
         } catch (MalformedURLException ex) {
-            Log.e(LOG_TAG, ex.toString());
+            Log.e(LOG_TAG, "URL malformed " + sheetUrl + " Message " + ex.getMessage());
             // TODO display error image
         }
 
         progressBar = (ProgressBar) view.findViewById(R.id.sheetProgress);
         progressBar.setVisibility(View.VISIBLE);
 
-        imageView = (TouchImageView) view.findViewById(R.id.sheetImage);
+        mImageView = (ImageView) view.findViewById(R.id.sheetImage);
+        mAttacher = new PhotoViewAttacher(mImageView);
         // getActivity used here since Fragment is not a subclass of Context
         ImageLoader imageLoader = VolleySingleton.getInstance(getActivity()).getImageLoader();
         imageLoader.get(sheetUrl, new ImageLoader.ImageListener() {
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                 if (response.getBitmap() != null) {
+                    Log.i(LOG_TAG, "Image loaded " + sheetUrl);
                     // Dismiss the progress animation
-                    imageView.setImageBitmap(response.getBitmap());
+                    Bitmap image = response.getBitmap();
+                    mImageView.setImageBitmap(image);
+                    mAttacher.update();
                     progressBar.setVisibility(View.GONE);
                 } else {
                     //TODO display error image or message
                     //imageView.setImageResource();
+                    Log.d(LOG_TAG, "Bitmap image null " + sheetUrl);
                 }
             }
 
             @Override
             public void onErrorResponse(VolleyError error) {
                 // TODO Load an error image or display an error dialog
+                Log.e(LOG_TAG, "Image request error " + error.getMessage() + " url " + sheetUrl);
             }
             // Set the height and width of the image here for resizing
         }, 0, 0);
