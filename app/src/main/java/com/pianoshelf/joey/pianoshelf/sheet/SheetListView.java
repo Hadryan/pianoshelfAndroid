@@ -3,6 +3,8 @@ package com.pianoshelf.joey.pianoshelf.sheet;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -21,12 +23,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Created by joey on 12/29/14.
  */
 
 // View for basically everything. - Responsible for swapping fragments
 public class SheetListView extends BaseActivity {
+    private static final String LOG_TAG = "Sheet list view";
     // Information sent to the server
     private String query;       // A query (i.e. composers)
     private String queryType;   // A type of query (i.e. order_by)
@@ -54,6 +61,11 @@ public class SheetListView extends BaseActivity {
 
     private String composerUrl;
 
+    // Current state of list view
+    private enum SheetListState {INVALID, SHEETMUSIC, COMPOSER}
+    private SheetListState mState = SheetListState.INVALID;
+    private Semaphore mStateSem = new Semaphore(1);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,85 +83,118 @@ public class SheetListView extends BaseActivity {
     }
 
     public void loadSheetmusicList(String query, String queryType, int queryListBegin, int queryListSize){
-        ProgressFragment progressFragment = new ProgressFragment();
-        getSupportFragmentManager().beginTransaction().
-                replace(R.id.single_frame, progressFragment).commit();
+        // Change state to sheetmusic
+        if (mStateSem.tryAcquire()) {
+            ProgressFragment progressFragment = new ProgressFragment();
+            getSupportFragmentManager().beginTransaction().
+                    replace(R.id.single_frame, progressFragment).commit();
 
-        String jsonQueryUrl;
-        // Compose the queryURL by parsing the extras from the intent
-        if (query.isEmpty()) {
-            throw new RuntimeException("Empty query given to SheetListView.java");
-        } else if (queryType.isEmpty()){
-            jsonQueryUrl = parseQuery(query, queryListBegin, queryListSize);
-        } else {
-            jsonQueryUrl = parseQuery(query, queryType, queryListBegin, queryListSize);
-        }
+            String jsonQueryUrl;
+            // Compose the queryURL by parsing the extras from the intent
+            if (query.isEmpty()) {
+                throw new RuntimeException("Empty query given to SheetListView.java");
+            } else if (queryType.isEmpty()) {
+                jsonQueryUrl = parseQuery(query, queryListBegin, queryListSize);
+            } else {
+                jsonQueryUrl = parseQuery(query, queryType, queryListBegin, queryListSize);
+            }
 
-        // Making the JSON request
-        JsonObjectRequest getJsonSheetList = new JsonObjectRequest
-                (Request.Method.GET, jsonQueryUrl, (String) null, new Response.Listener<JSONObject>(){
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //Populate the list with JSON objects
-                        try {
-                            if (!(response.getString("next")).equals("null")) {
-                                nextPageUrl = response.getString("next");
-                            } else {
-                                nextPageUrl = null;
-                            }
-                            if (!(response.getString("previous")).equals("null")) {
-                                prevPageUrl = response.getString("previous");
-                            } else {
-                                prevPageUrl = null;
-                            }
-                            sheetListCount = response.getInt("count");
+            // Making the JSON request
+            JsonObjectRequest getJsonSheetList = new JsonObjectRequest
+                    (Request.Method.GET, jsonQueryUrl, (String) null,
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    mState = SheetListState.SHEETMUSIC;
+                                    //Populate the list with JSON objects
+                                    try {
+                                        if (!(response.getString("next")).equals("null")) {
+                                            nextPageUrl = response.getString("next");
+                                        } else {
+                                            nextPageUrl = null;
+                                        }
+                                        if (!(response.getString("previous")).equals("null")) {
+                                            prevPageUrl = response.getString("previous");
+                                        } else {
+                                            prevPageUrl = null;
+                                        }
+                                        sheetListCount = response.getInt("count");
 
-                            SheetListFragment sheetList = SheetListFragment.newInstance(
-                                    response.getJSONArray("results"));
-                            getSupportFragmentManager().beginTransaction().
-                                    replace(R.id.single_frame, sheetList).commit();
-                            //TODO implement thumbnailView
-                        } catch (JSONException ex) {
-                            throw new RuntimeException(ex);
+                                        SheetListFragment sheetList = SheetListFragment.newInstance(
+                                                response.getJSONArray("results"));
+                                        FragmentManager fm = getSupportFragmentManager();
+                                        fm.beginTransaction().
+                                                replace(R.id.single_frame, sheetList).commit();
+                                        // update view before unlocking
+                                        fm.executePendingTransactions();
+
+                                        TextView sheetMusicView = (TextView) findViewById(R.id.sheetmusic_tab);
+                                        sheetMusicView.setTypeface(Typeface.DEFAULT_BOLD, Typeface.BOLD);
+                                        TextView composer = (TextView) findViewById(R.id.composer_tab);
+                                        composer.setTypeface(Typeface.DEFAULT);
+                                        // Update UI
+                                        highlightText(mState);
+                                        //TODO implement thumbnailView
+                                    } catch (JSONException ex) {
+                                        throw new RuntimeException(ex);
+                                    } finally {
+                                        mStateSem.release();
+                                    }
+                                    //TODO write a catch block for casting integer
+                                }
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            //TODO Something Here
+                            Log.e(LOG_TAG, "sheetmusic request error " + error.getMessage());
+                            highlightText(mState);
+                            mStateSem.release();
                         }
-                        //TODO write a catch block for casting integer
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //TODO Something Here
-                    }
-                });
-        VolleySingleton.getInstance(this).addToRequestQueue(getJsonSheetList);
+                    });
+            VolleySingleton.getInstance(this).addToRequestQueue(getJsonSheetList);
+        }
     }
 
     public void loadComposerList() {
-        ProgressFragment progressFragment = new ProgressFragment();
-        getSupportFragmentManager().beginTransaction().
-                replace(R.id.single_frame, progressFragment).commit();
+        if (mStateSem.tryAcquire()) {
+            ProgressFragment progressFragment = new ProgressFragment();
+            getSupportFragmentManager().beginTransaction().
+                    replace(R.id.single_frame, progressFragment).commit();
 
-        JsonArrayRequest composersRequest = new JsonArrayRequest
-                (Request.Method.GET, composerUrl, (String) null, new Response.Listener<JSONArray>(){
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        //Populate the list with JSON objects
-                        try {
-                            ComposerListFragment composerList = ComposerListFragment.newInstance(
-                                    response);
-                            getSupportFragmentManager().beginTransaction().
-                                    replace(R.id.single_frame, composerList).commit();
-
-                        } catch (Error ex) {
-                            throw new RuntimeException(ex);
+            JsonArrayRequest composersRequest = new JsonArrayRequest
+                    (Request.Method.GET, composerUrl, (String) null, new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            mState = SheetListState.COMPOSER;
+                            //Populate the list with JSON objects
+                            try {
+                                ComposerListFragment composerList = ComposerListFragment.newInstance(
+                                        response);
+                                FragmentManager fm = getSupportFragmentManager();
+                                fm.beginTransaction().
+                                        replace(R.id.single_frame, composerList).commit();
+                                // update view before unlocking
+                                fm.executePendingTransactions();
+                                // update UI
+                                highlightText(mState);
+                            } catch (Error ex) {
+                                throw new RuntimeException(ex);
+                            } finally {
+                                mStateSem.release();
+                            }
                         }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //TODO Something Here
-                    }
-                });
-        VolleySingleton.getInstance(this).addToRequestQueue(composersRequest);
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            //TODO Something Here
+                            Log.e(LOG_TAG, "composer request error " + error.getMessage());
+                            highlightText(mState);
+                            mStateSem.release();
+                        }
+                    });
+            VolleySingleton.getInstance(this).addToRequestQueue(composersRequest);
+
+        }
     }
 
     /**
@@ -177,19 +222,34 @@ public class SheetListView extends BaseActivity {
     }
 
     public void loadSheetmusic(View view){
+        // disable clicking until view is updated
+        findViewById(R.id.sheetmusic_tab).setClickable(false);
+        findViewById(R.id.composer_tab).setClickable(false);
         loadSheetmusicList(query, queryType, queryListBegin, queryListSize);
-        TextView sheetMusicView = (TextView) findViewById(R.id.sheetmusic_tab);
-        sheetMusicView.setTypeface(Typeface.DEFAULT_BOLD, Typeface.BOLD);
-        TextView composer = (TextView) findViewById(R.id.composer_tab);
-        composer.setTypeface(Typeface.DEFAULT);
     }
 
     public void loadComposer(View view){
+        findViewById(R.id.sheetmusic_tab).setClickable(false);
+        findViewById(R.id.composer_tab).setClickable(false);
         loadComposerList();
-        TextView sheetMusicView = (TextView) findViewById(R.id.sheetmusic_tab);
-        sheetMusicView.setTypeface(Typeface.DEFAULT);
-        TextView composer = (TextView) findViewById(R.id.composer_tab);
-        composer.setTypeface(Typeface.DEFAULT_BOLD);
     }
 
+
+    private void highlightText(SheetListState state) {
+        TextView sheetMusicView = (TextView) findViewById(R.id.sheetmusic_tab);
+        TextView composer = (TextView) findViewById(R.id.composer_tab);
+        switch (state) {
+            case SHEETMUSIC:
+                sheetMusicView.setTypeface(Typeface.DEFAULT_BOLD, Typeface.BOLD);
+                composer.setTypeface(Typeface.DEFAULT);
+                break;
+            case COMPOSER:
+                sheetMusicView.setTypeface(Typeface.DEFAULT);
+                composer.setTypeface(Typeface.DEFAULT_BOLD);
+
+        }
+        sheetMusicView.setClickable(true);
+        composer.setClickable(true);
+
+    }
 }

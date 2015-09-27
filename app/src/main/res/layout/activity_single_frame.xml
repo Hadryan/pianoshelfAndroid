@@ -4,62 +4,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
+    android:layout_height="fill_parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="150px"
+        android:layout_height="70dp"
         android:background="@drawable/border">
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight=".5"
-            android:gravity="center|right">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/sheetmusic_tab"
-                android:text="SheetMusic"
-                android:gravity="center|right"
-                android:paddingRight="15px"
-                android:textSize="20dp"
-                android:onClick="loadSheetmusic"
-                android:textStyle="bold"/>
-
-        </LinearLayout>
+            android:id="@+id/sheetmusic_tab"
+            android:text="@string/sheet_music_tab_name"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:onClick="loadSheetmusic"
+            android:textStyle="bold"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/divider"
+            android:layout_toStartOf="@+id/divider"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp" />
 
         <TextView
-            android:layout_width="10px"
+            android:layout_width="5dp"
             android:layout_height="match_parent"
             android:id="@+id/divider"
             android:text="|"
             android:gravity="center"
-            android:textSize="30dp" />
+            android:textSize="30sp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight=".5">
+            android:id="@+id/composer_tab"
+            android:text="@string/composer_tab_name"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:onClick="loadComposer"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/divider"
+            android:layout_toEndOf="@+id/divider"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/composer_tab"
-
-                android:text="Composers"
-                android:gravity="center|left"
-                android:paddingLeft="15px"
-                android:textSize="20dp"
-                android:onClick="loadComposer"/>
-        </LinearLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 
 
     <FrameLayout

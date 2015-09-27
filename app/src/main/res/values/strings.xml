@@ -58,4 +58,9 @@
         <item>@string/myshelf</item>
         <item>@string/downloads</item>
     </string-array>
+
+
+    <!-- Sheet list strings -->
+    <string name="sheet_music_tab_name">SheetMusic</string>
+    <string name="composer_tab_name">Composers</string>
 </resources>
