@@ -6,13 +6,10 @@ android {
 
     defaultConfig {
         applicationId "com.pianoshelf.joey.pianoshelf"
-        minSdkVersion 16
+        minSdkVersion 16 // only 5% android devices are below this SDK version
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-    }
-    lintOptions {
-        abortOnError false
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -26,8 +23,12 @@ android {
         exclude 'META-INF/ASL2.0'
     }
     buildTypes {
+        debug {
+            debuggable true
+        }
         release {
             minifyEnabled true
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -36,11 +37,13 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:support-v4:23.0.1'
-    compile 'com.mcxiaoke.volley:library:1.0.19'
+    compile 'com.android.support:design:23.0.1'
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.octo.android.robospice:robospice:1.4.14'
     compile 'com.octo.android.robospice:robospice-spring-android:1.4.14'
     compile 'com.google.code.gson:gson:2.3.1'
+    // Independent Libraries
+    compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.commit451:PhotoView:1.2.4'
 }
 

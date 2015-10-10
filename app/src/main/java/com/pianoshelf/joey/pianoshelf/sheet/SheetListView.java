@@ -24,8 +24,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by joey on 12/29/14.
@@ -69,7 +67,10 @@ public class SheetListView extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_single_frame);
+        setContentView(R.layout.activity_sheet_list_view);
+
+        getSupportActionBar().setTitle("Sheet Music");
+
         // Fetch intent information
         Intent intent = getIntent();
         //TODO write a function that computes this query

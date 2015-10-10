@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.springandroid.SpringAndroidSpiceRequest;
-import com.pianoshelf.joey.pianoshelf.Constants;
+import com.pianoshelf.joey.pianoshelf.C;
 
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -14,7 +14,7 @@ import org.springframework.web.client.HttpClientErrorException;
  * Created by joey on 03/07/15.
  */
 public class RegisterRequest extends SpringAndroidSpiceRequest<RegisterResponse> {
-    private final String registrationUrl = Constants.SERVER_ADDR + "api-auth/register/";
+    private final String registrationUrl = C.SERVER_ADDR + "api-auth/register/";
     private final String usernameParam = "username";
     private final String passwordParam = "password1";
     private final String passwordRepeatParam = "password2";

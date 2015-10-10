@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.google.gson.JsonArray;
-import com.pianoshelf.joey.pianoshelf.Constants;
+import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.JSONAdapter;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.VolleySingleton;
@@ -87,7 +87,7 @@ public class ComposerListFragment extends android.support.v4.app.ListFragment {
             String composerName;
             try {
                 composer = jsonArray.get(position);
-                composerPortraitUrl = Constants.SERVER_ADDR + composer.getString("thumbnail_path");
+                composerPortraitUrl = C.SERVER_ADDR + composer.getString("thumbnail_path");
                 Log.i("URL", composerPortraitUrl);
                 composerName = composer.getString("full_name");
             } catch (JSONException ex) {

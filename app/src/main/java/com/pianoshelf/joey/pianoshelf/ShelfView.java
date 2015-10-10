@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -33,8 +32,8 @@ public class ShelfView extends BaseActivity {
         Intent intent = getIntent();
         // Set the action bar title to myshelf if current user is the shelf owner.
         SharedPreferences globalPreferences = getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
-        String currentUser = globalPreferences.getString(Constants.USERNAME, null);
-        String intentUser = intent.getStringExtra(Constants.SHELF_USER);
+        String currentUser = globalPreferences.getString(C.USERNAME, null);
+        String intentUser = intent.getStringExtra(C.SHELF_USER);
         if (!TextUtils.isEmpty(currentUser) && !TextUtils.isEmpty(intentUser) && currentUser.equals(intentUser)) {
             getSupportActionBar().setTitle(getString(R.string.myshelf));
         } else if (intentUser != null) {
@@ -44,15 +43,15 @@ public class ShelfView extends BaseActivity {
         }
 
         // Retrieve shelf content
-        if (intent.hasExtra(Constants.SHELF_CONTENT)) {
+        if (intent.hasExtra(C.SHELF_CONTENT)) {
             //progressBar.setVisibility(View.GONE);
             SheetListFragment shelf = SheetListFragment.newInstance(
-                    intent.getStringExtra(Constants.SHELF_CONTENT));
+                    intent.getStringExtra(C.SHELF_CONTENT));
             getSupportFragmentManager().beginTransaction().replace(
                     R.id.single_frame, shelf).commit();
-        } else if (intent.hasExtra(Constants.SHELF_URL)) {
+        } else if (intent.hasExtra(C.SHELF_URL)) {
             JsonObjectRequest profileRequest = new JsonObjectRequest(
-                    Request.Method.GET, intent.getStringExtra(Constants.SHELF_URL), (String) null,
+                    Request.Method.GET, intent.getStringExtra(C.SHELF_URL), (String) null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {

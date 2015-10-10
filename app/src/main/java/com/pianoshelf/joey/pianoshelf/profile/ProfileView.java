@@ -18,7 +18,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
-import com.pianoshelf.joey.pianoshelf.Constants;
+import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.ShelfView;
 import com.pianoshelf.joey.pianoshelf.VolleySingleton;
@@ -104,10 +104,10 @@ public class ProfileView extends BaseActivity {
     public void invokeShelfView(View view) {
         Intent intent = new Intent(this, ShelfView.class);
         if (profile != null) {
-            intent.putExtra(Constants.SHELF_CONTENT, profile.getShelf().getSheetmusic().toString());
-            intent.putExtra(Constants.SHELF_USER, username);
+            intent.putExtra(C.SHELF_CONTENT, profile.getShelf().getSheetmusic().toString());
+            intent.putExtra(C.SHELF_USER, username);
         } else {
-            intent.putExtra(Constants.SHELF_URL, parseJsonRequestUrl(username));
+            intent.putExtra(C.SHELF_URL, parseJsonRequestUrl(username));
         }
         startActivity(intent);
     }

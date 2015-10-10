@@ -30,8 +30,8 @@ import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
+import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
-import com.pianoshelf.joey.pianoshelf.Constants;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
 import com.pianoshelf.joey.pianoshelf.VolleySingleton;
@@ -51,7 +51,7 @@ import java.io.IOException;
  * Goal: Auto-Hiding navigation buttons after some time {Left, Right, Page Number}
  * SheeView cannot extend BaseActivity currently due to a bug in the PhotoView library
  */
-public class SheetView extends FragmentActivity {
+public class SheetView extends BaseActivity {
     private final String LOG_TAG = "SheetView";
     private Composition composition;
 
@@ -61,7 +61,7 @@ public class SheetView extends FragmentActivity {
     private String[] offlineImages;
 
     private final String offlineRootDirectory =
-            Environment.getExternalStorageDirectory() + File.separator + Constants.PIANOSHELF;
+            Environment.getExternalStorageDirectory() + File.separator + C.PIANOSHELF;
 
     protected SpiceManager mSpiceManager = new SpiceManager(GsonSpringAndroidSpiceService.class);
 
@@ -86,6 +86,9 @@ public class SheetView extends FragmentActivity {
 
                         offlineImages = (new SharedPreferenceHelper(context)).
                                 getOfflineCompositionImages(composition.getUniqueurl(), null);
+
+                        // Set actionbar title
+                        getSupportActionBar().setTitle(composition.getTitle());
 
                         // Make the download button visible
                         boolean disableDownloadButton = true;
@@ -122,8 +125,8 @@ public class SheetView extends FragmentActivity {
         //downloadAction = menu.findItem(R.id.sheet_download);
         //downloadAction.setVisible(false);
         // Disable add to shelf when user is not logged in.
-        if (!getSharedPreferences(Constants.PIANOSHELF, MODE_PRIVATE).
-                contains(Constants.AUTHORIZATION_TOKEN)) {
+        if (!getSharedPreferences(C.PIANOSHELF, MODE_PRIVATE).
+                contains(C.AUTHORIZATION_TOKEN)) {
             (menu.findItem(R.id.sheet_add_to_shelf)).setEnabled(false);
         }
         return super.onCreateOptionsMenu(menu);
@@ -270,11 +273,11 @@ public class SheetView extends FragmentActivity {
 
     public boolean invokeAddToShelf(MenuItem item) {
         SharedPreferences globalPreferences =
-                getSharedPreferences(Constants.PIANOSHELF, MODE_PRIVATE);
+                getSharedPreferences(C.PIANOSHELF, MODE_PRIVATE);
         //TODO Add a check to see if the sheet is already present in the user's shelf
-        if (globalPreferences.contains(Constants.AUTHORIZATION_TOKEN)) {
+        if (globalPreferences.contains(C.AUTHORIZATION_TOKEN)) {
             performRequest(composition.getId(),
-                    globalPreferences.getString(Constants.AUTHORIZATION_TOKEN, null));
+                    globalPreferences.getString(C.AUTHORIZATION_TOKEN, null));
         }
         return true;
     }

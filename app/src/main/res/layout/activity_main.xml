@@ -1,49 +1,64 @@
-<LinearLayout
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-    <View
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start" >
+
+    <!-- Root layout for activity -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sheet View Entry Point"
-        android:onClick="invokeSheetView"/>
+        <!-- The toolbar behaves like a regular view and takes up space -->
+        <include layout="@layout/toolbar_default"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Composer View Entry Point"
-        android:onClick="invokeComposerView"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sheet View Entry Point"
+            android:onClick="invokeSheetView"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SheetListView Entry Point"
-        android:onClick="invokeSheetList"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Composer View Entry Point"
+            android:onClick="invokeComposerView"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Login"
-        android:onClick="invokeLogin"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SheetListView Entry Point"
+            android:onClick="invokeSheetList"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Logout"
-        android:onClick="invokeLogout"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sign Up"
-        android:onClick="invokeRegistration"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Profile"
-        android:onClick="invokeProfile"/>
-</LinearLayout>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:onClick="invokeLogin"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Logout"
+            android:onClick="invokeLogout"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sign Up"
+            android:onClick="invokeRegistration"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Profile"
+            android:onClick="invokeProfile"/>
+    </LinearLayout>
+
+    <!-- Drawer -->
+    <include layout="@layout/drawer_default"/>
+</android.support.v4.widget.DrawerLayout>

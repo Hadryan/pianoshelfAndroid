@@ -1,9 +1,10 @@
 package com.pianoshelf.joey.pianoshelf;
 
 /**
+ * C for Constants
  * Created by joey on 12/29/14.
  */
-public class Constants {
+public class C {
     public static final String
             PIANOSHELF = "pianoshelf",
             SERVER_ADDR = "https://www.pianoshelf.com/",

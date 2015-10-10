@@ -14,7 +14,7 @@ import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
-import com.pianoshelf.joey.pianoshelf.Constants;
+import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.rest_api.Login;
 import com.pianoshelf.joey.pianoshelf.rest_api.LoginRequest;
@@ -121,10 +121,10 @@ public class LoginView extends BaseActivity {
             SharedPreferences.Editor globalPreferenceEditor =
                     getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit();
             if (loginResponse == null) {
-                globalPreferenceEditor.remove(Constants.USERNAME);
+                globalPreferenceEditor.remove(C.USERNAME);
                 setResult(RESULT_FAILED);
             } else {
-                globalPreferenceEditor.putString(Constants.USERNAME, username);
+                globalPreferenceEditor.putString(C.USERNAME, username);
                 globalPreferenceEditor.putString(AUTHORIZATION_TOKEN,
                         loginResponse.getAuth_token());
                 Log.i(LOG_TAG, loginResponse.getAuth_token());

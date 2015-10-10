@@ -1,17 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <!-- Actual content -->
-    <FrameLayout
-        android:id="@+id/base_content"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:actionBarSize"
+            android:background="?colorPrimary" />
+    </LinearLayout>
 
     <!-- Drawer -->
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true" />
+
+    <!--
     <LinearLayout
         android:layout_width="@dimen/drawer_width"
         android:layout_height="match_parent"
@@ -31,7 +46,6 @@
             android:clickable="true"
             android:onClick="invokeFirstItem"/>
 
-        <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/drawer_divider_height"
@@ -47,4 +61,5 @@
             android:dividerHeight="@dimen/drawer_divider_height"
             android:textFilterEnabled="false" />
     </LinearLayout>
+    -->
 </android.support.v4.widget.DrawerLayout>

@@ -13,8 +13,8 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
-import com.pianoshelf.joey.pianoshelf.Constants;
 import com.pianoshelf.joey.pianoshelf.JSONAdapter;
 import com.pianoshelf.joey.pianoshelf.R;
 
@@ -89,7 +89,7 @@ public class SheetListFragment extends android.support.v4.app.ListFragment {
     public void onListItemClick (ListView l, View v, int position, long id) {
         Intent openSheet = new Intent(getActivity(), SheetView.class);
         openSheet.putExtra("sheetMusicUrl",
-                Constants.SERVER_ADDR + SERVER_SHEETMUSIC_SUFFIX + String.valueOf(id));
+                C.SERVER_ADDR + SERVER_SHEETMUSIC_SUFFIX + String.valueOf(id));
         startActivity(openSheet);
     }
 

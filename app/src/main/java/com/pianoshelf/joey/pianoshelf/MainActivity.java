@@ -3,6 +3,7 @@ package com.pianoshelf.joey.pianoshelf;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,8 +30,9 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         SharedPreferences sharedPreferences = getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
-    }
 
+        getSupportActionBar().setTitle("PianoShelf");
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -106,7 +108,7 @@ public class MainActivity extends BaseActivity {
 
     public void invokeProfile(View view) {
         SharedPreferences sharedPreferences = getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
-        String username =  sharedPreferences.getString(Constants.USERNAME, null);
+        String username =  sharedPreferences.getString(C.USERNAME, null);
         Intent intent = new Intent(this, ProfileView.class);
         intent.putExtra("username", "hello");
         startActivity(intent);

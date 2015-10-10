@@ -1,49 +1,38 @@
 package com.pianoshelf.joey.pianoshelf;
 
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.octo.android.robospice.GsonSpringAndroidSpiceService;
 import com.octo.android.robospice.SpiceManager;
-import com.octo.android.robospice.persistence.DurationInMillis;
-import com.pianoshelf.joey.pianoshelf.authentication.LoginView;
-import com.pianoshelf.joey.pianoshelf.profile.ProfileView;
-import com.pianoshelf.joey.pianoshelf.rest_api.LogoutRequest;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Base activity for the purpose of implementing left panel on all activities.
  * Created by joey on 12/26/14.
  */
-public class BaseActivity extends AppCompatActivity {
-    private String[] listItems; // Array of items in the drawer, excluding the first item
-    private DrawerLayout drawerLayout;
-    private android.support.v7.app.ActionBarDrawerToggle drawerToggle;
-    private TextView firstItem;
+public class BaseActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
+    private DrawerLayout mDrawerLayout;
+    private android.support.v7.app.ActionBarDrawerToggle mDrawerToggle;
+
+    protected Toolbar mToolbar;
+
     protected SpiceManager spiceManager = new SpiceManager(GsonSpringAndroidSpiceService.class);
 
     private static final String LOG_TAG = "BaseActivity";
 
-    // Protected Constants
-    protected static final String SERVER_ADDR = Constants.SERVER_ADDR;
-    protected static final String PIANOSHELF = Constants.PIANOSHELF;
+    // Protected C
+    protected static final String SERVER_ADDR = C.SERVER_ADDR;
+    protected static final String PIANOSHELF = C.PIANOSHELF;
     protected static final String AUTHORIZATION_TOKEN = "AUTHORIZATION_TOKEN";
     protected static final String ACTION_LOGIN = "ACTION_LOGIN";
     protected static final int RESULT_FAILED = 1;
@@ -64,79 +53,141 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.setContentView(R.layout.activity_base);
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-        firstItem = (TextView) findViewById(R.id.drawer_first_item);
+        // Base activity should never define the toolbar
+        //setContentView(R.layout.activity_base);
+
+        //firstItem = (TextView) findViewById(R.id.drawer_first_item);
+
+        // Set the values for the rest of the list
+        /*ListView drawerList = (ListView) findViewById(R.id.drawer_list);
+        listItems = getResources().getStringArray(R.array.drawer_text);
+        drawerList.setAdapter(new DrawerAdapter(this,
+                R.layout.adapter_drawer_list_item, listItems));
+        drawerList.setOnItemClickListener(new DrawerItemClickListener());*/
 
         // Set the value for the first item of the list
         SharedPreferences sharedPreferences = getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
         // Check the login token from shared preferences
         if (sharedPreferences.contains(AUTHORIZATION_TOKEN)) {
-            firstItem.setText(getString(R.string.profile));
+            //firstItem.setText(getString(R.string.profile));
         } else {
-            firstItem.setText(getString(R.string.login));
+            //firstItem.setText(getString(R.string.login));
         }
-
-        // Set the values for the rest of the list
-        ListView drawerList = (ListView) findViewById(R.id.drawer_list);
-        listItems = getResources().getStringArray(R.array.drawer_text);
-        drawerList.setAdapter(new DrawerAdapter(this,
-                R.layout.adapter_drawer_list_item, listItems));
-        drawerList.setOnItemClickListener(new DrawerItemClickListener());
-
-        // Attach listener to drawer open/close events
-        drawerToggle = new android.support.v7.app.ActionBarDrawerToggle(
-                this, drawerLayout, R.string.drawer_open, R.string.drawer_closed){
-            @Override
-            public void	onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                //getSupportActionBar().setTitle(R.string.drawer_title);
-                //invalidateOptionsMenu();
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                //getSupportActionBar().setTitle(R.string.action_title);
-            }
-        };
-        drawerLayout.setDrawerListener(drawerToggle);
-
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //getSupportActionBar().setHomeButtonEnabled(true);
-        //getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        drawerToggle.syncState();
+        setupNavDrawer();
+    }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        getActionBarToolbar();
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if (isNavDrawerOpen()) {
+            closeNavDrawer();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    protected Toolbar getActionBarToolbar() {
+        if (mToolbar == null) {
+            mToolbar = (Toolbar) findViewById(R.id.toolbar);
+            if (mToolbar != null) {
+                setSupportActionBar(mToolbar);
+                Log.v(LOG_TAG, "Action bar set");
+            }
+        }
+        return mToolbar;
     }
 
     /**
-     * Manual override of setContentView class. Any class inheriting BaseActivity should be
-     * inflating its view in the FrameLayout provided in BaseActivity instead of changing the
-     * actual view.
-     * @param layoutResID
+     * Sets up the navigation drawer as appropriate. Note that the nav drawer will be
+     * different depending on whether the attendee indicated that they are attending the
+     * event on-site vs. attending remotely.
      */
-    @Override
-    public void setContentView(int layoutResID) {
-        FrameLayout content = (FrameLayout) findViewById(R.id.base_content);
-        content.addView(getLayoutInflater().inflate(layoutResID, content, false));
+    private void setupNavDrawer() {
+        Log.v(LOG_TAG, "nav drawer setup");
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
+        // Abort drawer setup when drawer is not defined in the current xml file
+        if (mDrawerLayout == null) {
+            Log.v(LOG_TAG, "DrawerLayout null");
+            return;
+        } else {
+            Log.v(LOG_TAG, "DrawerLayout present");
+            mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        }
+
+        if (mToolbar != null) {
+            mToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
+        } else {
+            Log.e(LOG_TAG, "DrawerLayout without toolbar.");
+            return;
+        }
+
+        // Attach listener to drawer open/close events
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
+                R.string.drawer_open, R.string.drawer_closed);
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
+
+        // Nav View is the actual drawer hidden from sight,
+        // we inflate this view with an xml resource
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (navigationView != null) {
+            navigationView.setNavigationItemSelectedListener(this);
+        } else {
+            Log.e(LOG_TAG, "no drawer found.");
+        }
+
     }
 
+    /**
+     * Naviagtion drawer actions
+     */
+    protected void closeNavDrawer() {
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        }
+    }
+    protected boolean isNavDrawerOpen() {
+        return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START);
+    }
+
+
+    /**
+     * Handle when a drawer item is selected
+     * @param menuItem
+     * @return
+     */
+    @Override
+    public boolean onNavigationItemSelected(MenuItem menuItem) {
+        return false;
+    }
+
+    /**
+     * Handle when a menu item is selected on the toolbar
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (drawerToggle.onOptionsItemSelected(item)) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+   /* @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case TOKEN_REQUEST:
                 Log.i(LOG_TAG, "Result Code:" + String.valueOf(resultCode));
@@ -157,10 +208,6 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Action for the first drawer item
-     * @param view
-     */
     public void invokeFirstItem(View view) {
         Intent intent;
         String itemText = firstItem.getText().toString();
@@ -180,10 +227,10 @@ public class BaseActivity extends AppCompatActivity {
             }
             firstItem.setText(getString(R.string.login));
         } else if (itemText.equals(getString(R.string.profile))) {
-            SharedPreferences globalPreferences = getSharedPreferences(Constants.PIANOSHELF, MODE_PRIVATE);
-            if (globalPreferences.contains(Constants.USERNAME)) {
+            SharedPreferences globalPreferences = getSharedPreferences(C.PIANOSHELF, MODE_PRIVATE);
+            if (globalPreferences.contains(C.USERNAME)) {
                 intent = new Intent(this, ProfileView.class);
-                intent.putExtra("username", globalPreferences.getString(Constants.USERNAME, null));
+                intent.putExtra("username", globalPreferences.getString(C.USERNAME, null));
                 startActivity(intent);
             } else {
                 throw new RuntimeException("No username found.");
@@ -197,7 +244,7 @@ public class BaseActivity extends AppCompatActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Context context = parent.getContext();
             Intent intent;
-            String currentString = listItems[position];
+            String currentString = "";// = listItems[position];
             if(currentString.equals(getString(R.string.home))) {
                 intent = new Intent(context, MainActivity.class);
                 startActivity(intent);
@@ -210,46 +257,5 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    private class DrawerAdapter extends BaseAdapter {
-        private final Context context;
-        private final int layout;
-        private final List<String> list;
-        public DrawerAdapter(Context context, int layout, List<String> list) {
-            this.context = context;
-            this.layout = layout;
-            this.list = list;
-        }
-
-        public DrawerAdapter(Context context, int layout, String[] list) {
-            this.context = context;
-            this.layout = layout;
-            this.list = Arrays.asList(list);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).
-                        inflate(layout, parent, false);
-            }
-            TextView listItem = (TextView) convertView.findViewById(R.id.drawer_text);
-            listItem.setText(list.get(position));
-            return convertView;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return list.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public int getCount() {
-            return list.size();
-        }
-    }
+    */
 }

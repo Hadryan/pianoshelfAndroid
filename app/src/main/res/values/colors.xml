@@ -8,6 +8,15 @@
     <color name="error">#FF0000</color>
     <color name="dark_background">#000000</color>
     <color name="separator_dark">#000000</color>
+    <color name="separator_gray">#50BDBDBD</color>
     <color name="clickable_text">#0066FF</color>
     <color name="delete">@android:color/holo_red_light</color>
+
+    <!-- Material Design Colors -->
+    <color name="primary">#FFEEC1</color>
+    <color name="accent">#24557c</color>
+    <color name="text_primary">#555</color>
+    <color name="text_inverse">#DDD</color>
+
+
 </resources>

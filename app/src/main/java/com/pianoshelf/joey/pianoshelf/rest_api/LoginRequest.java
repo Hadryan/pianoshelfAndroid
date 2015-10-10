@@ -1,7 +1,7 @@
 package com.pianoshelf.joey.pianoshelf.rest_api;
 
 import com.octo.android.robospice.request.springandroid.SpringAndroidSpiceRequest;
-import com.pianoshelf.joey.pianoshelf.Constants;
+import com.pianoshelf.joey.pianoshelf.C;
 
 /**
  * Uses the delegate design pattern instead of callbacks
@@ -10,7 +10,7 @@ import com.pianoshelf.joey.pianoshelf.Constants;
  */
 
 public class LoginRequest extends SpringAndroidSpiceRequest<LoginResponse> {
-    private final String loginUrl = Constants.SERVER_ADDR + "api-auth/login/";
+    private final String loginUrl = C.SERVER_ADDR + "api-auth/login/";
     private Login credentials;
 
     public LoginRequest(String username, String password) {
