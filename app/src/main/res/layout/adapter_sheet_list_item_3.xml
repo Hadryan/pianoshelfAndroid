@@ -41,7 +41,8 @@
         android:layout_width="fill_parent"
         android:layout_height="25dp"
         android:layout_below="@id/sheet_list_item_title"
-        android:layout_alignStart="@id/sheet_list_item_title">
+        android:layout_alignStart="@id/sheet_list_item_title"
+        android:layout_alignLeft="@id/sheet_list_item_title">
 
         <TextView
             android:id="@id/sheet_list_item_composer_name"

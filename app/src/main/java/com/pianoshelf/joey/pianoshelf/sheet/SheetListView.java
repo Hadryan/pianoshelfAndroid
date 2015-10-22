@@ -2,9 +2,12 @@ package com.pianoshelf.joey.pianoshelf.sheet;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -64,9 +67,16 @@ public class SheetListView extends BaseActivity {
     private SheetListState mState = SheetListState.INVALID;
     private Semaphore mStateSem = new Semaphore(1);
 
+    private Drawable mGridIcon;
+    private Drawable mListIcon;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mGridIcon = getResources().getDrawable(R.drawable.ic_grid_24dp);
+        mListIcon = getResources().getDrawable(R.drawable.ic_list_24dp);
+
         setContentView(R.layout.activity_sheet_list_view);
 
         getSupportActionBar().setTitle("Sheet Music");
@@ -81,6 +91,13 @@ public class SheetListView extends BaseActivity {
         composerUrl = intent.getStringExtra("composersUrl");
 
         loadSheetmusicList(query, queryType, queryListBegin, queryListSize);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.sheet_list, menu);
+        return true;
     }
 
     public void loadSheetmusicList(String query, String queryType, int queryListBegin, int queryListSize){
@@ -101,6 +118,7 @@ public class SheetListView extends BaseActivity {
             }
 
             // Making the JSON request
+            // TODO refactor this object out of this class
             JsonObjectRequest getJsonSheetList = new JsonObjectRequest
                     (Request.Method.GET, jsonQueryUrl, (String) null,
                             new Response.Listener<JSONObject>() {
@@ -121,11 +139,14 @@ public class SheetListView extends BaseActivity {
                                         }
                                         sheetListCount = response.getInt("count");
 
-                                        SheetListFragment sheetList = SheetListFragment.newInstance(
+                                        SheetArrayListFragment sheetList = SheetArrayListFragment.newInstance(
+                                                response.getJSONArray("results"));
+                                        SheetArrayGridFragment sheetGrid = SheetArrayGridFragment.newInstance(
                                                 response.getJSONArray("results"));
                                         FragmentManager fm = getSupportFragmentManager();
+                                        // TODO put a TAG for this fragment since we might access it later
                                         fm.beginTransaction().
-                                                replace(R.id.single_frame, sheetList).commit();
+                                                replace(R.id.single_frame, sheetGrid).commit();
                                         // update view before unlocking
                                         fm.executePendingTransactions();
 
@@ -195,6 +216,17 @@ public class SheetListView extends BaseActivity {
                     });
             VolleySingleton.getInstance(this).addToRequestQueue(composersRequest);
 
+        }
+    }
+
+    public void gridListToggle(MenuItem item) {
+        Drawable menuIcon = item.getIcon();
+        if (menuIcon == mGridIcon) {
+            Log.i(LOG_TAG, "Grid Icon");
+        } else if (menuIcon == mListIcon) {
+
+        } else {
+            Log.wtf(LOG_TAG, "Incorrect icon");
         }
     }
 

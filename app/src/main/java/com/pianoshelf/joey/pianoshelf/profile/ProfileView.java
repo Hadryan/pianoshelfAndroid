@@ -22,7 +22,7 @@ import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.ShelfView;
 import com.pianoshelf.joey.pianoshelf.VolleySingleton;
-import com.pianoshelf.joey.pianoshelf.sheet.SheetListFragment;
+import com.pianoshelf.joey.pianoshelf.sheet.SheetArrayListFragment;
 
 import org.json.JSONObject;
 
@@ -84,7 +84,7 @@ public class ProfileView extends BaseActivity {
                             }
 
                             // Initialize myShelf
-                            SheetListFragment myShelf = SheetListFragment.newInstance(
+                            SheetArrayListFragment myShelf = SheetArrayListFragment.newInstance(
                                     shrinkJsonArray(profile.getShelf().getSheetmusic(),
                                             PREVIEW_VALUE));
                             getSupportFragmentManager().beginTransaction().replace(

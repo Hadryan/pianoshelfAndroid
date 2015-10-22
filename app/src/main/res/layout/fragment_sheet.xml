@@ -13,7 +13,7 @@
         android:visibility="visible"/>
 
     <!-- Actual sheet music image -->
-    <ImageView
+    <com.pianoshelf.joey.pianoshelf.sheet.SheetURLImageView
         android:id="@+id/sheetImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

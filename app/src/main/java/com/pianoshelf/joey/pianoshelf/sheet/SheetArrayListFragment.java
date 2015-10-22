@@ -2,12 +2,12 @@ package com.pianoshelf.joey.pianoshelf.sheet;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,18 +27,18 @@ import org.json.JSONObject;
  * This class deals with displaying a list of sheet music
  * This class reacts in a query format
  */
-public class SheetListFragment extends android.support.v4.app.ListFragment {
+public class SheetArrayListFragment extends android.support.v4.app.ListFragment {
     private final String SERVER_SHEETMUSIC_SUFFIX = "api/sheetmusic/";
 
     private static final String JSON_ARRAY = "JSONARRAY";
-    private static final String LOG_TAG = "SheetListFragment";
+    private static final String LOG_TAG = "SheetArrayListFragment";
     private JSONArray jsonArray;
     private int deleteButtonVisibility;
 
-    public SheetListFragment() {}
+    public SheetArrayListFragment() {}
 
-    public static SheetListFragment newInstance(JSONArray jsonArray) {
-        SheetListFragment sheetList = new SheetListFragment();
+    public static SheetArrayListFragment newInstance(JSONArray jsonArray) {
+        SheetArrayListFragment sheetList = new SheetArrayListFragment();
         Bundle args = new Bundle();
 
         args.putString(JSON_ARRAY, jsonArray.toString());
@@ -46,8 +46,8 @@ public class SheetListFragment extends android.support.v4.app.ListFragment {
         return sheetList;
     }
 
-    public static SheetListFragment newInstance(JsonArray jsonArray) {
-        SheetListFragment sheetList = new SheetListFragment();
+    public static SheetArrayListFragment newInstance(JsonArray jsonArray) {
+        SheetArrayListFragment sheetList = new SheetArrayListFragment();
         Bundle args = new Bundle();
 
         args.putString(JSON_ARRAY, jsonArray.toString());
@@ -55,8 +55,8 @@ public class SheetListFragment extends android.support.v4.app.ListFragment {
         return sheetList;
     }
 
-    public static SheetListFragment newInstance(String jsonArray) {
-        SheetListFragment sheetList = new SheetListFragment();
+    public static SheetArrayListFragment newInstance(String jsonArray) {
+        SheetArrayListFragment sheetList = new SheetArrayListFragment();
         Bundle args = new Bundle();
 
         args.putString(JSON_ARRAY, jsonArray);
@@ -137,56 +137,8 @@ public class SheetListFragment extends android.support.v4.app.ListFragment {
             return parentView;
         }
 
-
         public void invokeDelete(View view) {
             // TODO Send a DELETE request to server
-        }
-
-        // Parse a difficulty integer to a difficulty string
-        private String parseDifficulty(int difficulty) {
-            switch (difficulty) {
-                case 0: return "No Rating";
-                case 1: return "Beginner";
-                case 2: return "Novice";
-                case 3: return "Intermediate";
-                case 4: return "Advanced";
-                case 5: return "Expert";
-                default : throw new RuntimeException("Invalid difficulty");
-            }
-        }
-
-        private int getDifficultyColor(int difficulty) {
-            return Color.GRAY;
-            /*
-            switch (difficulty) {
-                case 0: return Color.GRAY;
-                case 1: return Color.GREEN;
-                case 2: return Color.CYAN;
-                case 3: return Color.YELLOW;
-                case 4: return Color.MAGENTA;
-                case 5: return Color.RED;
-                default: throw new RuntimeException("Invalid difficulty");
-            }*/
-        }
-
-        private String parseDownloadCount(int downloadCount) {
-            int thousandth = downloadCount;
-            int thousandthPrev = 0;
-            int counter = -1;
-            while (thousandth != 0) {
-                thousandthPrev = thousandth;
-                thousandth = thousandth / 1000;
-                ++counter;
-            }
-            String parsedDownloadCount = Integer.toString(thousandthPrev);
-            switch (counter) {
-                case -1: return parsedDownloadCount;
-                case 0: return parsedDownloadCount;
-                case 1: return parsedDownloadCount + 'K';
-                case 2: return parsedDownloadCount + 'M';
-                case 3: return parsedDownloadCount + 'B';
-                default: return parsedDownloadCount + 'T';
-            }
         }
     }
 

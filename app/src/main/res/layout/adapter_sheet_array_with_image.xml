@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/sheet_list_item_background"
+    android:paddingBottom="3dp"
+    android:id="@+id/sheet_music_card_layout">
+
+    <!-- Here we make the assumption that most preview images will be close to the example preview image -->
+    <com.pianoshelf.joey.pianoshelf.sheet.SheetURLImageView
+        android:id="@+id/sheet_music_preview_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:src="@drawable/example_preview_image"/>
+
+    <include layout="@layout/adapter_sheet_list_item_3"/>
+</LinearLayout>

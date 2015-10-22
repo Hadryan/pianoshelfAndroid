@@ -15,7 +15,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.pianoshelf.joey.pianoshelf.profile.Profile;
-import com.pianoshelf.joey.pianoshelf.sheet.SheetListFragment;
+import com.pianoshelf.joey.pianoshelf.sheet.SheetArrayListFragment;
 
 import org.json.JSONObject;
 
@@ -45,7 +45,7 @@ public class ShelfView extends BaseActivity {
         // Retrieve shelf content
         if (intent.hasExtra(C.SHELF_CONTENT)) {
             //progressBar.setVisibility(View.GONE);
-            SheetListFragment shelf = SheetListFragment.newInstance(
+            SheetArrayListFragment shelf = SheetArrayListFragment.newInstance(
                     intent.getStringExtra(C.SHELF_CONTENT));
             getSupportFragmentManager().beginTransaction().replace(
                     R.id.single_frame, shelf).commit();
@@ -57,7 +57,7 @@ public class ShelfView extends BaseActivity {
                         public void onResponse(JSONObject response) {
                             Profile profile = (new Gson()).fromJson(
                                     response.toString(), Profile.class);
-                            SheetListFragment shelf = SheetListFragment.newInstance(
+                            SheetArrayListFragment shelf = SheetArrayListFragment.newInstance(
                                     profile.getShelf().getSheetmusic());
                             getSupportFragmentManager().beginTransaction().replace(
                                     R.id.single_frame, shelf).commit();
@@ -85,7 +85,7 @@ public class ShelfView extends BaseActivity {
         if (editItem.isVisible()) {
             super.onBackPressed();
         } else {
-            ((SheetListFragment) getSupportFragmentManager().findFragmentById(R.id.single_frame)).
+            ((SheetArrayListFragment) getSupportFragmentManager().findFragmentById(R.id.single_frame)).
                     setDeleteButtonVisibility(View.GONE);
             editItem.setVisible(true);
         }
@@ -95,7 +95,7 @@ public class ShelfView extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.shelf_edit:
-                ((SheetListFragment) getSupportFragmentManager().findFragmentById(R.id.single_frame)).
+                ((SheetArrayListFragment) getSupportFragmentManager().findFragmentById(R.id.single_frame)).
                         setDeleteButtonVisibility(View.VISIBLE);
                 item.setVisible(false);
                 return true;
