@@ -129,11 +129,11 @@ public class SheetArrayListFragment extends android.support.v4.app.ListFragment 
             //((TextView) parentView.findViewById(R.id.sheet_list_item_key)).setText(key);
             //((TextView) parentView.findViewById(R.id.sheet_list_item_date)).setText(date);
             ((TextView) parentView.findViewById(R.id.sheet_list_item_download_count))
-                    .setText(parseDownloadCount(composition.getPop()));
+                    .setText(CompositionUtil.ParseDownloadCount(composition.getPop()));
             TextView difficultyText =
                     (TextView) parentView.findViewById(R.id.sheet_list_item_difficulty);
-            difficultyText.setText(parseDifficulty(composition.getDifficulty()));
-            difficultyText.setTextColor(getDifficultyColor(composition.getDifficulty()));
+            difficultyText.setText(CompositionUtil.ParseDifficulty(composition.getDifficulty()));
+            difficultyText.setTextColor(CompositionUtil.ParseDifficultyColor(composition.getDifficulty()));
             return parentView;
         }
 

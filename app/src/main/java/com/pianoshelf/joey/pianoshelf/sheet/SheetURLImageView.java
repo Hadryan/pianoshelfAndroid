@@ -19,7 +19,7 @@ import java.net.URL;
  * Created by joey on 21/10/15.
  */
 public class SheetURLImageView extends ImageView {
-    private static String LOG_TAG = "ImageView URL";
+    private static final String LOG_TAG = "ImageView URL";
     private Context mContext;
     private Bitmap mBitmap = null;
     private String mSheetUrl;

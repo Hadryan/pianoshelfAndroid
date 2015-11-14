@@ -10,8 +10,11 @@
     <dimen name="title_bottom_margin">10dp</dimen>
     <dimen name="title_top_margin">10dp</dimen>
 
-    <!-- Sheet Music Array Adapter -->
+    <!-- Sheet Music Adapter and List -->
     <dimen name="list_item_height">60dp</dimen>
+    <dimen name="list_horizontal_margin">20dp</dimen>
+    <dimen name="list_bottom_margin">3dp</dimen>
+    <dimen name="grid_margin">7dp</dimen>
     <dimen name="delete_button_square">10dp</dimen>
     <dimen name="sheet_music_card_height">300dp</dimen>
 

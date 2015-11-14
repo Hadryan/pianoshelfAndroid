@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height"
-    android:background="@drawable/sheet_list_item_background"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingBottom="3dp" >
+    android:paddingLeft="@dimen/list_horizontal_margin"
+    android:paddingRight="@dimen/list_horizontal_margin"
+    android:paddingBottom="@dimen/list_bottom_margin"
+    android:orientation="vertical"
+    android:background="@drawable/sheet_list_item_background" >
 
     <View
         android:id="@+id/sheet_list_item_delete"
@@ -26,15 +27,15 @@
     <TextView
         android:id="@+id/sheet_list_item_title"
 
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="35dp"
-        android:layout_toRightOf="@id/sheet_list_item_delete"
-        android:layout_toEndOf="@id/sheet_list_item_delete"
 
         android:text="Op. 12 - Dream log log"
         android:textSize="20sp"
         android:maxLines="1"
-        android:gravity="center_vertical" />
+        android:gravity="center_vertical"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <LinearLayout
         android:id="@+id/sheet_list_item_bottom_row"

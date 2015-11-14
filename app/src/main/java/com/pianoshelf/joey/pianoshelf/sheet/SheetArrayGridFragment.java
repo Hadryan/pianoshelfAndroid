@@ -1,27 +1,28 @@
 package com.pianoshelf.joey.pianoshelf.sheet;
 
-import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.pianoshelf.joey.pianoshelf.JSONAdapter;
 import com.pianoshelf.joey.pianoshelf.R;
-import com.pianoshelf.joey.pianoshelf.composition.Composition;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by joey on 17/10/15.
@@ -30,6 +31,9 @@ public class SheetArrayGridFragment extends Fragment {
     private static final String JSON_ARRAY = "json";
     private static final String LOG_TAG = "Sheet Grid Fragment";
     private GridView mGridView;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView.Adapter mAdapter;
     private JSONArray mSheetListJson;
 
     public static SheetArrayGridFragment newInstance(JSONArray jsonArray) {
@@ -63,9 +67,11 @@ public class SheetArrayGridFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+        Bundle args = getArguments();
+        if (args != null) {
             try {
-                mSheetListJson = new JSONArray(getArguments().getString(JSON_ARRAY));
+                String jsonArray = args.getString(JSON_ARRAY);
+                mSheetListJson = new JSONArray(jsonArray);
             } catch (JSONException ex) {
                 Log.d(LOG_TAG, ex.toString());
             }
@@ -82,61 +88,71 @@ public class SheetArrayGridFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        mGridView = (GridView) view.findViewById(R.id.sheet_grid);
-        mGridView.setAdapter(new SheetGridAdapter(getActivity(),
-                R.layout.adapter_sheet_array_with_image,
-                mSheetListJson));
+        super.onViewCreated(view, savedInstanceState);
+
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.sheet_recycler);
+
+        mAdapter = new PreviewRecycler(R.layout.adapter_sheet_array_with_image, mSheetListJson);
+        mRecyclerView.setAdapter(mAdapter);
+
+        // Calculate optimal number of columns
+        int widthPixels = getResources().getDisplayMetrics().widthPixels;
+        BitmapDrawable previewExample = (BitmapDrawable) getResources().getDrawable(R.drawable.example_preview_image);
+        int previewWidth = previewExample.getBitmap().getWidth();
+        Log.i(LOG_TAG, "Device width: " + widthPixels + " Preview example width: " + previewWidth);
+        // Tolerate resizing the preview down a bit
+        int columns = Math.max(1, widthPixels / ((int) (0.9 * previewWidth)));
+
+        mLayoutManager = new StaggeredGridLayoutManager(columns, StaggeredGridLayoutManager.VERTICAL);
+
+        mRecyclerView.setLayoutManager(mLayoutManager);
     }
 
-    private class SheetGridAdapter extends JSONAdapter {
-        public SheetGridAdapter(Context context, int layout, JSONArray sheetList) {
-            super(context, layout, sheetList);
+    public class PreviewRecycler extends JsonRecycler<PreviewHolder> {
+        protected int mLayout;
+        public PreviewRecycler(int layout, JSONArray composition) {
+            super(composition);
+            mLayout = layout;
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View parentView = super.getView(position, convertView, parent);
-            // Unwrap the JSONObject
-            JSONObject sheetJson = jsonArray.get(position);
+        public void onBindViewHolder(PreviewHolder holder, int position) {
+            holder.bindSheetJson(mJsonList.get(position));
+        }
 
-            // Unwrapping the JSON object
-            Composition composition =
-                    (new Gson()).fromJson(sheetJson.toString(), Composition.class);
+        @Override
+        public PreviewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(mLayout, parent, false);
+            return new PreviewHolder(view);
+        }
+    }
 
-            final LinearLayout rootView = (LinearLayout) parentView.findViewById(R.id.sheet_music_card_layout);
+    public class PreviewHolder extends CompositionViewHolder {
+        private SheetURLImageView mPreviewImage;
+        //private PhotoViewAttacher mAttacher;
 
-            // Populate textViews with information
-                    ((TextView) parentView.findViewById(R.id.sheet_list_item_title))
-                    .setText(composition.getTitle().trim());
-            ((TextView) parentView.findViewById(R.id.sheet_list_item_composer_name))
-                    .setText(composition.getComposer_name());
-            //((TextView) parentView.findViewById(R.id.sheet_list_item_style)).setText(style);
-            //((TextView) parentView.findViewById(R.id.sheet_list_item_key)).setText(key);
-            //((TextView) parentView.findViewById(R.id.sheet_list_item_date)).setText(date);
-            ((TextView) parentView.findViewById(R.id.sheet_list_item_download_count))
-                    .setText(parseDownloadCount(composition.getPop()));
-            TextView difficultyText =
-                    (TextView) parentView.findViewById(R.id.sheet_list_item_difficulty);
-            difficultyText.setText(parseDifficulty(composition.getDifficulty()));
-            difficultyText.setTextColor(getDifficultyColor(composition.getDifficulty()));
+        public PreviewHolder(View view) {
+            super(view);
+            mPreviewImage = (SheetURLImageView) view.findViewById(R.id.sheet_music_preview_image);
+            //mAttacher = new PhotoViewAttacher(mPreviewImage);
+        }
 
-            SheetURLImageView previewImage = (SheetURLImageView) parentView.findViewById(R.id.sheet_music_preview_image);
-            previewImage.loadImageFromURL("https:" + composition.getThumbnail_url(),
+        @Override
+        public void bindSheetJson(JSONObject sheetJson) {
+            super.bindSheetJson(sheetJson);
+            mPreviewImage.loadImageFromURL("https:" + mComposition.getThumbnail_url(),
                     new SheetURLImageView.ImageLoaded() {
                         @Override
                         public void onImageLoaded(ImageView image) {
-                            ViewGroup.LayoutParams params = rootView.getLayoutParams();
-                            params.width = image.getWidth();
-                            rootView.setLayoutParams(params);
+                            //mAttacher.update();
                         }
 
                         @Override
                         public void onImageError(ImageView image) {
-
+                            Log.w(LOG_TAG, "Image Error " + image);
                         }
                     });
-            return parentView;
         }
     }
-
 }

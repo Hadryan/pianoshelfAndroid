@@ -1,20 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:id="@+id/sheet_music_card_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/sheet_list_item_background"
-    android:paddingBottom="3dp"
-    android:id="@+id/sheet_music_card_layout">
+    android:layout_margin="@dimen/grid_margin">
 
-    <!-- Here we make the assumption that most preview images will be close to the example preview image -->
-    <com.pianoshelf.joey.pianoshelf.sheet.SheetURLImageView
-        android:id="@+id/sheet_music_preview_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:src="@drawable/example_preview_image"/>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/list_bottom_margin">
 
-    <include layout="@layout/adapter_sheet_list_item_3"/>
-</LinearLayout>
+        <!-- Here we make the assumption that most preview images will be close to the example preview image -->
+        <com.pianoshelf.joey.pianoshelf.sheet.SheetURLImageView
+            android:id="@+id/sheet_music_preview_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/example_preview_image"
+            android:layout_gravity="center"/>
+
+        <include layout="@layout/adapter_sheet_list_item_3"/>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
