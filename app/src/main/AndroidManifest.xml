@@ -52,7 +52,7 @@
         </activity>
         <!-- Shelf Page -->
         <activity
-            android:name=".ShelfView">
+            android:name=".shelf.ShelfView">
         </activity>
     </application>
 

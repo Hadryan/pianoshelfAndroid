@@ -2,7 +2,6 @@ package com.pianoshelf.joey.pianoshelf.sheet;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ImageView;

@@ -14,8 +14,8 @@ import com.octo.android.robospice.request.listener.RequestListener;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.rest_api.Register;
-import com.pianoshelf.joey.pianoshelf.rest_api.RegisterResponse;
 import com.pianoshelf.joey.pianoshelf.rest_api.RegisterRequest;
+import com.pianoshelf.joey.pianoshelf.rest_api.RegisterResponse;
 
 /**
  * Created by joey on 12/6/14.

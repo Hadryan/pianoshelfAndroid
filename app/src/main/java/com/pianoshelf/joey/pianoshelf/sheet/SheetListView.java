@@ -17,10 +17,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
-import com.pianoshelf.joey.pianoshelf.composition.ComposerListFragment;
 import com.pianoshelf.joey.pianoshelf.ProgressFragment;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.VolleySingleton;
+import com.pianoshelf.joey.pianoshelf.composition.ComposerListFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;

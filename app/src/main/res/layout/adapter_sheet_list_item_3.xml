@@ -9,18 +9,17 @@
     android:orientation="vertical"
     android:background="@drawable/sheet_list_item_background" >
 
-    <View
+    <ImageView
         android:id="@+id/sheet_list_item_delete"
         android:layout_width="@dimen/delete_button_square"
         android:layout_height="@dimen/delete_button_square"
-        android:layout_marginRight="@dimen/delete_button_square"
-        android:layout_marginEnd="@dimen/delete_button_square"
-        android:background="@color/delete"
+        android:layout_marginRight="@dimen/delete_button_margin"
+        android:layout_marginEnd="@dimen/delete_button_margin"
+        android:src="@drawable/ic_delete_24dp"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:clickable="true"
-        android:onClick="invokeDelete"
         android:visibility="gone"/>
 
     <!-- Hard-coded text here to use with design preview mode -->
@@ -34,8 +33,8 @@
         android:textSize="20sp"
         android:maxLines="1"
         android:gravity="center_vertical"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_toRightOf="@+id/sheet_list_item_delete"
+        android:layout_toEndOf="@+id/sheet_list_item_delete" />
 
     <LinearLayout
         android:id="@+id/sheet_list_item_bottom_row"

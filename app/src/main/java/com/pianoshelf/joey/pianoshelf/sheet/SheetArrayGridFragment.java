@@ -1,11 +1,9 @@
 package com.pianoshelf.joey.pianoshelf.sheet;
 
-import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
@@ -13,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.ImageView;
 
 import com.google.gson.JsonArray;
 import com.pianoshelf.joey.pianoshelf.R;
@@ -21,8 +18,6 @@ import com.pianoshelf.joey.pianoshelf.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by joey on 17/10/15.
@@ -83,7 +78,7 @@ public class SheetArrayGridFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_sheet_grid_view, container, false);
+        return inflater.inflate(R.layout.recyclerview, container, false);
     }
 
     @Override
@@ -95,17 +90,25 @@ public class SheetArrayGridFragment extends Fragment {
         mAdapter = new PreviewRecycler(R.layout.adapter_sheet_array_with_image, mSheetListJson);
         mRecyclerView.setAdapter(mAdapter);
 
-        // Calculate optimal number of columns
-        int widthPixels = getResources().getDisplayMetrics().widthPixels;
-        BitmapDrawable previewExample = (BitmapDrawable) getResources().getDrawable(R.drawable.example_preview_image);
-        int previewWidth = previewExample.getBitmap().getWidth();
-        Log.i(LOG_TAG, "Device width: " + widthPixels + " Preview example width: " + previewWidth);
-        // Tolerate resizing the preview down a bit
-        int columns = Math.max(1, widthPixels / ((int) (0.9 * previewWidth)));
+        int columns = calculateOptimalColumnNumber();
 
         mLayoutManager = new StaggeredGridLayoutManager(columns, StaggeredGridLayoutManager.VERTICAL);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
+    }
+
+    // Calculate optimal number of columns
+    private int calculateOptimalColumnNumber() {
+        int widthPixels = getResources().getDisplayMetrics().widthPixels;
+        BitmapDrawable previewExample = (BitmapDrawable) getResources().getDrawable(R.drawable.example_preview_image);
+        if (previewExample != null) {
+            int previewWidth = previewExample.getBitmap().getWidth();
+            Log.i(LOG_TAG, "Device width: " + widthPixels + " Preview example width: " + previewWidth);
+            // Tolerate resizing the preview down a bit
+            return Math.max(1, widthPixels / ((int) (0.9 * previewWidth)));
+        } else {
+            return 2;
+        }
     }
 
     public class PreviewRecycler extends JsonRecycler<PreviewHolder> {
@@ -130,29 +133,16 @@ public class SheetArrayGridFragment extends Fragment {
 
     public class PreviewHolder extends CompositionViewHolder {
         private SheetURLImageView mPreviewImage;
-        //private PhotoViewAttacher mAttacher;
 
         public PreviewHolder(View view) {
             super(view);
             mPreviewImage = (SheetURLImageView) view.findViewById(R.id.sheet_music_preview_image);
-            //mAttacher = new PhotoViewAttacher(mPreviewImage);
         }
 
         @Override
         public void bindSheetJson(JSONObject sheetJson) {
             super.bindSheetJson(sheetJson);
-            mPreviewImage.loadImageFromURL("https:" + mComposition.getThumbnail_url(),
-                    new SheetURLImageView.ImageLoaded() {
-                        @Override
-                        public void onImageLoaded(ImageView image) {
-                            //mAttacher.update();
-                        }
-
-                        @Override
-                        public void onImageError(ImageView image) {
-                            Log.w(LOG_TAG, "Image Error " + image);
-                        }
-                    });
+            mPreviewImage.loadImageFromURL("https:" + mComposition.getThumbnail_url(), null);
         }
     }
 }

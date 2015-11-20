@@ -20,9 +20,9 @@ import com.google.gson.JsonArray;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
-import com.pianoshelf.joey.pianoshelf.ShelfView;
 import com.pianoshelf.joey.pianoshelf.VolleySingleton;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetArrayListFragment;
+import com.pianoshelf.joey.pianoshelf.shelf.ShelfView;
 
 import org.json.JSONObject;
 

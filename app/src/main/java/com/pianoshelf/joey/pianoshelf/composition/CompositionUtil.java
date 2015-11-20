@@ -1,4 +1,4 @@
-package com.pianoshelf.joey.pianoshelf.sheet;
+package com.pianoshelf.joey.pianoshelf.composition;
 
 import android.graphics.Color;
 import android.util.Log;

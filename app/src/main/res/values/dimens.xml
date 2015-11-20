@@ -15,7 +15,8 @@
     <dimen name="list_horizontal_margin">20dp</dimen>
     <dimen name="list_bottom_margin">3dp</dimen>
     <dimen name="grid_margin">7dp</dimen>
-    <dimen name="delete_button_square">10dp</dimen>
+    <dimen name="delete_button_square">30dp</dimen>
+    <dimen name="delete_button_margin">5dp</dimen>
     <dimen name="sheet_music_card_height">300dp</dimen>
 
     <!-- Font -->
