@@ -23,8 +23,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
-import com.octo.android.robospice.GsonSpringAndroidSpiceService;
-import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
@@ -61,8 +59,6 @@ public class SheetView extends BaseActivity {
 
     private final String offlineRootDirectory =
             Environment.getExternalStorageDirectory() + File.separator + C.PIANOSHELF;
-
-    protected SpiceManager mSpiceManager = new SpiceManager(GsonSpringAndroidSpiceService.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,12 +130,12 @@ public class SheetView extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mSpiceManager.start(this);
+        spiceManager.start(this);
     }
 
     @Override
     protected void onStop() {
-        mSpiceManager.shouldStop();
+        spiceManager.shouldStop();
         super.onStop();
     }
 
@@ -283,7 +279,7 @@ public class SheetView extends BaseActivity {
 
     private void performRequest(int id, String authToken) {
         AddSheetToShelfRequest request = new AddSheetToShelfRequest(id, authToken);
-        mSpiceManager.execute(request, null, DurationInMillis.ONE_MINUTE,
+        spiceManager.execute(request, null, DurationInMillis.ONE_MINUTE,
                 new AddSheetToShelfRequestListener());
     }
 

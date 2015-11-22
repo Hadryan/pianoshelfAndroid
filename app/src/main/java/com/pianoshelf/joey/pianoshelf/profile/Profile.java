@@ -1,6 +1,8 @@
 package com.pianoshelf.joey.pianoshelf.profile;
 
-import com.google.gson.JsonArray;
+import com.pianoshelf.joey.pianoshelf.composition.Composition;
+
+import java.util.List;
 
 /**
  * Created by joey on 12/29/14.
@@ -8,7 +10,7 @@ import com.google.gson.JsonArray;
 public class Profile {
     private String username;
     private String full_name;
-    private Sheetmusic shelf;
+    private ProfileShelf shelf;
     private String description;
     private String small_profile_picture;
     private String large_profile_picture;
@@ -29,11 +31,11 @@ public class Profile {
         this.full_name = full_name;
     }
 
-    public Sheetmusic getShelf() {
+    public ProfileShelf getShelf() {
         return shelf;
     }
 
-    public void setShelf(Sheetmusic shelf) {
+    public void setShelf(ProfileShelf shelf) {
         this.shelf = shelf;
     }
 
@@ -62,14 +64,14 @@ public class Profile {
     }
 
 
-    public class Sheetmusic {
-        private JsonArray sheetmusic;
+    public class ProfileShelf {
+        private List<Composition> sheetmusic;
 
-        public JsonArray getSheetmusic() {
+        public List<Composition> getSheetmusic() {
             return sheetmusic;
         }
 
-        public void setSheetmusic(JsonArray sheetmusic) {
+        public void setSheetmusic(List<Composition> sheetmusic) {
             this.sheetmusic = sheetmusic;
         }
     }

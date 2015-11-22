@@ -1,4 +1,4 @@
-package com.pianoshelf.joey.pianoshelf.rest_api;
+package com.pianoshelf.joey.pianoshelf.authentication;
 
 import com.octo.android.robospice.request.springandroid.SpringAndroidSpiceRequest;
 import com.pianoshelf.joey.pianoshelf.C;

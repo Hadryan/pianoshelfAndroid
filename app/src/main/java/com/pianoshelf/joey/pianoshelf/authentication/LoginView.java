@@ -16,9 +16,6 @@ import com.octo.android.robospice.request.listener.RequestListener;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
-import com.pianoshelf.joey.pianoshelf.rest_api.Login;
-import com.pianoshelf.joey.pianoshelf.rest_api.LoginRequest;
-import com.pianoshelf.joey.pianoshelf.rest_api.LoginResponse;
 
 /**
  * It seems impossible to execute two concurrent activities in android

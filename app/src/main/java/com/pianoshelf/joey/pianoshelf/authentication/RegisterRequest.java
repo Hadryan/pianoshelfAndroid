@@ -1,4 +1,4 @@
-package com.pianoshelf.joey.pianoshelf.rest_api;
+package com.pianoshelf.joey.pianoshelf.authentication;
 
 import android.util.Log;
 

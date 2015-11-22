@@ -20,12 +20,12 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  * This class receives a working URL and loads the URL
  * Created by joey on 10/29/14.
  */
-public class SheetURLFragment extends Fragment implements SheetURLImageView.ImageLoaded {
+public class SheetURLFragment extends Fragment implements URLImageView.ImageLoaded {
     private String sheetUrl;
     private static final String SHEET_URL_ARGUMENT = "sheetUrl";
     private static final String LOG_TAG = "SheetURLFragment";
     private ProgressBar progressBar;
-    private SheetURLImageView mImageView;
+    private URLImageView mImageView;
     private PhotoViewAttacher mAttacher;
 
     // Default Constructor
@@ -60,7 +60,7 @@ public class SheetURLFragment extends Fragment implements SheetURLImageView.Imag
         progressBar = (ProgressBar) view.findViewById(R.id.sheetProgress);
         progressBar.setVisibility(View.VISIBLE);
 
-        mImageView = (SheetURLImageView) view.findViewById(R.id.sheetImage);
+        mImageView = (URLImageView) view.findViewById(R.id.sheetImage);
         mAttacher = new PhotoViewAttacher(mImageView);
 
         mImageView.loadImageFromURL(sheetUrl, this);

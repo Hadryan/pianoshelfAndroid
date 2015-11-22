@@ -1,4 +1,4 @@
-package com.pianoshelf.joey.pianoshelf.rest_api;
+package com.pianoshelf.joey.pianoshelf.authentication;
 
 /**
  * Created by joey on 03/07/15.

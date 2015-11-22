@@ -9,10 +9,10 @@ import android.view.View;
 
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.pianoshelf.joey.pianoshelf.authentication.LoginView;
+import com.pianoshelf.joey.pianoshelf.authentication.LogoutRequest;
 import com.pianoshelf.joey.pianoshelf.authentication.SignupView;
 import com.pianoshelf.joey.pianoshelf.composition.ComposerView;
 import com.pianoshelf.joey.pianoshelf.profile.ProfileView;
-import com.pianoshelf.joey.pianoshelf.rest_api.LogoutRequest;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetListView;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetView;
 

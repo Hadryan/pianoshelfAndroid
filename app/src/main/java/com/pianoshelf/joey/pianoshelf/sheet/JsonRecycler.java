@@ -2,11 +2,10 @@ package com.pianoshelf.joey.pianoshelf.sheet;
 
 import android.support.v7.widget.RecyclerView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.pianoshelf.joey.pianoshelf.composition.Composition;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -14,32 +13,26 @@ import java.util.List;
  */
 public abstract class JsonRecycler<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
     private static final String LOG_TAG = "Json Recycler";
-    protected List<JSONObject> mJsonList;
+    protected List<Composition> mSheetList = new ArrayList<>();
 
-    public JsonRecycler(JSONArray composers) {
-        mJsonList = new ArrayList<>();
-        for(int i=0;i<composers.length();++i) {
-            try {
-                mJsonList.add(composers.getJSONObject(i));
-            } catch (JSONException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+    public JsonRecycler(List<Composition> sheets) {
+        mSheetList.addAll(sheets);
+    }
+
+    public void setJsonList(Collection<Composition> jsonCollection) {
+        mSheetList.clear();
+        mSheetList.addAll(jsonCollection);
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return mJsonList.size();
+        return mSheetList.size();
     }
 
     @Override
     public long getItemId(int position) {
-        try {
-            JSONObject jsonObject = mJsonList.get(position);
-            return jsonObject.getInt("id");
-        } catch (JSONException ex) {
-            throw new RuntimeException(ex);
-        }
+        return mSheetList.get(position).getId();
     }
 
 }

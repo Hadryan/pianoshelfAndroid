@@ -3,91 +3,33 @@ package com.pianoshelf.joey.pianoshelf.sheet;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 
-import com.google.gson.JsonArray;
 import com.pianoshelf.joey.pianoshelf.R;
+import com.pianoshelf.joey.pianoshelf.composition.Composition;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.List;
 
 /**
  * Created by joey on 17/10/15.
  */
-public class SheetArrayGridFragment extends Fragment {
-    private static final String JSON_ARRAY = "json";
+public class SheetArrayGridFragment extends SheetArrayFragment {
     private static final String LOG_TAG = "Sheet Grid Fragment";
-    private GridView mGridView;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private RecyclerView.Adapter mAdapter;
-    private JSONArray mSheetListJson;
 
-    public static SheetArrayGridFragment newInstance(JSONArray jsonArray) {
+    public static SheetArrayGridFragment newInstance() {
         SheetArrayGridFragment sheetList = new SheetArrayGridFragment();
-        Bundle args = new Bundle();
-
-        args.putString(JSON_ARRAY, jsonArray.toString());
-        sheetList.setArguments(args);
         return sheetList;
-    }
-
-    public static SheetArrayGridFragment newInstance(JsonArray jsonArray) {
-        SheetArrayGridFragment sheetList = new SheetArrayGridFragment();
-        Bundle args = new Bundle();
-
-        args.putString(JSON_ARRAY, jsonArray.toString());
-        sheetList.setArguments(args);
-        return sheetList;
-    }
-
-    public static SheetArrayGridFragment newInstance(String jsonArray) {
-        SheetArrayGridFragment sheetList = new SheetArrayGridFragment();
-        Bundle args = new Bundle();
-
-        args.putString(JSON_ARRAY, jsonArray);
-        sheetList.setArguments(args);
-        return sheetList;
-
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
-        if (args != null) {
-            try {
-                String jsonArray = args.getString(JSON_ARRAY);
-                mSheetListJson = new JSONArray(jsonArray);
-            } catch (JSONException ex) {
-                Log.d(LOG_TAG, ex.toString());
-            }
-        } else {
-            Log.w(LOG_TAG, "no argument bundle");
-        }
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.recyclerview, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.sheet_recycler);
-
-        mAdapter = new PreviewRecycler(R.layout.adapter_sheet_array_with_image, mSheetListJson);
+        mAdapter = new PreviewRecycler(R.layout.adapter_sheet_array_with_image, mSheetList);
         mRecyclerView.setAdapter(mAdapter);
 
         int columns = calculateOptimalColumnNumber();
@@ -113,14 +55,15 @@ public class SheetArrayGridFragment extends Fragment {
 
     public class PreviewRecycler extends JsonRecycler<PreviewHolder> {
         protected int mLayout;
-        public PreviewRecycler(int layout, JSONArray composition) {
+
+        public PreviewRecycler(int layout, List<Composition> composition) {
             super(composition);
             mLayout = layout;
         }
 
         @Override
         public void onBindViewHolder(PreviewHolder holder, int position) {
-            holder.bindSheetJson(mJsonList.get(position));
+            holder.bindSheetJson(mSheetList.get(position));
         }
 
         @Override
@@ -132,16 +75,16 @@ public class SheetArrayGridFragment extends Fragment {
     }
 
     public class PreviewHolder extends CompositionViewHolder {
-        private SheetURLImageView mPreviewImage;
+        private URLImageView mPreviewImage;
 
         public PreviewHolder(View view) {
             super(view);
-            mPreviewImage = (SheetURLImageView) view.findViewById(R.id.sheet_music_preview_image);
+            mPreviewImage = (URLImageView) view.findViewById(R.id.sheet_music_preview_image);
         }
 
         @Override
-        public void bindSheetJson(JSONObject sheetJson) {
-            super.bindSheetJson(sheetJson);
+        public void bindSheetJson(Composition sheet) {
+            super.bindSheetJson(sheet);
             mPreviewImage.loadImageFromURL("https:" + mComposition.getThumbnail_url(), null);
         }
     }

@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import com.octo.android.robospice.GsonSpringAndroidSpiceService;
 import com.octo.android.robospice.SpiceManager;
 
+import roboguice.util.temp.Ln;
+
 /**
  * Base activity for the purpose of implementing left panel on all activities.
  * Created by joey on 12/26/14.
@@ -52,6 +54,8 @@ public class BaseActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Ln.getConfig().setLoggingLevel(Log.ERROR);
 
         // Base activity should never define the toolbar
         //setContentView(R.layout.activity_base);

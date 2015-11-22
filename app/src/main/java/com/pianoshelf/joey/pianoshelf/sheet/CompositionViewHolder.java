@@ -5,12 +5,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
 import com.pianoshelf.joey.pianoshelf.composition.CompositionUtil;
-
-import org.json.JSONObject;
 
 /**
  * Created by joey on 13/11/15.
@@ -44,10 +41,9 @@ public class CompositionViewHolder extends RecyclerView.ViewHolder {
     }
 
 
-    public void bindSheetJson(JSONObject sheetJson) {
+    public void bindSheetJson(Composition sheet) {
         // Unwrapping the JSON object
-        mComposition = new Gson()
-                .fromJson(sheetJson.toString(), Composition.class);
+        mComposition = sheet;
 
         // Populate textViews with information
         mTitle.setText(mComposition.getTitle().trim());

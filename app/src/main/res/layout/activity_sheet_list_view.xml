@@ -68,14 +68,24 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <FrameLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/single_frame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/list_item_background_normal">
-        </FrameLayout>
+            <FrameLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/single_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/list_item_background_normal" />
+
+            <ProgressBar
+                android:id="@+id/progress_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminate="true"/>
+        </RelativeLayout>
     </LinearLayout>
     <include layout="@layout/drawer_default"/>
 </android.support.v4.widget.DrawerLayout>
