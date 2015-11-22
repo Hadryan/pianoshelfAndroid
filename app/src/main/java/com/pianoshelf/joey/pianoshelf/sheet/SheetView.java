@@ -127,18 +127,6 @@ public class SheetView extends BaseActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        spiceManager.start(this);
-    }
-
-    @Override
-    protected void onStop() {
-        spiceManager.shouldStop();
-        super.onStop();
-    }
-
     /**
      * Check existing files and download missing files.
      * Checks the file, if it does not exist then create and request the image.

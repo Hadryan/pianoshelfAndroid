@@ -16,7 +16,7 @@
         android:layout_marginBottom="@dimen/list_bottom_margin">
 
         <!-- Here we make the assumption that most preview images will be close to the example preview image -->
-        <com.pianoshelf.joey.pianoshelf.sheet.URLImageView
+        <ImageView
             android:id="@+id/sheet_music_preview_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

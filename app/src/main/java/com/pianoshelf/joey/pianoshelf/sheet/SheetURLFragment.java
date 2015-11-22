@@ -9,27 +9,22 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.pianoshelf.joey.pianoshelf.R;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * This class receives a working URL and loads the URL
  * Created by joey on 10/29/14.
  */
-public class SheetURLFragment extends Fragment implements URLImageView.ImageLoaded {
+public class SheetURLFragment extends Fragment implements RequestListener<String, GlideDrawable> {
     private String sheetUrl;
     private static final String SHEET_URL_ARGUMENT = "sheetUrl";
     private static final String LOG_TAG = "SheetURLFragment";
     private ProgressBar progressBar;
-    private URLImageView mImageView;
-    private PhotoViewAttacher mAttacher;
-
-    // Default Constructor
-    public SheetURLFragment() {}
+    private ImageView mImageView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,37 +41,36 @@ public class SheetURLFragment extends Fragment implements URLImageView.ImageLoad
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_sheet, container, false);
+        return inflater.inflate(R.layout.fragment_sheet, container, false);
+    }
 
-
-        // Try to parse the URL to see if it is malformed
-        try {
-            URL sheetUrlTest = new URL(sheetUrl);
-        } catch (MalformedURLException ex) {
-            Log.e(LOG_TAG, "URL malformed " + sheetUrl + " Message " + ex.getMessage());
-            // TODO display error image
-        }
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         progressBar = (ProgressBar) view.findViewById(R.id.sheetProgress);
         progressBar.setVisibility(View.VISIBLE);
 
-        mImageView = (URLImageView) view.findViewById(R.id.sheetImage);
-        mAttacher = new PhotoViewAttacher(mImageView);
-
-        mImageView.loadImageFromURL(sheetUrl, this);
-
-        return view;
+        mImageView = (ImageView) view.findViewById(R.id.sheetImage);
+        Glide.with(getContext())
+                .load(sheetUrl)
+                .fitCenter()
+                .crossFade()
+                .listener(this)
+                .into(mImageView);
     }
 
     @Override
-    public void onImageLoaded(ImageView image) {
+    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+        Log.e(LOG_TAG, e.getMessage());
         progressBar.setVisibility(View.GONE);
-        mAttacher.update();
+        return false;
     }
 
     @Override
-    public void onImageError(ImageView image) {
-        Log.w(LOG_TAG, "Image error " + image);
+    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+        progressBar.setVisibility(View.GONE);
+        return false;
     }
 
     /**

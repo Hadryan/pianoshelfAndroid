@@ -104,6 +104,7 @@ public class SheetListView extends BaseActivity {
         // switch from list to grid and back
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.single_frame, mSheetList)
+                .hide(mSheetList)
                 .add(R.id.single_frame, mSheetGrid)
                 .commit();
 
@@ -243,7 +244,6 @@ public class SheetListView extends BaseActivity {
     private class SheetListRequestListener implements RequestListener<SheetList> {
         @Override
         public void onRequestSuccess(SheetList sheetList) {
-            Log.i(LOG_TAG, "got it");
             mState = SheetListState.SHEETMUSIC;
             //Populate the list with JSON objects
             mSheets.addAll(sheetList.getResults());

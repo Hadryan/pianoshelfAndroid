@@ -1,5 +1,6 @@
 package com.pianoshelf.joey.pianoshelf.profile;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
@@ -17,7 +19,6 @@ import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetArrayListFragment;
-import com.pianoshelf.joey.pianoshelf.sheet.URLImageView;
 
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class ProfileView extends BaseActivity {
     private TextView userName;
     private TextView description;
 
-    private URLImageView avatar;
+    private ImageView avatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,7 @@ public class ProfileView extends BaseActivity {
         userName = (TextView) findViewById(R.id.profile_username);
         description = (TextView) findViewById(R.id.profile_description);
 
-        avatar = (URLImageView) findViewById(R.id.profile_avatar);
+        avatar = (ImageView) findViewById(R.id.profile_avatar);
 
         myShelf = SheetArrayListFragment.newInstance();
         getSupportFragmentManager().beginTransaction()
@@ -65,7 +66,7 @@ public class ProfileView extends BaseActivity {
         } else {
             ProfileRequest request = new ProfileRequest(username);
             spiceManager.execute(request, request.createCacheKey(),
-                    DurationInMillis.ONE_HOUR, new ProfileRequestListener());
+                    DurationInMillis.ONE_HOUR, new ProfileRequestListener(this));
 
         }
     }
@@ -77,8 +78,15 @@ public class ProfileView extends BaseActivity {
     }
 
     private class ProfileRequestListener implements RequestListener<Profile> {
+        private Context mContext;
+
+        public ProfileRequestListener(Context context) {
+            mContext = context;
+        }
+
         @Override
         public void onRequestSuccess(Profile profile) {
+            progressBar.setVisibility(View.GONE);
             mProfile = profile;
 
             // user info
@@ -92,20 +100,8 @@ public class ProfileView extends BaseActivity {
             if (TextUtils.isEmpty(avatarUrl)) {
                 avatar.setImageResource(R.drawable.default_avatar);
             } else {
-                avatar.loadImageFromURL(avatarUrl, new URLImageView.ImageLoaded() {
-                    @Override
-                    public void onImageLoaded(ImageView image) {
-                        progressBar.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onImageError(ImageView image) {
-                        progressBar.setVisibility(View.GONE);
-                        avatar.setImageResource(R.drawable.default_avatar);
-                    }
-                });
+                Glide.with(mContext).load(avatarUrl).into(avatar);
             }
-
             // Load a preview of the user's shelf
             List<Composition> sheetList = profile.getShelf().getSheetmusic();
             if (sheetList.size() > PREVIEW_VALUE) {
@@ -117,6 +113,7 @@ public class ProfileView extends BaseActivity {
 
         @Override
         public void onRequestFailure(SpiceException spiceException) {
+            progressBar.setVisibility(View.GONE);
             Log.e(LOG_TAG, "User " + username + " failed to load");
         }
     }
