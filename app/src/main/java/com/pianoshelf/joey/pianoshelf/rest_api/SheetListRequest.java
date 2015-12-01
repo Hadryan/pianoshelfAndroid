@@ -7,6 +7,7 @@ import com.octo.android.robospice.request.springandroid.SpringAndroidSpiceReques
  */
 public class SheetListRequest extends SpringAndroidSpiceRequest<SheetList> {
     private String mUrl;
+
     public SheetListRequest(String url) {
         super(SheetList.class);
         mUrl = url;

@@ -17,6 +17,7 @@ public class SharedPreferenceHelper {
     final Context context;
     final SharedPreferences sharedPreferences;
     final SharedPreferences.Editor preferenceEditor;
+    final Gson mGson;
 
     public static final String PIANOSHELF = "pianoshelf";
     public static final String COMPOSITION_JSON_KEY = "COMPOSITION_JSON_KEY";
@@ -26,11 +27,13 @@ public class SharedPreferenceHelper {
         this.context = context;
         sharedPreferences = context.getSharedPreferences(PIANOSHELF, Context.MODE_PRIVATE);
         preferenceEditor = sharedPreferences.edit();
+        mGson = new Gson();
     }
 
     /**
      * Check preferences for the set of keys. Create the set if it does not exist.
      * The set of keys represent the availability of a offline composition
+     *
      * @return
      */
     private Set<String> getOfflineCompositionKeys() {
@@ -47,6 +50,7 @@ public class SharedPreferenceHelper {
 
     /**
      * Fetch the composition JSON object
+     *
      * @param compositionName
      * @return
      */
@@ -60,7 +64,7 @@ public class SharedPreferenceHelper {
             if (compositionJsonString == null) {
                 return defaultValue;
             } else {
-                return (new Gson()).fromJson(compositionJsonString, Composition.class);
+                return mGson.fromJson(compositionJsonString, Composition.class);
             }
         }
     }
@@ -69,7 +73,7 @@ public class SharedPreferenceHelper {
         SharedPreferences.Editor compositionEditor = context.
                 getSharedPreferences(compositionsName, Context.MODE_PRIVATE).edit();
         compositionEditor.putString(COMPOSITION_JSON_KEY,
-                (new Gson()).toJson(composition, Composition.class));
+                mGson.toJson(composition, Composition.class));
         compositionEditor.apply();
         // Check if the composition exists in the set of keys. Create it if it does not exist.
         HashSet<String> offlineCompositionKeys = (HashSet<String>) getOfflineCompositionKeys();
@@ -82,6 +86,7 @@ public class SharedPreferenceHelper {
 
     /**
      * Fetch the offline images array/list
+     *
      * @param compositionName
      * @return
      */
@@ -101,6 +106,7 @@ public class SharedPreferenceHelper {
 
     /**
      * Precondition: compositionName must exist
+     *
      * @param compositionName
      * @param compositionImages
      */

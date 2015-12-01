@@ -29,7 +29,7 @@ public abstract class JSONAdapter extends BaseAdapter {
         this.layout = layout;
         this.jsonArray = new ArrayList<>();
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        for(int i=0;i<composers.length();++i) {
+        for (int i = 0; i < composers.length(); ++i) {
             try {
                 this.jsonArray.add(composers.getJSONObject(i));
             } catch (JSONException ex) {
@@ -49,7 +49,7 @@ public abstract class JSONAdapter extends BaseAdapter {
     }
 
     @Override
-    public int getCount(){
+    public int getCount() {
         return jsonArray.size();
     }
 

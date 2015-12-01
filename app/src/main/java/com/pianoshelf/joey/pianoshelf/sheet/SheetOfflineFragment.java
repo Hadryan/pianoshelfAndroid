@@ -26,7 +26,8 @@ public class SheetOfflineFragment extends Fragment {
     private ProgressBar progressBar;
 
     // Default Constructor
-    public SheetOfflineFragment() {}
+    public SheetOfflineFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

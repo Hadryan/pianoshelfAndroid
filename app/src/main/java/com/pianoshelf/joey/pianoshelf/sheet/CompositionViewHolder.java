@@ -11,7 +11,7 @@ import com.pianoshelf.joey.pianoshelf.composition.CompositionUtil;
 
 /**
  * Created by joey on 13/11/15.
- *
+ * <p/>
  * Provide a reference to the views for each data item
  * Complex data items may need more than one view per item, and
  * you provide access to all the views for a data item in a view holder

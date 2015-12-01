@@ -45,18 +45,18 @@ public class MainActivity extends BaseActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_settings:
                 return true;
             //case R.id.actionBarSearch:
-                // Process search keypress from action bar
-                //return true;
+            // Process search keypress from action bar
+            //return true;
             default:
-               return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected(item);
         }
     }
 
-    public void invokeSheetView(View view){
+    public void invokeSheetView(View view) {
         Intent intent = new Intent(this, SheetView.class);
         intent.putExtra("sheetMusicUrl", (SERVER_ADDR + "/api/sheetmusic/1/"));
         intent.putExtra(AUTHORIZATION_TOKEN, getAuthToken());
@@ -107,14 +107,14 @@ public class MainActivity extends BaseActivity {
 
     public void invokeProfile(View view) {
         SharedPreferences sharedPreferences = getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
-        String username =  sharedPreferences.getString(C.USERNAME, null);
+        String username = sharedPreferences.getString(C.USERNAME, null);
         Intent intent = new Intent(this, ProfileView.class);
         intent.putExtra("username", "hello");
         startActivity(intent);
     }
 
     @Override
-    protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
         }

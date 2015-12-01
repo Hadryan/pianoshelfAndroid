@@ -25,6 +25,7 @@ public class SignupView extends BaseActivity {
     private final String LOG_TAG = "SignupView";
 
     private static final String KEY_LAST_REQUEST_CACHE_KEY = "lastRequestCacheKey";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +52,7 @@ public class SignupView extends BaseActivity {
             performRequest(credentials);
         }
     }
+
     private void performRequest(Register credentials) {
         progressBar.setVisibility(View.VISIBLE);
         RegisterRequest request = new RegisterRequest(credentials);

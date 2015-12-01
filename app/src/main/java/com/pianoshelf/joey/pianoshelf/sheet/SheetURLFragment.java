@@ -35,6 +35,7 @@ public class SheetURLFragment extends Fragment implements RequestListener<String
             //TODO load error img?
         }
     }
+
     // Currently the progressBar only shows upon first entering the Fragment
     // Need to implement the onResume, onPaused, etc functions to display
     // the spinning progressbar correctly 

@@ -57,6 +57,7 @@ public class LoginView extends BaseActivity {
 
     /**
      * POST login if username and password are valid
+     *
      * @param view layout for this class
      */
     public void invokeLogin(View view) {

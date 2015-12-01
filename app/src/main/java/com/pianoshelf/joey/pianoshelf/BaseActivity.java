@@ -161,6 +161,7 @@ public class BaseActivity extends AppCompatActivity
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }
     }
+
     protected boolean isNavDrawerOpen() {
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START);
     }
@@ -168,6 +169,7 @@ public class BaseActivity extends AppCompatActivity
 
     /**
      * Handle when a drawer item is selected
+     *
      * @param menuItem
      * @return
      */
@@ -178,6 +180,7 @@ public class BaseActivity extends AppCompatActivity
 
     /**
      * Handle when a menu item is selected on the toolbar
+     *
      * @param item
      * @return
      */

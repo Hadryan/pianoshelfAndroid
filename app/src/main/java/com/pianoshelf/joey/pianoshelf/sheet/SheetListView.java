@@ -145,6 +145,7 @@ public class SheetListView extends BaseActivity {
     public void loadComposerList() {
         if (mStateSem.tryAcquire()) {
             mSpinner.setVisibility(View.VISIBLE);
+            Log.v(LOG_TAG, "Composer Request Url " + composerUrl);
             JsonArrayRequest composersRequest = new JsonArrayRequest
                     (Request.Method.GET, composerUrl, (String) null, new Response.Listener<JSONArray>() {
                         @Override

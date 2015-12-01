@@ -8,6 +8,7 @@ import android.util.Log;
  */
 public class CompositionUtil {
     public static final String LOG_TAG = "Composition Parser";
+
     // Parse a difficulty integer to a difficulty string
     public static String ParseDifficulty(int difficulty) {
         switch (difficulty) {
@@ -68,5 +69,13 @@ public class CompositionUtil {
             default:
                 return parsedDownloadCount + 'T';
         }
+    }
+
+    public static String ParseSheetFileNameUrl(String sheetUrl) {
+        return sheetUrl.substring(sheetUrl.lastIndexOf('/') + 1);
+    }
+
+    public static String ParseOnlineSheetUrl(String sheetUrl) {
+        return "https:" + sheetUrl;
     }
 }

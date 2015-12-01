@@ -31,7 +31,8 @@ public class ComposerListFragment extends android.support.v4.app.ListFragment {
     private static final String LOG_TAG = "ComposerListFragment";
     private JSONArray jsonArray;
 
-    public ComposerListFragment() {}
+    public ComposerListFragment() {
+    }
 
     public static ComposerListFragment newInstance(JSONArray jsonArray) {
         ComposerListFragment sheetList = new ComposerListFragment();

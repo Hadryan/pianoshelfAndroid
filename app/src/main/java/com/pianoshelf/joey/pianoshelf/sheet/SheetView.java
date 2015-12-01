@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,12 +18,9 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.gson.Gson;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
@@ -32,9 +30,11 @@ import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
 import com.pianoshelf.joey.pianoshelf.VolleySingleton;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.composition.CompositionRequest;
+import com.pianoshelf.joey.pianoshelf.composition.CompositionUtil;
 import com.pianoshelf.joey.pianoshelf.rest_api.AddSheetToShelfRequest;
 
-import org.json.JSONObject;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,12 +50,15 @@ import java.io.IOException;
  */
 public class SheetView extends BaseActivity {
     private final String LOG_TAG = "SheetView";
-    private Composition composition;
+    private Composition mComposition;
 
     // Menu button to download sheetmusic
     //private MenuItem downloadAction;
 
-    private String[] offlineImages;
+    private ViewPager mViewPager;
+    private ActionBar mActionBar;
+
+    private String[] mOfflineImages;
 
     private final String offlineRootDirectory =
             Environment.getExternalStorageDirectory() + File.separator + C.PIANOSHELF;
@@ -69,48 +72,56 @@ public class SheetView extends BaseActivity {
         Intent intent = getIntent();
         String sheetMusicUrl = intent.getStringExtra("sheetMusicUrl");
 
-        final Context context = this;
-        // Fetch the JSON object from the URL
-        // Create the request object
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, sheetMusicUrl, (String) null, new Response.Listener<JSONObject>() {
-                    public void onResponse(JSONObject response) {
-                        // Parse response into Java object with Gson
-                        composition =
-                                (new Gson()).fromJson(response.toString(), Composition.class);
 
-                        offlineImages = (new SharedPreferenceHelper(context)).
-                                getOfflineCompositionImages(composition.getUniqueurl(), null);
+        mViewPager = (ViewPager) findViewById(R.id.sheetViewPager);
+        mActionBar = getSupportActionBar();
 
-                        // Set actionbar title
-                        getSupportActionBar().setTitle(composition.getTitle());
+        // Fetch the JSON object from the URL Create the request object
+        CompositionRequest request = new CompositionRequest(sheetMusicUrl);
+        spiceManager.execute(request, null, DurationInMillis.ONE_HOUR,
+                new SheetMusicRequestListener(this));
+    }
 
-                        // Make the download button visible
-                        boolean disableDownloadButton = true;
-                        for (int i=0; i<composition.getImages().length && disableDownloadButton;++i) {
-                            String onlineImageUrl = composition.getImages()[i];
-                            String offlineImageLocation = parseSheetFileNameUrl(onlineImageUrl);
-                            disableDownloadButton = (offlineImages != null) && (composition.getImages().length != offlineImages.length) && (offlineImageLocation.equals(offlineImages[i]));
-                        }
-                        // Only enable download button if the data in shared preferences are
-                        // incomplete
-                        if (!disableDownloadButton) {
-                            //downloadAction.setVisible(true);
-                        }
+    private class SheetMusicRequestListener implements RequestListener<Composition> {
+        private Context mContext;
 
-                        // Instantiate a ViewPager and a PagerAdapter.
-                        ViewPager viewPager = (ViewPager)
-                                findViewById(R.id.sheetViewPager);
-                        // TODO BeginTransaction ?
-                        viewPager.setAdapter(new SheetViewPagerAdapter(getSupportFragmentManager()));
-                    }
-                }, new Response.ErrorListener() {
-                    public void onErrorResponse(VolleyError error) {
-                        //TODO popup error message
-                    }
-                });
-        // Make the actual request
-        VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
+        public SheetMusicRequestListener(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        public void onRequestSuccess(Composition composition) {
+            mComposition = composition;
+            mOfflineImages = (new SharedPreferenceHelper(mContext)).
+                    getOfflineCompositionImages(composition.getUniqueurl(), null);
+
+            // Set actionbar title
+            mActionBar.setTitle(composition.getTitle());
+
+            // Make the download button visible
+            boolean disableDownloadButton = true;
+            String[] compositionImages = composition.getImages();
+            for (int i = 0; i < compositionImages.length && disableDownloadButton; ++i) {
+                String onlineImageUrl = compositionImages[i];
+                String offlineImageLocation = CompositionUtil.ParseSheetFileNameUrl(onlineImageUrl);
+                disableDownloadButton = (mOfflineImages != null)
+                        && (compositionImages.length != mOfflineImages.length)
+                        && (offlineImageLocation.equals(mOfflineImages[i]));
+            }
+            // Only enable download button if the data in shared preferences are
+            // incomplete
+            if (!disableDownloadButton) {
+                //downloadAction.setVisible(true);
+            }
+
+            // Instantiate a ViewPager and a PagerAdapter.
+            mViewPager.setAdapter(new SheetViewPagerAdapter(getSupportFragmentManager()));
+        }
+
+        @Override
+        public void onRequestFailure(SpiceException spiceException) {
+            mActionBar.setTitle("Error");
+        }
     }
 
     @Override
@@ -131,13 +142,14 @@ public class SheetView extends BaseActivity {
      * Check existing files and download missing files.
      * Checks the file, if it does not exist then create and request the image.
      * Save the image when the request completes.
+     *
      * @param item
      */
     public boolean invokeDownload(MenuItem item) {
-        final String compositionFolderName = composition.getUniqueurl();
+        final String compositionFolderName = mComposition.getUniqueurl();
         final File offlineSheetDirectory;
 
-        // Check composition folder, create it if it does not exist.
+        // Check mComposition folder, create it if it does not exist.
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             offlineSheetDirectory = new File(offlineRootDirectory, compositionFolderName);
@@ -149,31 +161,30 @@ public class SheetView extends BaseActivity {
             return false;
         }
 
-        // Start async task to download all the images of this composition and store them
+        // Start async task to download all the images of this mComposition and store them
         // in external storage
         VolleySingleton requestQueue = VolleySingleton.getInstance(this);
         final SharedPreferenceHelper offlineFiles = new SharedPreferenceHelper(this);
-        final String compositionName = composition.getUniqueurl();
-        final String[] offlineImages;
+        final String compositionName = mComposition.getUniqueurl();
         String[] cachedOfflineImages = offlineFiles.
                 getOfflineCompositionImages(compositionName, null);
-        final String[] onlineImages = composition.getImages();
+        final String[] onlineImages = mComposition.getImages();
 
         if (cachedOfflineImages == null) {
-            offlineFiles.setOfflineCompositions(compositionName, composition);
-            offlineImages = new String[onlineImages.length];
+            offlineFiles.setOfflineCompositions(compositionName, mComposition);
+            mOfflineImages = new String[onlineImages.length];
         } else {
-            offlineImages = cachedOfflineImages;
+            mOfflineImages = cachedOfflineImages;
         }
         // Iterate over all sheetUrls and download each image
-        for (int i=0; i<onlineImages.length; ++i) {
+        for (int i = 0; i < onlineImages.length; ++i) {
             final int currentIndex = i;
-            final String sheetUrl = parseOnlineSheetUrl(onlineImages[i]);
+            final String sheetUrl = CompositionUtil.ParseOnlineSheetUrl(onlineImages[i]);
             final boolean writeSheetToFile;
             final File offlineSheet;
-            final String sheetFileName = parseSheetFileNameUrl(sheetUrl);
+            final String sheetFileName = CompositionUtil.ParseSheetFileNameUrl(sheetUrl);
             // Store the image to external storage
-            // Check composition file, skip this write if file exists
+            // Check mComposition file, skip this write if file exists
             state = Environment.getExternalStorageState();
             if (Environment.MEDIA_MOUNTED.equals(state)) {
                 offlineSheet = new File(offlineSheetDirectory, sheetFileName);
@@ -182,7 +193,7 @@ public class SheetView extends BaseActivity {
                 if (offlineSheet.exists()) {
                     // Check if we written the file to shared preferences.
                     // If we did, do not write the file.
-                    writeSheetToFile = !sheetFileName.equals(offlineImages[i]);
+                    writeSheetToFile = !sheetFileName.equals(mOfflineImages[i]);
                 } else {
                     writeSheetToFile = true;
                 }
@@ -202,23 +213,19 @@ public class SheetView extends BaseActivity {
                             @Override
                             public void onResponse(Bitmap bitmap) {
                                 // Write the image file
-                                FileOutputStream fileOutputStream;
+                                FileOutputStream fileOutputStream = null;
                                 try {
                                     fileOutputStream = new FileOutputStream(offlineSheet);
                                     // Compression format PNG ignores the 100 quality setting
-                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100,
-                                            fileOutputStream);
-                                    fileOutputStream.close();
-                                    // Update offlineImages
-                                    offlineImages[currentIndex] = sheetFileName;
+                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+                                    // Update mOfflineImages
+                                    mOfflineImages[currentIndex] = sheetFileName;
                                     // Update offline content information
-                                    offlineFiles.setOfflineCompositionImages(compositionName,
-                                            offlineImages);
-                                    setOfflineImages(offlineImages);
+                                    offlineFiles.setOfflineCompositionImages(compositionName, mOfflineImages);
                                 } catch (FileNotFoundException ex) {
                                     Log.e(LOG_TAG, "File not found.");
-                                } catch (IOException ex) {
-                                    Log.e(LOG_TAG, "File output stream not closed.");
+                                } finally {
+                                    IOUtils.closeQuietly(fileOutputStream);
                                 }
                             }
                         }, 0, 0, ImageView.ScaleType.CENTER, null,
@@ -237,6 +244,7 @@ public class SheetView extends BaseActivity {
 
     /**
      * Forced download of sheet images. Overwrite all files
+     *
      * @param item
      */
     public boolean invokeForcedDownload(MenuItem item) {
@@ -248,6 +256,7 @@ public class SheetView extends BaseActivity {
      * Consider invoking a global download intent as we do not have the capabilities of
      * rendering PDF at the moment. Or we can save to a publicly visible folder and
      * notify the user.
+     *
      * @param item
      */
     public boolean invokePDFDownload(MenuItem item) {
@@ -259,7 +268,7 @@ public class SheetView extends BaseActivity {
                 getSharedPreferences(C.PIANOSHELF, MODE_PRIVATE);
         //TODO Add a check to see if the sheet is already present in the user's shelf
         if (globalPreferences.contains(C.AUTHORIZATION_TOKEN)) {
-            performRequest(composition.getId(),
+            performRequest(mComposition.getId(),
                     globalPreferences.getString(C.AUTHORIZATION_TOKEN, null));
         }
         return true;
@@ -284,18 +293,6 @@ public class SheetView extends BaseActivity {
         }
     }
 
-    private String parseSheetFileNameUrl(String sheetUrl) {
-        return sheetUrl.substring(sheetUrl.lastIndexOf('/') + 1);
-    }
-
-    private String parseOnlineSheetUrl(String sheetUrl) {
-        return "https:" + sheetUrl;
-    }
-
-    private void setOfflineImages(String[] offlineImages) {
-        this.offlineImages = offlineImages;
-    }
-
     private class SheetViewPagerAdapter extends FragmentPagerAdapter {
         public SheetViewPagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
@@ -303,13 +300,13 @@ public class SheetView extends BaseActivity {
 
         @Override
         public Fragment getItem(int position) {
-            String onlineImageUrl = parseOnlineSheetUrl(composition.getImages()[position]);
-            String offlineImageLocation = parseSheetFileNameUrl(onlineImageUrl);
-            if (offlineImages != null && (position < offlineImages.length) &&
-                    (offlineImageLocation.equals(offlineImages[position]))) {
+            String onlineImageUrl = CompositionUtil.ParseOnlineSheetUrl(mComposition.getImages()[position]);
+            String offlineImageLocation = CompositionUtil.ParseSheetFileNameUrl(onlineImageUrl);
+            if (mOfflineImages != null && (position < mOfflineImages.length) &&
+                    (offlineImageLocation.equals(mOfflineImages[position]))) {
                 Log.i(LOG_TAG, "Using offline image.");
                 return SheetOfflineFragment.newInstance(offlineRootDirectory + File.separator +
-                        composition.getUniqueurl() + File.separator + offlineImageLocation);
+                        mComposition.getUniqueurl() + File.separator + offlineImageLocation);
             } else {
                 Log.i(LOG_TAG, "Fetching online image. " + onlineImageUrl);
                 return SheetURLFragment.newInstance(onlineImageUrl);
@@ -318,7 +315,7 @@ public class SheetView extends BaseActivity {
 
         @Override
         public int getCount() {
-            return composition.getImages().length;
+            return mComposition.getImages().length;
         }
     }
 }

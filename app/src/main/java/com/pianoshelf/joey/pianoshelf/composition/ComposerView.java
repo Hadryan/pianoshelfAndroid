@@ -50,8 +50,8 @@ public class ComposerView extends ListActivity {
 
         // Request to get the array of composers
         JsonObjectRequest composersRequest = new JsonObjectRequest
-                (composerUrl, null, new Response.Listener<JSONObject>(){
-                    public void onResponse(JSONObject response){
+                (composerUrl, null, new Response.Listener<JSONObject>() {
+                    public void onResponse(JSONObject response) {
                         try {
                             //TODO implement infinite scrolling for next/prev pages
                             composerCount = response.getInt("count");
@@ -72,7 +72,7 @@ public class ComposerView extends ListActivity {
     }
 
     @Override
-    protected void onListItemClick (ListView listview, View view, int position, long id){
+    protected void onListItemClick(ListView listview, View view, int position, long id) {
         // Example:  /api/sheetmusic/?composer_name=Chopin&page_size=200
         Intent getSheetsByComposer = new Intent(this, SheetListView.class);
         getSheetsByComposer.putExtra("query"
