@@ -39,7 +39,6 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 /**
  * Created by joey on 24/10/14.

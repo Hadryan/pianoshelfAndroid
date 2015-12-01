@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/sheet_music_card_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/sheet_list_item_background"
     android:layout_margin="@dimen/grid_margin">
 
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -22,9 +19,9 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:src="@drawable/example_preview_image"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
-        <include layout="@layout/adapter_sheet_list_item_3"/>
+        <include layout="@layout/adapter_sheet_list_item_3" />
 
     </LinearLayout>
 

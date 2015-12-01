@@ -3,10 +3,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Main" >
+    tools:context=".Main">
 
     <!-- Search Button -->
-    <item android:id="@+id/myActionSearch"
+    <item
+        android:id="@+id/myActionSearch"
         android:icon="@drawable/ic_action_search"
         android:title="@string/search_title"
         app:showAsAction="always" />

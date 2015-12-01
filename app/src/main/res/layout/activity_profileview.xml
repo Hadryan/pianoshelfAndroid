@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" 
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin_minor"
@@ -14,14 +13,14 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:indeterminate="true"
-        android:visibility="visible"/>
+        android:visibility="visible" />
 
     <ImageView
         android:id="@+id/profile_avatar"
         android:layout_width="@dimen/profile_avatar_width"
         android:layout_height="@dimen/profile_avatar_height"
         android:padding="@dimen/profile_avatar_padding"
-        android:contentDescription="@string/profile_avatar_description"/>
+        android:contentDescription="@string/profile_avatar_description" />
 
     <TextView
         android:id="@+id/profile_fullname"
@@ -32,7 +31,7 @@
         android:paddingLeft="@dimen/profile_name_horizontal_padding"
         android:paddingRight="@dimen/profile_name_horizontal_padding"
 
-        android:textSize="@dimen/font_title"/>
+        android:textSize="@dimen/font_title" />
 
     <TextView
         android:id="@+id/profile_username"
@@ -44,7 +43,7 @@
         android:paddingLeft="@dimen/profile_name_horizontal_padding"
         android:paddingRight="@dimen/profile_name_horizontal_padding"
 
-        android:textStyle="bold|italic"/>
+        android:textStyle="bold|italic" />
 
     <TextView
         android:id="@+id/profile_description"
@@ -53,7 +52,7 @@
         android:layout_below="@id/profile_avatar"
 
         android:textSize="@dimen/font_title_minor"
-        android:gravity="center"/>
+        android:gravity="center" />
 
     <RelativeLayout
         android:id="@+id/profile_myshelf_banner"
@@ -62,10 +61,12 @@
         android:layout_marginTop="@dimen/title_top_margin"
         android:layout_below="@+id/profile_description"
         android:clickable="true">
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/separator_dark"/>
+            android:background="@color/separator_dark" />
+
         <TextView
             android:id="@+id/profile_myshelf_title"
             android:layout_width="wrap_content"
@@ -74,7 +75,8 @@
             android:layout_alignParentStart="true"
             android:gravity="center_vertical"
             android:text="@string/myshelf"
-            android:textSize="@dimen/font_title_minor"/>
+            android:textSize="@dimen/font_title_minor" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -85,7 +87,7 @@
             android:textColor="@color/clickable_text"
             android:textSize="@dimen/font_title_minor"
             android:clickable="true"
-            android:onClick="invokeShelfView"/>
+            android:onClick="invokeShelfView" />
     </RelativeLayout>
 
 
@@ -94,6 +96,6 @@
         android:id="@+id/profile_myshelf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profile_myshelf_banner"/>
+        android:layout_below="@+id/profile_myshelf_banner" />
 
 </RelativeLayout>

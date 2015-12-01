@@ -27,10 +27,12 @@ public class URLImageView extends ImageView {
         super(context);
         init(context);
     }
+
     public URLImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
+
     public URLImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
@@ -101,6 +103,7 @@ public class URLImageView extends ImageView {
 
     public interface ImageLoaded {
         void onImageLoaded(ImageView image);
+
         void onImageError(ImageView image);
     }
 }

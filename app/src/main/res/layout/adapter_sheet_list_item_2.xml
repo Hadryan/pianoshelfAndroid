@@ -6,7 +6,7 @@
     android:background="@drawable/sheet_list_item_background"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingBottom="3dp" >
+    android:paddingBottom="3dp">
 
     <!-- Hard-coded text here to use with design preview mode -->
     <TextView
@@ -26,7 +26,7 @@
         android:id="@+id/sheet_list_item_bottom_row"
         android:layout_width="match_parent"
         android:layout_height="25dp"
-        android:layout_below="@id/sheet_list_item_title" >
+        android:layout_below="@id/sheet_list_item_title">
 
         <TextView
             android:id="@id/sheet_list_item_composer_name"
@@ -49,16 +49,18 @@
 
             android:text="Intermediate"
             android:gravity="center" />
+
         <LinearLayout
             android:layout_width="65dp"
             android:layout_height="match_parent"
-            android:clickable="true" >
+            android:clickable="true">
+
             <ImageView
                 android:id="@+id/sheet_list_item_download_icon"
                 android:layout_width="20dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
-                android:src="@drawable/ic_action_download"/>
+                android:src="@drawable/ic_action_download" />
 
             <TextView
                 android:id="@id/sheet_list_item_download_count"

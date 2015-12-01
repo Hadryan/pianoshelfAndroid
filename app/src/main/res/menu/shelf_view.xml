@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:compat="http://schemas.android.com/apk/res-auto">
-<item android:id="@+id/shelf_edit"
-    android:title="@string/edit"
-    compat:showAsAction="ifRoom"
-    android:icon="@drawable/ic_action_edit"
-    android:onClick="editToggle"/>
+    xmlns:compat="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/shelf_edit"
+        android:title="@string/edit"
+        compat:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_edit"
+        android:onClick="editToggle" />
 </menu>
