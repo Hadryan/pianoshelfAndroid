@@ -31,7 +31,7 @@ public class BaseActivity extends AppCompatActivity
 
     private static final String LOG_TAG = "BaseActivity";
 
-    // Protected C
+    // Protected Constants
     protected static final String SERVER_ADDR = C.SERVER_ADDR;
     protected static final String PIANOSHELF = C.PIANOSHELF;
     protected static final String AUTHORIZATION_TOKEN = "AUTHORIZATION_TOKEN";

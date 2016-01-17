@@ -41,7 +41,6 @@ public class SheetURLFragment extends Fragment implements RequestListener<String
     // the spinning progressbar correctly 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         return inflater.inflate(R.layout.fragment_sheet, container, false);
     }
 
