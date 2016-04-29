@@ -31,6 +31,7 @@ import com.pianoshelf.joey.pianoshelf.utility.QueryUtil;
 import org.json.JSONArray;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
 
@@ -247,7 +248,12 @@ public class SheetListView extends BaseActivity {
         public void onRequestSuccess(SheetList sheetList) {
             mState = SheetListState.SHEETMUSIC;
             //Populate the list with JSON objects
-            mSheets.addAll(sheetList.getResults());
+            List<Composition> requestSheets = sheetList.getData();
+            if (requestSheets == null) {
+                Log.d(LOG_TAG, "Loaded zero sheets from Sheet List Request");
+            } else {
+                mSheets.addAll(sheetList.getData());
+            }
 
             mSheetList.setSheetList(mSheets);
             mSheetGrid.setSheetList(mSheets);

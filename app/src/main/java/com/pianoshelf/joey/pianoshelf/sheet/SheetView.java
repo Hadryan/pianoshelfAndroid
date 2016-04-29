@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.google.gson.Gson;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
@@ -33,12 +34,15 @@ import com.pianoshelf.joey.pianoshelf.composition.Composition;
 import com.pianoshelf.joey.pianoshelf.composition.CompositionRequest;
 import com.pianoshelf.joey.pianoshelf.composition.CompositionUtil;
 import com.pianoshelf.joey.pianoshelf.rest_api.AddSheetToShelfRequest;
+import com.pianoshelf.joey.pianoshelf.rest_api.CompositionJSON;
 
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by joey on 24/10/14.
@@ -70,18 +74,18 @@ public class SheetView extends BaseActivity {
         // fetches the url of the sheet music JSON object
         Intent intent = getIntent();
         String sheetMusicUrl = intent.getStringExtra("sheetMusicUrl");
-
+        Log.i(LOG_TAG, "Loading sheet from: " + sheetMusicUrl);
 
         mViewPager = (ViewPager) findViewById(R.id.sheetViewPager);
         mActionBar = getSupportActionBar();
 
         // Fetch the JSON object from the URL Create the request object
         CompositionRequest request = new CompositionRequest(sheetMusicUrl);
-        spiceManager.execute(request, null, DurationInMillis.ONE_HOUR,
+        spiceManager.execute(request, null, DurationInMillis.ALWAYS_EXPIRED,
                 new SheetMusicRequestListener(this));
     }
 
-    private class SheetMusicRequestListener implements RequestListener<Composition> {
+    private class SheetMusicRequestListener implements RequestListener<CompositionJSON> {
         private Context mContext;
 
         public SheetMusicRequestListener(Context context) {
@@ -89,22 +93,25 @@ public class SheetView extends BaseActivity {
         }
 
         @Override
-        public void onRequestSuccess(Composition composition) {
-            mComposition = composition;
+        public void onRequestSuccess(CompositionJSON json) {
+            mComposition = json.getData();
             mOfflineImages = (new SharedPreferenceHelper(mContext)).
-                    getOfflineCompositionImages(composition.getUniqueurl(), null);
+                    getOfflineCompositionImages(mComposition.getUniqueurl(), null);
+
+            Log.i(LOG_TAG, "myobj \n" + new Gson().toJson(mComposition));
 
             // Set actionbar title
-            mActionBar.setTitle(composition.getTitle());
+            mActionBar.setTitle(mComposition.getTitle());
 
             // Make the download button visible
             boolean disableDownloadButton = true;
-            String[] compositionImages = composition.getImages();
-            for (int i = 0; i < compositionImages.length && disableDownloadButton; ++i) {
-                String onlineImageUrl = compositionImages[i];
+            List<String> compositionImages = Arrays.asList(mComposition.getImages());
+            for (int i = 0; i < compositionImages.size() && disableDownloadButton; ++i) {
+                String onlineImageUrl = compositionImages.get(i);
                 String offlineImageLocation = CompositionUtil.ParseSheetFileNameUrl(onlineImageUrl);
+                // Verify all offline files
                 disableDownloadButton = (mOfflineImages != null)
-                        && (compositionImages.length != mOfflineImages.length)
+                        && (compositionImages.size() != mOfflineImages.length)
                         && (offlineImageLocation.equals(mOfflineImages[i]));
             }
             // Only enable download button if the data in shared preferences are
@@ -120,6 +127,7 @@ public class SheetView extends BaseActivity {
         @Override
         public void onRequestFailure(SpiceException spiceException) {
             mActionBar.setTitle("Error");
+            Log.e(LOG_TAG, "Sheet music request failed");
         }
     }
 
@@ -167,18 +175,18 @@ public class SheetView extends BaseActivity {
         final String compositionName = mComposition.getUniqueurl();
         String[] cachedOfflineImages = offlineFiles.
                 getOfflineCompositionImages(compositionName, null);
-        final String[] onlineImages = mComposition.getImages();
+        final List<String> onlineImages = Arrays.asList(mComposition.getImages());
 
         if (cachedOfflineImages == null) {
             offlineFiles.setOfflineCompositions(compositionName, mComposition);
-            mOfflineImages = new String[onlineImages.length];
+            mOfflineImages = new String[onlineImages.size()];
         } else {
             mOfflineImages = cachedOfflineImages;
         }
         // Iterate over all sheetUrls and download each image
-        for (int i = 0; i < onlineImages.length; ++i) {
+        for (int i = 0; i < onlineImages.size(); ++i) {
             final int currentIndex = i;
-            final String sheetUrl = CompositionUtil.ParseOnlineSheetUrl(onlineImages[i]);
+            final String sheetUrl = onlineImages.get(i);
             final boolean writeSheetToFile;
             final File offlineSheet;
             final String sheetFileName = CompositionUtil.ParseSheetFileNameUrl(sheetUrl);
@@ -299,7 +307,7 @@ public class SheetView extends BaseActivity {
 
         @Override
         public Fragment getItem(int position) {
-            String onlineImageUrl = CompositionUtil.ParseOnlineSheetUrl(mComposition.getImages()[position]);
+            String onlineImageUrl = mComposition.getImages()[position];
             String offlineImageLocation = CompositionUtil.ParseSheetFileNameUrl(onlineImageUrl);
             if (mOfflineImages != null && (position < mOfflineImages.length) &&
                     (offlineImageLocation.equals(mOfflineImages[position]))) {

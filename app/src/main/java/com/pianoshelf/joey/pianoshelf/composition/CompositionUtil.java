@@ -75,7 +75,4 @@ public class CompositionUtil {
         return sheetUrl.substring(sheetUrl.lastIndexOf('/') + 1);
     }
 
-    public static String ParseOnlineSheetUrl(String sheetUrl) {
-        return "https:" + sheetUrl;
-    }
 }

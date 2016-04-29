@@ -58,7 +58,8 @@ public class MainActivity extends BaseActivity {
 
     public void invokeSheetView(View view) {
         Intent intent = new Intent(this, SheetView.class);
-        intent.putExtra("sheetMusicUrl", (SERVER_ADDR + "/api/sheetmusic/1/"));
+        // https://www.pianoshelf.com/api/sheetmusic/1/
+        intent.putExtra("sheetMusicUrl", (SERVER_ADDR + "api/sheetmusic/1/"));
         intent.putExtra(AUTHORIZATION_TOKEN, getAuthToken());
         startActivity(intent);
     }

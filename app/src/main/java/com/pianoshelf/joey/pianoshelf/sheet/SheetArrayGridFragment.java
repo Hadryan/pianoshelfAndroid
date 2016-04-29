@@ -74,7 +74,7 @@ public class SheetArrayGridFragment extends SheetArrayFragment {
                 public void onClick(View v) {
                     Intent openSheet = new Intent(getContext(), SheetView.class);
                     openSheet.putExtra("sheetMusicUrl",
-                            C.SERVER_ADDR + SERVER_SHEETMUSIC_SUFFIX + itemId);
+                            C.SERVER_ADDR + SERVER_SHEETMUSIC_SUFFIX + itemId + "/");
                     startActivity(openSheet);
                 }
             });
@@ -100,7 +100,7 @@ public class SheetArrayGridFragment extends SheetArrayFragment {
         public void bindSheetJson(Composition sheet) {
             super.bindSheetJson(sheet);
             Glide.with(getContext())
-                    .load("https:" + mComposition.getThumbnail_url())
+                    .load(mComposition.getThumbnail_url())
                     .into(mPreviewImage);
         }
     }

@@ -72,7 +72,7 @@ public class SheetArrayListFragment extends SheetArrayFragment {
                 public void onClick(View v) {
                     Intent openSheet = new Intent(getContext(), SheetView.class);
                     openSheet.putExtra("sheetMusicUrl",
-                            C.SERVER_ADDR + SERVER_SHEETMUSIC_SUFFIX + itemId);
+                            C.SERVER_ADDR + SERVER_SHEETMUSIC_SUFFIX + itemId + "/");
                     startActivity(openSheet);
                 }
             });

@@ -28,6 +28,7 @@ android {
             minifyEnabled true
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            zipAlignEnabled true
         }
     }
 }
@@ -41,8 +42,10 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.3.0'
     compile 'com.octo.android.robospice:robospice:1.4.14'
     compile 'com.octo.android.robospice:robospice-spring-android:1.4.14'
+    // compile 'com.octo.android.robospice:robospice-retrofit:1.4.14'
     compile 'com.google.code.gson:gson:2.4'
-    // Independent Libraries
+    compile 'com.squareup.retrofit2:retrofit:2.0.2'
+    // Unofficial Libraries
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.github.bumptech.glide:glide:3.6.1'
 }
