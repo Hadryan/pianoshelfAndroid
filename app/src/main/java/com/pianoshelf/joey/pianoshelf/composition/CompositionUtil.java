@@ -3,6 +3,10 @@ package com.pianoshelf.joey.pianoshelf.composition;
 import android.graphics.Color;
 import android.util.Log;
 
+import com.pianoshelf.joey.pianoshelf.C;
+
+import java.io.File;
+
 /**
  * Created by joey on 13/11/15.
  */
@@ -71,8 +75,18 @@ public class CompositionUtil {
         }
     }
 
-    public static String ParseSheetFileNameUrl(String sheetUrl) {
+    public static String offlineSheetFilename(String sheetUrl) {
         return sheetUrl.substring(sheetUrl.lastIndexOf('/') + 1);
+    }
+
+    public static String offlineDirPath(Composition sheetInfo) {
+        return C.OFFLINE_ROOT_DIRECTORY + File.separator +
+                sheetInfo.getUniqueurl() + File.separator + sheetInfo.getId();
+    }
+
+    public static String offlineSheetPath(Composition sheetInfo, int pos) {
+        String sheetUrl = sheetInfo.getImages()[pos];
+        return offlineDirPath(sheetInfo) + offlineSheetFilename(sheetUrl);
     }
 
 }

@@ -13,7 +13,12 @@ import android.view.MenuItem;
 
 import com.octo.android.robospice.GsonSpringAndroidSpiceService;
 import com.octo.android.robospice.SpiceManager;
+import com.pianoshelf.joey.pianoshelf.rest_api.RetroShelf;
 
+import org.greenrobot.eventbus.EventBus;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import roboguice.util.temp.Ln;
 
 /**
@@ -39,14 +44,23 @@ public class BaseActivity extends AppCompatActivity
     protected static final int RESULT_FAILED = 1;
     protected static final int TOKEN_REQUEST = 1;
 
+    protected Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(C.SERVER_ADDR)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+
+    protected RetroShelf apiService = retrofit.create(RetroShelf.class);
+
     @Override
     protected void onStart() {
         super.onStart();
         spiceManager.start(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
+        EventBus.getDefault().unregister(this);
         spiceManager.shouldStop();
         super.onStop();
     }

@@ -1,9 +1,10 @@
 package com.pianoshelf.joey.pianoshelf.rest_api;
 
-import org.json.JSONObject;
-
 /**
  * Created by joey on 27/04/16.
+ *
+ * Fields cannot be overriden in Java, only hidden.
+ * Every request contained a meta field, not necessarily a data field
  */
 public abstract class RESTJSON {
     public MetaData meta = null;

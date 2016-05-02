@@ -2,8 +2,10 @@ package com.pianoshelf.joey.pianoshelf.rest_api;
 
 /**
  * Created by joey on 27/04/16.
+ *
+ * Implicitly gets the code field from MetaData
  */
-public class PagedMetaData extends PageInfo {
+public class PagedMetaData extends MetaData {
     private PageInfo pagination;
 
     public PageInfo getPagination() {

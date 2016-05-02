@@ -44,9 +44,12 @@ dependencies {
     compile 'com.octo.android.robospice:robospice-spring-android:1.4.14'
     // compile 'com.octo.android.robospice:robospice-retrofit:1.4.14'
     compile 'com.google.code.gson:gson:2.4'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'com.android.volley:volley:1.0.0'
     // Unofficial Libraries
-    compile 'com.mcxiaoke.volley:library:1.0.19'
-    compile 'com.github.bumptech.glide:glide:3.6.1'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
 }
 

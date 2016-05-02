@@ -37,12 +37,18 @@ import com.pianoshelf.joey.pianoshelf.rest_api.AddSheetToShelfRequest;
 import com.pianoshelf.joey.pianoshelf.rest_api.CompositionJSON;
 
 import org.apache.commons.io.IOUtils;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.net.HttpURLConnection;
 import java.util.Arrays;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
 
 /**
  * Created by joey on 24/10/14.
@@ -61,10 +67,10 @@ public class SheetView extends BaseActivity {
     private ViewPager mViewPager;
     private ActionBar mActionBar;
 
+
     private String[] mOfflineImages;
 
-    private final String offlineRootDirectory =
-            Environment.getExternalStorageDirectory() + File.separator + C.PIANOSHELF;
+    public static final String SHEET_ID_INTENT = "SheetView_sheetId";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,59 +82,64 @@ public class SheetView extends BaseActivity {
         String sheetMusicUrl = intent.getStringExtra("sheetMusicUrl");
         Log.i(LOG_TAG, "Loading sheet from: " + sheetMusicUrl);
 
+        int sheetId = intent.getIntExtra(SHEET_ID_INTENT, 0);
+        Log.i(LOG_TAG, "Loading sheet ID: " + sheetId);
+
+
         mViewPager = (ViewPager) findViewById(R.id.sheetViewPager);
         mActionBar = getSupportActionBar();
 
-        // Fetch the JSON object from the URL Create the request object
-        CompositionRequest request = new CompositionRequest(sheetMusicUrl);
-        spiceManager.execute(request, null, DurationInMillis.ALWAYS_EXPIRED,
-                new SheetMusicRequestListener(this));
+        Call<CompositionJSON> sheetCall = apiService.getSheet(sheetId);
+        sheetCall.enqueue(new Callback<CompositionJSON>() {
+            @Override
+            public void onResponse(Call<CompositionJSON> call, retrofit2.Response<CompositionJSON> response) {
+                int metaCode = response.body().getMeta().getCode();
+                if (metaCode != HttpURLConnection.HTTP_OK) {
+                    Log.e(LOG_TAG, "Metadata status code not OK " + metaCode);
+                    onFailure(call, null);
+                } else {
+                    EventBus.getDefault().post(response.body().getData());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CompositionJSON> call, Throwable t) {
+                mActionBar.setTitle("Error");
+                Log.e(LOG_TAG, "Sheet music request failed");
+            }
+        });
     }
 
-    private class SheetMusicRequestListener implements RequestListener<CompositionJSON> {
-        private Context mContext;
+    @Subscribe
+    public void onSheetInfoEvent(Composition sheetInfo) {
+        mComposition = sheetInfo;
+        mOfflineImages = (new SharedPreferenceHelper(this)).
+                getOfflineCompositionImages(mComposition.getUniqueurl(), null);
 
-        public SheetMusicRequestListener(Context context) {
-            mContext = context;
+        // Log.i(LOG_TAG, "SheetInfo: \n" + new Gson().toJson(mComposition));
+
+        // Set actionbar title
+        mActionBar.setTitle(mComposition.getTitle());
+
+        // Make the download button visible
+        boolean disableDownloadButton = true;
+        List<String> compositionImages = Arrays.asList(mComposition.getImages());
+        for (int i = 0; i < compositionImages.size() && disableDownloadButton; ++i) {
+            String onlineImageUrl = compositionImages.get(i);
+            String offlineImageFilename = CompositionUtil.offlineSheetFilename(onlineImageUrl);
+            // Verify all offline files
+            disableDownloadButton = (mOfflineImages != null)
+                    && (compositionImages.size() != mOfflineImages.length)
+                    && (offlineImageFilename.equals(mOfflineImages[i]));
+        }
+        // Only enable download button if the data in shared preferences are
+        // incomplete
+        if (!disableDownloadButton) {
+            //downloadAction.setVisible(true);
         }
 
-        @Override
-        public void onRequestSuccess(CompositionJSON json) {
-            mComposition = json.getData();
-            mOfflineImages = (new SharedPreferenceHelper(mContext)).
-                    getOfflineCompositionImages(mComposition.getUniqueurl(), null);
-
-            Log.i(LOG_TAG, "myobj \n" + new Gson().toJson(mComposition));
-
-            // Set actionbar title
-            mActionBar.setTitle(mComposition.getTitle());
-
-            // Make the download button visible
-            boolean disableDownloadButton = true;
-            List<String> compositionImages = Arrays.asList(mComposition.getImages());
-            for (int i = 0; i < compositionImages.size() && disableDownloadButton; ++i) {
-                String onlineImageUrl = compositionImages.get(i);
-                String offlineImageLocation = CompositionUtil.ParseSheetFileNameUrl(onlineImageUrl);
-                // Verify all offline files
-                disableDownloadButton = (mOfflineImages != null)
-                        && (compositionImages.size() != mOfflineImages.length)
-                        && (offlineImageLocation.equals(mOfflineImages[i]));
-            }
-            // Only enable download button if the data in shared preferences are
-            // incomplete
-            if (!disableDownloadButton) {
-                //downloadAction.setVisible(true);
-            }
-
-            // Instantiate a ViewPager and a PagerAdapter.
-            mViewPager.setAdapter(new SheetViewPagerAdapter(getSupportFragmentManager()));
-        }
-
-        @Override
-        public void onRequestFailure(SpiceException spiceException) {
-            mActionBar.setTitle("Error");
-            Log.e(LOG_TAG, "Sheet music request failed");
-        }
+        // Instantiate a ViewPager and a PagerAdapter.
+        mViewPager.setAdapter(new SheetViewPagerAdapter(getSupportFragmentManager()));
     }
 
     @Override
@@ -152,21 +163,8 @@ public class SheetView extends BaseActivity {
      *
      * @param item
      */
+    /*
     public boolean invokeDownload(MenuItem item) {
-        final String compositionFolderName = mComposition.getUniqueurl();
-        final File offlineSheetDirectory;
-
-        // Check mComposition folder, create it if it does not exist.
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            offlineSheetDirectory = new File(offlineRootDirectory, compositionFolderName);
-            if (!offlineSheetDirectory.mkdirs()) {
-                Log.e(LOG_TAG, "Directory not created or already present.");
-            }
-        } else {
-            Log.d(LOG_TAG, "External filesystem not mounted.");
-            return false;
-        }
 
         // Start async task to download all the images of this mComposition and store them
         // in external storage
@@ -248,6 +246,7 @@ public class SheetView extends BaseActivity {
         }
         return true;
     }
+    */
 
     /**
      * Forced download of sheet images. Overwrite all files
@@ -307,15 +306,14 @@ public class SheetView extends BaseActivity {
 
         @Override
         public Fragment getItem(int position) {
-            String onlineImageUrl = mComposition.getImages()[position];
-            String offlineImageLocation = CompositionUtil.ParseSheetFileNameUrl(onlineImageUrl);
-            if (mOfflineImages != null && (position < mOfflineImages.length) &&
-                    (offlineImageLocation.equals(mOfflineImages[position]))) {
-                Log.i(LOG_TAG, "Using offline image.");
-                return SheetOfflineFragment.newInstance(offlineRootDirectory + File.separator +
-                        mComposition.getUniqueurl() + File.separator + offlineImageLocation);
+            String offlineImageLocation = CompositionUtil.offlineDirPath(mComposition);
+            if (mOfflineImages != null && (position < mOfflineImages.length) && (offlineImageLocation.equals(mOfflineImages[position]))) {
+                Log.i(LOG_TAG, "Using offline image for id " + mComposition.getId() + " page " + position);
+                String offlineImagePath = CompositionUtil.offlineSheetPath(mComposition, position);
+                return SheetOfflineFragment.newInstance(offlineImagePath);
             } else {
-                Log.i(LOG_TAG, "Fetching online image. " + onlineImageUrl);
+                String onlineImageUrl = mComposition.getImages()[position];
+                Log.i(LOG_TAG, "Fetching online image from: " + onlineImageUrl);
                 return SheetURLFragment.newInstance(onlineImageUrl);
             }
         }

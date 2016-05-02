@@ -13,58 +13,6 @@
         <include layout="@layout/toolbar_default" />
 
         <RelativeLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/subtitle_height"
-            android:background="@drawable/border">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/sheetmusic_tab"
-                android:text="@string/sheet_music_tab_name"
-                android:gravity="center"
-                android:textSize="20sp"
-                android:onClick="loadSheetmusic"
-                android:textStyle="bold"
-                android:layout_alignParentTop="true"
-                android:layout_toLeftOf="@+id/divider"
-                android:layout_toStartOf="@+id/divider"
-                android:layout_marginRight="5dp"
-                android:layout_marginEnd="5dp" />
-
-            <ImageView
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:id="@+id/divider"
-                android:gravity="center"
-                android:src="@color/separator_gray"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="7dp"
-                android:layout_marginStart="7dp"
-                android:layout_marginRight="7dp"
-                android:layout_marginEnd="7dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/composer_tab"
-                android:text="@string/composer_tab_name"
-                android:gravity="center"
-                android:textSize="20sp"
-                android:onClick="loadComposer"
-                android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/divider"
-                android:layout_toEndOf="@+id/divider"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
