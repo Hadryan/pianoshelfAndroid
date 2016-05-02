@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -90,12 +91,12 @@ public class SharedPreferenceHelper {
      * @param compositionName
      * @return
      */
-    public String[] getOfflineCompositionImages(String compositionName, String[] defaultValue) {
+    public List<String> getOfflineCompositionImages(String compositionName, List<String> defaultValue) {
         Composition offlineComposition = getOfflineComposition(compositionName, null);
         if (offlineComposition == null) {
             return defaultValue;
         } else {
-            String[] offlineCompositionImages = offlineComposition.getOffline_Images();
+            List<String> offlineCompositionImages = offlineComposition.getOffline_Images();
             if (offlineCompositionImages == null) {
                 return defaultValue;
             } else {
@@ -110,7 +111,7 @@ public class SharedPreferenceHelper {
      * @param compositionName
      * @param compositionImages
      */
-    public void setOfflineCompositionImages(String compositionName, String[] compositionImages) {
+    public void setOfflineCompositionImages(String compositionName, List<String> compositionImages) {
         Composition offlineComposition = getOfflineComposition(compositionName, null);
         if (offlineComposition == null) {
             throw new RuntimeException(compositionName + " does not exist");

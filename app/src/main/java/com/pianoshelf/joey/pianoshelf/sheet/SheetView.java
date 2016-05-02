@@ -68,7 +68,7 @@ public class SheetView extends BaseActivity {
     private ActionBar mActionBar;
 
 
-    private String[] mOfflineImages;
+    private List<String> mOfflineImages;
 
     public static final String SHEET_ID_INTENT = "SheetView_sheetId";
 
@@ -146,8 +146,8 @@ public class SheetView extends BaseActivity {
             String offlineImageFilename = CompositionUtil.offlineSheetFilename(onlineImageUrl);
             // Verify all offline files
             disableDownloadButton = (mOfflineImages != null)
-                    && (compositionImages.size() != mOfflineImages.length)
-                    && (offlineImageFilename.equals(mOfflineImages[i]));
+                    && (compositionImages.size() != mOfflineImages.size())
+                    && (offlineImageFilename.equals(mOfflineImages.get(i)));
         }
         // Only enable download button if the data in shared preferences are
         // incomplete
@@ -324,7 +324,8 @@ public class SheetView extends BaseActivity {
         @Override
         public Fragment getItem(int position) {
             String offlineImageLocation = CompositionUtil.offlineDirPath(mComposition);
-            if (mOfflineImages != null && (position < mOfflineImages.length) && (offlineImageLocation.equals(mOfflineImages[position]))) {
+            if (mOfflineImages != null && (position < mOfflineImages.size())
+                    && (offlineImageLocation.equals(mOfflineImages.get(position)))) {
                 Log.i(LOG_TAG, "Using offline image for id " + mComposition.getId() + " page " + position);
                 String offlineImagePath = CompositionUtil.offlineSheetPath(mComposition, position);
                 return SheetOfflineFragment.newInstance(offlineImagePath);
