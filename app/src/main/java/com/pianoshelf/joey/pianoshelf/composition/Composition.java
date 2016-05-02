@@ -81,6 +81,7 @@ public class Composition {
     // arrays
     private String[] images;
     private VideoInfo[] videos;
+    @Deprecated
     private CommentInfo[] comments; // Not implemented
 
     // Custom fields

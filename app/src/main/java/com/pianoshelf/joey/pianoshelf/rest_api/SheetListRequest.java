@@ -1,5 +1,7 @@
 package com.pianoshelf.joey.pianoshelf.rest_api;
 
+import android.util.Log;
+
 import com.octo.android.robospice.request.springandroid.SpringAndroidSpiceRequest;
 
 /**
@@ -11,6 +13,7 @@ public class SheetListRequest extends SpringAndroidSpiceRequest<SheetList> {
     public SheetListRequest(String url) {
         super(SheetList.class);
         mUrl = url;
+        Log.i("sheet list query", mUrl);
     }
 
     public String createCacheKey() {
