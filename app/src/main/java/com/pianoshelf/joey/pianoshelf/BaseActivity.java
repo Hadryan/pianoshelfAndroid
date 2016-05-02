@@ -55,12 +55,10 @@ public class BaseActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         spiceManager.start(this);
-        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
-        EventBus.getDefault().unregister(this);
         spiceManager.shouldStop();
         super.onStop();
     }

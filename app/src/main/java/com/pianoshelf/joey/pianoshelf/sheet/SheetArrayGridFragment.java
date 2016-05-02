@@ -68,13 +68,12 @@ public class SheetArrayGridFragment extends SheetArrayFragment {
         @Override
         public void onBindViewHolder(PreviewHolder holder, int position) {
             holder.bindSheetJson(mSheetList.get(position));
-            final long itemId = getItemId(position);
+            final long sheetId = getItemId(position);
             holder.mRootView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent openSheet = new Intent(getContext(), SheetView.class);
-                    openSheet.putExtra("sheetMusicUrl",
-                            C.SERVER_ADDR + SERVER_SHEETMUSIC_SUFFIX + itemId + "/");
+                    openSheet.putExtra(SheetView.SHEET_ID_INTENT, sheetId);
                     startActivity(openSheet);
                 }
             });

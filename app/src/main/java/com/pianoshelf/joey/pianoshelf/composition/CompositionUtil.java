@@ -85,7 +85,7 @@ public class CompositionUtil {
     }
 
     public static String offlineSheetPath(Composition sheetInfo, int pos) {
-        String sheetUrl = sheetInfo.getImages()[pos];
+        String sheetUrl = sheetInfo.getImages().get(pos);
         return offlineDirPath(sheetInfo) + offlineSheetFilename(sheetUrl);
     }
 

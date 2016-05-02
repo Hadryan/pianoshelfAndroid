@@ -93,6 +93,11 @@ public class SheetView extends BaseActivity {
         sheetCall.enqueue(new Callback<CompositionJSON>() {
             @Override
             public void onResponse(Call<CompositionJSON> call, retrofit2.Response<CompositionJSON> response) {
+                if (response.body() == null) {
+                    onFailure(call, null);
+                    return;
+                }
+
                 int metaCode = response.body().getMeta().getCode();
                 if (metaCode != HttpURLConnection.HTTP_OK) {
                     Log.e(LOG_TAG, "Metadata status code not OK " + metaCode);
@@ -110,6 +115,18 @@ public class SheetView extends BaseActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
     @Subscribe
     public void onSheetInfoEvent(Composition sheetInfo) {
         mComposition = sheetInfo;
@@ -123,7 +140,7 @@ public class SheetView extends BaseActivity {
 
         // Make the download button visible
         boolean disableDownloadButton = true;
-        List<String> compositionImages = Arrays.asList(mComposition.getImages());
+        List<String> compositionImages = mComposition.getImages();
         for (int i = 0; i < compositionImages.size() && disableDownloadButton; ++i) {
             String onlineImageUrl = compositionImages.get(i);
             String offlineImageFilename = CompositionUtil.offlineSheetFilename(onlineImageUrl);
@@ -312,7 +329,7 @@ public class SheetView extends BaseActivity {
                 String offlineImagePath = CompositionUtil.offlineSheetPath(mComposition, position);
                 return SheetOfflineFragment.newInstance(offlineImagePath);
             } else {
-                String onlineImageUrl = mComposition.getImages()[position];
+                String onlineImageUrl = mComposition.getImages().get(position);
                 Log.i(LOG_TAG, "Fetching online image from: " + onlineImageUrl);
                 return SheetURLFragment.newInstance(onlineImageUrl);
             }
@@ -320,7 +337,7 @@ public class SheetView extends BaseActivity {
 
         @Override
         public int getCount() {
-            return mComposition.getImages().length;
+            return mComposition.getImages().size();
         }
     }
 }

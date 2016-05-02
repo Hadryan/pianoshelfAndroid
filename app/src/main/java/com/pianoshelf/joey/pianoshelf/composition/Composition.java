@@ -79,7 +79,7 @@ public class Composition {
     private String license_url;
 
     // arrays
-    private String[] images;
+    private List<String> images;
     private VideoInfo[] videos;
     @Deprecated
     private CommentInfo[] comments; // Not implemented
@@ -192,11 +192,11 @@ public class Composition {
         this.offline_images = offline_images;
     }
 
-    public String[] getImages() {
+    public List<String> getImages() {
         return images;
     }
 
-    public void setImages(String[] images) {
+    public void setImages(List<String> images) {
         this.images = images;
     }
 
