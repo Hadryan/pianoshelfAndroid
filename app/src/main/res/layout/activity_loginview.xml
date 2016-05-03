@@ -9,13 +9,15 @@
         android:id="@+id/loginview_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/input_username" />
+        android:hint="@string/input_username"
+        android:text="hello"/>
 
     <EditText
         android:id="@+id/loginview_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/input_password"
+        android:text="world"
         android:inputType="textPassword" />
 
     <ProgressBar

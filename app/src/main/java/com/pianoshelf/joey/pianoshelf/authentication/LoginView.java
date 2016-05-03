@@ -17,6 +17,8 @@ import com.octo.android.robospice.request.listener.RequestListener;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
+import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
+import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -100,15 +102,16 @@ public class LoginView extends BaseActivity {
     private void performRequest(Login login) {
         progressBar.setVisibility(View.VISIBLE);
 
-        apiService.login(login).enqueue(new Callback<LoginResponse>() {
+        apiService.login(login).enqueue(new Callback<RW<LoginResponse, MetaData>>() {
             @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                EventBus.getDefault().post(response.body());
+            public void onResponse(Call<RW<LoginResponse, MetaData>> call, Response<RW<LoginResponse, MetaData>> response) {
+                EventBus.getDefault().post(response.body().getData());
+
             }
 
             @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
-
+            public void onFailure(Call<RW<LoginResponse, MetaData>> call, Throwable t) {
+                Log.e(LOG_TAG, "failed");
             }
         });
         /*

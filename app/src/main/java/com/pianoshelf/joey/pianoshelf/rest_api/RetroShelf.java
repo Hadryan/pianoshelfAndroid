@@ -37,7 +37,7 @@ public interface RetroShelf {
 
     /* Auth */
     @POST(LOGIN_EP)
-    Call<LoginResponse> login(@Body Login login);
+    Call<RW<LoginResponse,MetaData>> login(@Body Login login);
 
     // TODO check what the api sends back
     @Headers("Authorization: TOKEN {authToken}")
