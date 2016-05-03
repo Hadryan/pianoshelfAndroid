@@ -79,17 +79,15 @@ public class SheetView extends BaseActivity {
 
         // fetches the url of the sheet music JSON object
         Intent intent = getIntent();
-        String sheetMusicUrl = intent.getStringExtra("sheetMusicUrl");
-        Log.i(LOG_TAG, "Loading sheet from: " + sheetMusicUrl);
 
-        int sheetId = intent.getIntExtra(SHEET_ID_INTENT, 0);
+        long sheetId = intent.getLongExtra(SHEET_ID_INTENT, -1);
         Log.i(LOG_TAG, "Loading sheet ID: " + sheetId);
 
 
         mViewPager = (ViewPager) findViewById(R.id.sheetViewPager);
         mActionBar = getSupportActionBar();
 
-        Call<CompositionJSON> sheetCall = apiService.getSheet(sheetId);
+        Call<CompositionJSON> sheetCall = apiService.getSheet((int) sheetId);
         sheetCall.enqueue(new Callback<CompositionJSON>() {
             @Override
             public void onResponse(Call<CompositionJSON> call, retrofit2.Response<CompositionJSON> response) {

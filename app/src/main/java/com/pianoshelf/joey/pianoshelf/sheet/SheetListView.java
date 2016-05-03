@@ -24,10 +24,14 @@ import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.VolleySingleton;
 import com.pianoshelf.joey.pianoshelf.composition.ComposerListFragment;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.rest_api.PageInfo;
+import com.pianoshelf.joey.pianoshelf.rest_api.SearchQuery;
 import com.pianoshelf.joey.pianoshelf.rest_api.SheetList;
 import com.pianoshelf.joey.pianoshelf.rest_api.SheetListRequest;
 import com.pianoshelf.joey.pianoshelf.utility.QueryUtil;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 
 import java.util.LinkedHashSet;
@@ -41,18 +45,7 @@ import java.util.concurrent.Semaphore;
 
 // View for basically everything. - Responsible for swapping fragments
 public class SheetListView extends BaseActivity {
-    private static final String LOG_TAG = "Sheet list view";
-    // Information sent to the server
-    private String query;       // A query (i.e. composers)
-    private String queryType;   // A type of query (i.e. order_by)
-    private int queryListBegin;
-    private int queryListSize;
-
-    // Information received from the server
-    private int sheetListCount;
-
-    private final int DEFAULT_PAGE_BEGIN = 1;
-    private final int DEFAULT_PAGE_SIZE = 20;
+    private static final String LOG_TAG = "Sheet_list";
 
     private String composerUrl;
 
@@ -79,6 +72,8 @@ public class SheetListView extends BaseActivity {
     TextView mSheetMusicText;
     TextView mComposerText;
 
+    private PageInfo mPageInfo = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,11 +86,6 @@ public class SheetListView extends BaseActivity {
 
         // Fetch intent information
         Intent intent = getIntent();
-        //TODO write a function that computes this query
-        query = intent.getStringExtra("query");
-        queryType = intent.getStringExtra("queryType");
-        queryListBegin = intent.getIntExtra("pageBegin", DEFAULT_PAGE_BEGIN);
-        queryListSize = intent.getIntExtra("pageSize", DEFAULT_PAGE_SIZE);
         composerUrl = intent.getStringExtra("composersUrl");
 
 
@@ -115,8 +105,21 @@ public class SheetListView extends BaseActivity {
                 .add(R.id.single_frame, mSheetGrid)
                 .commit();
 
-        loadSheetmusicList(query, queryType, queryListBegin, queryListSize);
+        // Default action, opens the first page of popular sheets
+        getSheetList(1);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     @Override
@@ -128,31 +131,17 @@ public class SheetListView extends BaseActivity {
         return true;
     }
 
-    public void loadSheetmusicList(String query, String queryType, int queryListBegin, int queryListSize) {
+    public void getSheetList(int page) {
         // Change state to sheetmusic
         if (!mStateSem.tryAcquire()) {
             Log.d(LOG_TAG, "Failed to acquire sheet music list UI semaphore");
             return;
         }
         mSpinner.setVisibility(View.VISIBLE);
-        String jsonQueryUrl;
-        // Compose the queryURL by parsing the extras from the intent
-        if (query.isEmpty()) {
-            // TODO what to do on empty query?
-            throw new RuntimeException("Empty query given to SheetListView.java");
-        } else if (queryType.isEmpty()) {
-            jsonQueryUrl = QueryUtil.parse(query, queryListBegin, queryListSize);
-        } else {
-            jsonQueryUrl = QueryUtil.parse(query, queryType, queryListBegin, queryListSize);
-        }
-        Log.i(LOG_TAG, "Query URL: " + jsonQueryUrl);
-
-        SheetListRequest request = new SheetListRequest(jsonQueryUrl);
-        spiceManager.execute(request, request.createCacheKey(),
-                DurationInMillis.ONE_HOUR * 4, new SheetListRequestListener());
-        // avoid loading twice by holding the lock here
+        new SearchQuery(apiService).getDefault(page);
     }
 
+    @Deprecated
     public void loadComposerList() {
         if (!mStateSem.tryAcquire()) {
             Log.d(LOG_TAG, "Composer list failed to acquire UI semaphore.");
@@ -190,67 +179,55 @@ public class SheetListView extends BaseActivity {
                     }
                 });
         VolleySingleton.getInstance(this).addToRequestQueue(composersRequest);
-
-
     }
 
     public void gridListToggle(MenuItem item) {
-        if (mStateSem.tryAcquire()) {
-            switch (mState) {
-                case SHEETMUSIC: {
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    switch (mListIconResource) {
-                        case R.drawable.ic_grid_24dp: {
-                            ft.hide(mSheetList);
-                            ft.show(mSheetGrid);
-                            mListIconResource = R.drawable.ic_list_24dp;
-                            mListIcon.setIcon(mListIconResource);
-                            break;
-                        }
-                        case R.drawable.ic_list_24dp: {
-                            ft.hide(mSheetGrid);
-                            ft.show(mSheetList);
-                            mListIconResource = R.drawable.ic_grid_24dp;
-                            mListIcon.setIcon(mListIconResource);
-                            break;
-                        }
+        if (!mStateSem.tryAcquire()) {
+            Log.i(LOG_TAG, "Unable to acquire state sem, aborting grid list toggle");
+            return;
+        }
+
+        switch (mState) {
+            case SHEETMUSIC: {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                switch (mListIconResource) {
+                    // TODO port this logic into XML
+                    case R.drawable.ic_grid_24dp: {
+                        ft.hide(mSheetList);
+                        ft.show(mSheetGrid);
+                        mListIconResource = R.drawable.ic_list_24dp;
+                        mListIcon.setIcon(mListIconResource);
+                        break;
                     }
-                    ft.commit();
-                    break;
+                    case R.drawable.ic_list_24dp: {
+                        ft.hide(mSheetGrid);
+                        ft.show(mSheetList);
+                        mListIconResource = R.drawable.ic_grid_24dp;
+                        mListIcon.setIcon(mListIconResource);
+                        break;
+                    }
                 }
+                ft.commit();
+                break;
             }
-            mStateSem.release();
         }
+        mStateSem.release();
     }
 
-    private class SheetListRequestListener implements RequestListener<SheetList> {
-        @Override
-        public void onRequestSuccess(SheetList sheetList) {
-            mState = SheetListState.SHEETMUSIC;
-            //Populate the list with JSON objects
-            List<Composition> requestSheets = sheetList.getData();
-            if (requestSheets == null) {
-                Log.d(LOG_TAG, "Loaded zero sheets from Sheet List Request");
-            } else {
-                mSheets.addAll(sheetList.getData());
-            }
+    @Subscribe
+    void onQueryFinished(SheetList sheetList) {
+        mState = SheetListState.SHEETMUSIC;
 
-            mSheetList.setSheetList(mSheets);
-            mSheetGrid.setSheetList(mSheets);
+        //Populate the list with JSON objects
+        mSheets.addAll(sheetList.getData());
 
-            updateUI();
-        }
+        mPageInfo = sheetList.getMeta().getPagination();
 
-        @Override
-        public void onRequestFailure(SpiceException spiceException) {
-            Log.e(LOG_TAG, "sheetmusic request error " + spiceException.getMessage());
-            updateUI();
-        }
+        mSheetList.setSheetList(mSheets);
+        mSheetGrid.setSheetList(mSheets);
 
-        private void updateUI() {
-            mSpinner.setVisibility(View.GONE);
-            mStateSem.release();
-        }
-
+        mSpinner.setVisibility(View.GONE);
+        mStateSem.release();
     }
+
 }

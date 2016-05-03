@@ -23,8 +23,16 @@ import java.util.List;
  *
  */
 public class SheetList {
-    private MetaData meta;
+    private PagedMetaData meta;
     private List<Composition> data;
+
+    public PagedMetaData getMeta() {
+        return meta;
+    }
+
+    public void setMeta(PagedMetaData meta) {
+        this.meta = meta;
+    }
 
     public List<Composition> getData() {
         return data;

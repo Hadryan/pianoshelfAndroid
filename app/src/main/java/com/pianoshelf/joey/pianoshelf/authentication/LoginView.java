@@ -3,6 +3,7 @@ package com.pianoshelf.joey.pianoshelf.authentication;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.EventLog;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -16,6 +17,13 @@ import com.octo.android.robospice.request.listener.RequestListener;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * It seems impossible to execute two concurrent activities in android
@@ -55,6 +63,18 @@ public class LoginView extends BaseActivity {
         super.onBackPressed();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
     /**
      * POST login if username and password are valid
      *
@@ -79,10 +99,29 @@ public class LoginView extends BaseActivity {
 
     private void performRequest(Login login) {
         progressBar.setVisibility(View.VISIBLE);
+
+        apiService.login(login).enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                EventBus.getDefault().post(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+
+            }
+        });
+        /*
         LoginRequest request = new LoginRequest(login);
         lastRequestCacheKey = request.createCacheKey();
         spiceManager.execute(request, lastRequestCacheKey, DurationInMillis.ONE_MINUTE,
                 new LoginRequestListener());
+        */
+    }
+
+    @Subscribe
+    public void onLoginComplete(LoginResponse response) {
+        Log.e(LOG_TAG, "good shit" + response.toString());
     }
 
     @Override

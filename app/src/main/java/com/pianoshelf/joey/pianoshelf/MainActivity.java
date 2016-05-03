@@ -74,13 +74,8 @@ public class MainActivity extends BaseActivity {
 
     public void invokeSheetList(View view) {
         Intent intent = new Intent(this, SheetListView.class);
-        intent.putExtra("query", "popular");
-        intent.putExtra("queryType", "order_by");
-
         intent.putExtra("composersEndpoint", "/api/composers/");
         intent.putExtra("composersUrl", SERVER_ADDR + "api/composers/");
-        intent.putExtra("sheetMusicEndPoint", "/api/sheetmusic/");
-
         intent.putExtra(AUTHORIZATION_TOKEN, getAuthToken());
         startActivity(intent);
     }
