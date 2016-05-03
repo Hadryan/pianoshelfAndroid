@@ -2,7 +2,7 @@ package com.pianoshelf.joey.pianoshelf.rest_api;
 
 /**
  * Created by joey on 27/04/16.
- *
+ * <p/>
  * Implicitly gets the code field from MetaData
  */
 public class PagedMetaData extends MetaData {

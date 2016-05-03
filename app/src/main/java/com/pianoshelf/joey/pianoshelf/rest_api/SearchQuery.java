@@ -7,7 +7,6 @@ import com.pianoshelf.joey.pianoshelf.composition.Composition;
 import org.greenrobot.eventbus.EventBus;
 
 import java.net.HttpURLConnection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

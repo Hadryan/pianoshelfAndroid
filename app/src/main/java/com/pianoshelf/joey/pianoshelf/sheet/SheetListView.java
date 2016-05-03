@@ -1,7 +1,6 @@
 package com.pianoshelf.joey.pianoshelf.sheet;
 
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,9 +15,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.octo.android.robospice.persistence.DurationInMillis;
-import com.octo.android.robospice.persistence.exception.SpiceException;
-import com.octo.android.robospice.request.listener.RequestListener;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.VolleySingleton;
@@ -28,9 +24,6 @@ import com.pianoshelf.joey.pianoshelf.rest_api.PageInfo;
 import com.pianoshelf.joey.pianoshelf.rest_api.PagedMetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.rest_api.SearchQuery;
-import com.pianoshelf.joey.pianoshelf.rest_api.SheetList;
-import com.pianoshelf.joey.pianoshelf.rest_api.SheetListRequest;
-import com.pianoshelf.joey.pianoshelf.utility.QueryUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

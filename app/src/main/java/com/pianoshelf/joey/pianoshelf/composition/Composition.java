@@ -1,7 +1,5 @@
 package com.pianoshelf.joey.pianoshelf.composition;
 
-import org.json.JSONArray;
-
 import java.util.List;
 
 /**
@@ -9,7 +7,7 @@ import java.util.List;
  * Querying the API through a search/filter no longer returns a fully complete Composition object
  * Always check null condition before accessing fields
  * Needs a util that automatically queries the full Composition object given an id/composition
- *
+ * <p/>
  * Cannot use containers with Gson, defer to Java arrays instead
  */
 /* Sample JSON Input

@@ -18,8 +18,6 @@ import com.pianoshelf.joey.pianoshelf.utility.BitmapUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Created by joey on 12/22/14.

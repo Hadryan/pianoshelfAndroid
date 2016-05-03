@@ -28,7 +28,7 @@ public class QueryUtil {
     // Example:  /api/sheetmusic/?order_by=popular&page_size=9
     public static String parse(String query, String queryType, int page, int pageSize) {
         return appendArguments(C.SERVER_ADDR + SERVER_SHEETMUSIC_SUFFIX
-                + QUERY_PREFIX + queryType + QUERY_ASSIGN + query
+                        + QUERY_PREFIX + queryType + QUERY_ASSIGN + query
                 , QUERY_PAGE + QUERY_ASSIGN + page
                 , QUERY_PAGE_SIZE + QUERY_ASSIGN + pageSize);
     }

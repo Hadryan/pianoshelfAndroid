@@ -3,7 +3,6 @@ package com.pianoshelf.joey.pianoshelf.authentication;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.EventLog;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;

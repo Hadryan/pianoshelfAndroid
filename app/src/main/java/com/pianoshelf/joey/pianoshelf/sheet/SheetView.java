@@ -1,11 +1,8 @@
 package com.pianoshelf.joey.pianoshelf.sheet;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -15,13 +12,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
-import com.google.gson.Gson;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
@@ -29,24 +21,16 @@ import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
-import com.pianoshelf.joey.pianoshelf.VolleySingleton;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
-import com.pianoshelf.joey.pianoshelf.composition.CompositionRequest;
 import com.pianoshelf.joey.pianoshelf.composition.CompositionUtil;
 import com.pianoshelf.joey.pianoshelf.rest_api.AddSheetToShelfRequest;
-import com.pianoshelf.joey.pianoshelf.rest_api.CompositionJSON;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 
-import org.apache.commons.io.IOUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
-import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
@@ -91,28 +75,28 @@ public class SheetView extends BaseActivity {
 
         apiService.getSheet((int) sheetId)
                 .enqueue(new Callback<RW<Composition, MetaData>>() {
-            @Override
-            public void onResponse(Call<RW<Composition, MetaData>> call, retrofit2.Response<RW<Composition, MetaData>> response) {
-                if (response.body() == null) {
-                    onFailure(call, null);
-                    return;
-                }
+                    @Override
+                    public void onResponse(Call<RW<Composition, MetaData>> call, retrofit2.Response<RW<Composition, MetaData>> response) {
+                        if (response.body() == null) {
+                            onFailure(call, null);
+                            return;
+                        }
 
-                int metaCode = response.body().getMeta().getCode();
-                if (metaCode != HttpURLConnection.HTTP_OK) {
-                    Log.e(LOG_TAG, "Metadata status code not OK " + metaCode);
-                    onFailure(call, null);
-                } else {
-                    EventBus.getDefault().post(response.body().getData());
-                }
-            }
+                        int metaCode = response.body().getMeta().getCode();
+                        if (metaCode != HttpURLConnection.HTTP_OK) {
+                            Log.e(LOG_TAG, "Metadata status code not OK " + metaCode);
+                            onFailure(call, null);
+                        } else {
+                            EventBus.getDefault().post(response.body().getData());
+                        }
+                    }
 
-            @Override
-            public void onFailure(Call<RW<Composition, MetaData>> call, Throwable t) {
-                mActionBar.setTitle("Error");
-                Log.e(LOG_TAG, "Sheet music request failed");
-            }
-        });
+                    @Override
+                    public void onFailure(Call<RW<Composition, MetaData>> call, Throwable t) {
+                        mActionBar.setTitle("Error");
+                        Log.e(LOG_TAG, "Sheet music request failed");
+                    }
+                });
     }
 
     @Override

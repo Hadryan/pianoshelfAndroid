@@ -15,10 +15,6 @@ import com.octo.android.robospice.GsonSpringAndroidSpiceService;
 import com.octo.android.robospice.SpiceManager;
 import com.pianoshelf.joey.pianoshelf.rest_api.RetroShelf;
 
-import org.greenrobot.eventbus.EventBus;
-
-import java.util.logging.Level;
-
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
