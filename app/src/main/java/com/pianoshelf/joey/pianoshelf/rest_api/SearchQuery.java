@@ -2,11 +2,14 @@ package com.pianoshelf.joey.pianoshelf.rest_api;
 
 import android.util.Log;
 
+import com.pianoshelf.joey.pianoshelf.composition.Composition;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.net.HttpURLConnection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -29,9 +32,9 @@ public class SearchQuery {
 
     private RetroShelf mApiService;
 
-    Callback<SheetList> queryFinishedAction = new Callback<SheetList>() {
+    Callback<RW<List<Composition>, PagedMetaData>> queryFinishedAction = new Callback<RW<List<Composition>, PagedMetaData>>() {
         @Override
-        public void onResponse(Call<SheetList> call, Response<SheetList> response) {
+        public void onResponse(Call<RW<List<Composition>, PagedMetaData>> call, Response<RW<List<Composition>, PagedMetaData>> response) {
             if (response == null || response.body() == null) {
                 onFailure(call, null);
                 return;
@@ -47,7 +50,7 @@ public class SearchQuery {
         }
 
         @Override
-        public void onFailure(Call<SheetList> call, Throwable t) {
+        public void onFailure(Call<RW<List<Composition>, PagedMetaData>> call, Throwable t) {
             Log.e(QUERY_TAG, "Sheet music request failed");
         }
     };
@@ -56,7 +59,7 @@ public class SearchQuery {
         mApiService = apiService;
     }
 
-    public SearchQuery(RetroShelf apiService, Callback<SheetList> cb) {
+    public SearchQuery(RetroShelf apiService, Callback<RW<List<Composition>, PagedMetaData>> cb) {
         mApiService = apiService;
         queryFinishedAction = cb;
     }

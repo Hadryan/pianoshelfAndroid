@@ -35,6 +35,8 @@ import com.pianoshelf.joey.pianoshelf.composition.CompositionRequest;
 import com.pianoshelf.joey.pianoshelf.composition.CompositionUtil;
 import com.pianoshelf.joey.pianoshelf.rest_api.AddSheetToShelfRequest;
 import com.pianoshelf.joey.pianoshelf.rest_api.CompositionJSON;
+import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
+import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 
 import org.apache.commons.io.IOUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -87,10 +89,10 @@ public class SheetView extends BaseActivity {
         mViewPager = (ViewPager) findViewById(R.id.sheetViewPager);
         mActionBar = getSupportActionBar();
 
-        Call<CompositionJSON> sheetCall = apiService.getSheet((int) sheetId);
-        sheetCall.enqueue(new Callback<CompositionJSON>() {
+        apiService.getSheet((int) sheetId)
+                .enqueue(new Callback<RW<Composition, MetaData>>() {
             @Override
-            public void onResponse(Call<CompositionJSON> call, retrofit2.Response<CompositionJSON> response) {
+            public void onResponse(Call<RW<Composition, MetaData>> call, retrofit2.Response<RW<Composition, MetaData>> response) {
                 if (response.body() == null) {
                     onFailure(call, null);
                     return;
@@ -106,7 +108,7 @@ public class SheetView extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Call<CompositionJSON> call, Throwable t) {
+            public void onFailure(Call<RW<Composition, MetaData>> call, Throwable t) {
                 mActionBar.setTitle("Error");
                 Log.e(LOG_TAG, "Sheet music request failed");
             }

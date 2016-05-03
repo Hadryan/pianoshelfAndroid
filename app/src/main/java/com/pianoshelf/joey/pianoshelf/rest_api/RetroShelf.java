@@ -2,7 +2,9 @@ package com.pianoshelf.joey.pianoshelf.rest_api;
 
 import com.pianoshelf.joey.pianoshelf.authentication.Login;
 import com.pianoshelf.joey.pianoshelf.authentication.LoginResponse;
+import com.pianoshelf.joey.pianoshelf.composition.Composition;
 
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -27,15 +29,22 @@ public interface RetroShelf {
     /* Sheet */
 
     @GET(SHEET_EP + "{id}")
-    Call<CompositionJSON> getSheet(@Path("id") int sheetId);
+    Call<RW<Composition, MetaData>> getSheet(@Path("id") int sheetId);
 
     @GET(SHEET_EP)
-    Call<SheetList> querySheetList(@QueryMap Map<String, String> order, @Query("page") int pageNumber, @Query("page_size") int pageSize);
+    Call<RW<List<Composition>, PagedMetaData>> querySheetList(
+            @QueryMap Map<String, String> order,
+            @Query("page") int pageNumber,
+            @Query("page_size") int pageSize);
 
     @GET(SHEET_EP)
-    Call<SheetList> queryTrendingSheetList(@QueryMap Map<String, String> order, @Query("days") int days, @Query("results") int sheetCount);
+    Call<RW<List<Composition>, PagedMetaData>> queryTrendingSheetList(
+            @QueryMap Map<String, String> order,
+            @Query("days") int days,
+            @Query("results") int sheetCount);
 
     /* Auth */
+
     @POST(LOGIN_EP)
     Call<RW<LoginResponse,MetaData>> login(@Body Login login);
 

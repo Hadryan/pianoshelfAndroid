@@ -58,7 +58,7 @@ public class MainActivity extends BaseActivity {
 
     public void invokeSheetView(View view) {
         Intent intent = new Intent(this, SheetView.class);
-        intent.putExtra(SheetView.SHEET_ID_INTENT, 1);
+        intent.putExtra(SheetView.SHEET_ID_INTENT, 1L);
         intent.putExtra(AUTHORIZATION_TOKEN, getAuthToken());
         startActivity(intent);
     }
