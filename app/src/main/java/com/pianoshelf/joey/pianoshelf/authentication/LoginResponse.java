@@ -14,15 +14,6 @@ public class LoginResponse {
     boolean is_superuser;
     URL profile_picture;
 
-    public LoginResponse(String username, String email, String first_name, String last_name, String auth_token, boolean is_superuser) {
-        this.username = username;
-        this.email = email;
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.auth_token = auth_token;
-        this.is_superuser = is_superuser;
-    }
-
     public String getUsername() {
         return username;
     }

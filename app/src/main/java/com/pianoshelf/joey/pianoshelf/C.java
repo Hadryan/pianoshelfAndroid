@@ -24,7 +24,8 @@ public class C {
 
     // Logging tags
     public static final String
-            FILE_IO = "fileIO";
+            FILE_IO = "fileIO",
+            AUTH = "djAuth";
 
     public static final int
             RESULT_FAILED = 1;

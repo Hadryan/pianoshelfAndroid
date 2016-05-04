@@ -77,11 +77,6 @@ public class SheetView extends BaseActivity {
                 .enqueue(new Callback<RW<Composition, MetaData>>() {
                     @Override
                     public void onResponse(Call<RW<Composition, MetaData>> call, retrofit2.Response<RW<Composition, MetaData>> response) {
-                        if (response.body() == null) {
-                            onFailure(call, null);
-                            return;
-                        }
-
                         int metaCode = response.body().getMeta().getCode();
                         if (metaCode != HttpURLConnection.HTTP_OK) {
                             Log.e(LOG_TAG, "Metadata status code not OK " + metaCode);

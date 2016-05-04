@@ -10,17 +10,24 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
+import com.pianoshelf.joey.pianoshelf.rest_api.LoginMeta;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,10 +47,13 @@ import retrofit2.Response;
  * Created by root on 11/25/14.
  */
 public class LoginView extends BaseActivity {
-    private String username;
     private ProgressBar progressBar;
     private TextView warningMessage;
     private TextView errorMessage;
+    private EditText mUserNameText;
+    private EditText mPasswordText;
+
+    private String mUsername;
     private final String LOG_TAG = "LoginView";
     protected String lastRequestCacheKey;
 
@@ -56,6 +66,8 @@ public class LoginView extends BaseActivity {
         progressBar = (ProgressBar) findViewById(R.id.loginview_progress);
         warningMessage = (TextView) findViewById(R.id.loginview_warning_message);
         errorMessage = (TextView) findViewById(R.id.loginview_error_message);
+        mUserNameText = (EditText) findViewById(R.id.loginview_username);
+        mPasswordText = (EditText) findViewById(R.id.loginview_password);
     }
 
     @Override
@@ -77,7 +89,7 @@ public class LoginView extends BaseActivity {
     }
 
     /**
-     * POST login if username and password are valid
+     * POST login if mUsername and password are valid
      *
      * @param view layout for this class
      */
@@ -86,14 +98,14 @@ public class LoginView extends BaseActivity {
         warningMessage.setText("");
         errorMessage.setText("");
 
-        username = ((EditText) findViewById(R.id.loginview_username)).getText().toString();
-        String password = ((EditText) findViewById(R.id.loginview_password)).getText().toString();
+        mUsername = mUserNameText.getText().toString();
+        String password = mPasswordText.getText().toString();
 
-        Login login = new Login(username, password);
+        Login login = new Login(mUsername, password);
 
-        // Verify username and password
+        // Verify mUsername and password
         // Short circuiting
-        if (checkUsername(username) && checkPassword(password)) {
+        if (checkUsername(mUsername) && checkPassword(password)) {
             performRequest(login);
         }
     }
@@ -101,29 +113,60 @@ public class LoginView extends BaseActivity {
     private void performRequest(Login login) {
         progressBar.setVisibility(View.VISIBLE);
 
-        apiService.login(login).enqueue(new Callback<RW<LoginResponse, MetaData>>() {
+        apiService.login(login).enqueue(new Callback<RW<LoginResponse, LoginMeta>>() {
             @Override
-            public void onResponse(Call<RW<LoginResponse, MetaData>> call, Response<RW<LoginResponse, MetaData>> response) {
-                EventBus.getDefault().post(response.body().getData());
-
+            public void onResponse(Call<RW<LoginResponse, LoginMeta>> call,
+                                   Response<RW<LoginResponse, LoginMeta>> response) {
+                Log.e(C.AUTH, "Response error codes: " + response.code());
+                try {
+                    String error = response.errorBody().string();
+                    Log.e(C.AUTH, "Response error body: " + error);
+                    Type rwType = new TypeToken<RW<LoginResponse, LoginMeta>>(){}.getType();
+                    Log.e(C.AUTH, new Gson().fromJson(error, rwType).toString());
+                } catch (IOException e) {
+                    Log.e(C.AUTH, e.getLocalizedMessage());
+                }
+                if (response.code() != HttpURLConnection.HTTP_OK) {
+                    EventBus.getDefault().post(response.body().getMeta());
+                } else {
+                    EventBus.getDefault().post(response.body().getData());
+                }
             }
 
             @Override
-            public void onFailure(Call<RW<LoginResponse, MetaData>> call, Throwable t) {
-                Log.e(LOG_TAG, "failed");
+            public void onFailure(Call<RW<LoginResponse, LoginMeta>> call, Throwable t) {
+                Toast.makeText(LoginView.this, "Error during request: " +
+                        t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                progressBar.setVisibility(View.INVISIBLE);
             }
         });
-        /*
-        LoginRequest request = new LoginRequest(login);
-        lastRequestCacheKey = request.createCacheKey();
-        spiceManager.execute(request, lastRequestCacheKey, DurationInMillis.ONE_MINUTE,
-                new LoginRequestListener());
-        */
     }
 
     @Subscribe
     public void onLoginComplete(LoginResponse response) {
-        Log.e(LOG_TAG, "good shit" + response.toString());
+        progressBar.setVisibility(View.INVISIBLE);
+
+        if (response == null) {
+            errorMessage.setText(R.string.input_login_failure);
+            return;
+        }
+
+        // Log.i(LOG_TAG, loginResponse.getAuth_token());
+
+
+        getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit()
+                .putString(C.USERNAME, mUsername)
+                .putString(AUTHORIZATION_TOKEN, response.getAuth_token())
+                .apply();
+
+        // exit from this login screen back to where we came from
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    @Subscribe
+    public void onLoginFailed(LoginMeta meta) {
+        Log.e(LOG_TAG, "Error handler");
     }
 
     @Override
@@ -149,32 +192,10 @@ public class LoginView extends BaseActivity {
     private class LoginRequestListener implements RequestListener<LoginResponse> {
         @Override
         public void onRequestFailure(SpiceException spiceException) {
-            Toast.makeText(LoginView.this, "Error during request: " +
-                    spiceException.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-            progressBar.setVisibility(View.INVISIBLE);
         }
 
         @Override
         public void onRequestSuccess(LoginResponse loginResponse) {
-            boolean quit = false;
-            SharedPreferences.Editor globalPreferenceEditor =
-                    getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit();
-            if (loginResponse == null) {
-                globalPreferenceEditor.remove(C.USERNAME);
-                setResult(RESULT_FAILED);
-            } else {
-                globalPreferenceEditor.putString(C.USERNAME, username);
-                globalPreferenceEditor.putString(AUTHORIZATION_TOKEN,
-                        loginResponse.getAuth_token());
-                Log.i(LOG_TAG, loginResponse.getAuth_token());
-                setResult(RESULT_OK);
-                quit = true;
-            }
-            globalPreferenceEditor.apply();
-            progressBar.setVisibility(View.INVISIBLE);
-            if (quit) {
-                finish();
-            }
         }
     }
 
