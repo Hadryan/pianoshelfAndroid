@@ -18,7 +18,7 @@ import com.pianoshelf.joey.pianoshelf.rest_api.RetroShelf;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 import roboguice.util.temp.Ln;
 
 /**
@@ -46,7 +46,7 @@ public class BaseActivity extends AppCompatActivity
 
     protected Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(C.SERVER_ADDR)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(JacksonConverterFactory.create())
             .client(new OkHttpClient.Builder()
                     .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
                     .build())

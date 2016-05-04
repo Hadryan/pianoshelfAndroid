@@ -8,6 +8,7 @@ public class VideoInfo {
     private String youtube_id;
     private String date; // TODO trello
     private String grade; // TODO enum
+    private int sheetmusic; // source sheet ID
     private Integer user; // who submitted this, can be null so we use Integer
 
     // Getters and Setters
@@ -41,6 +42,14 @@ public class VideoInfo {
 
     public void setGrade(String grade) {
         this.grade = grade;
+    }
+
+    public int getSheetmusic() {
+        return sheetmusic;
+    }
+
+    public void setSheetmusic(int sheetmusic) {
+        this.sheetmusic = sheetmusic;
     }
 
     public Integer getUser() {

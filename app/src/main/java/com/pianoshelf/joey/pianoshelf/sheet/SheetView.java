@@ -35,6 +35,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by joey on 24/10/14.
@@ -76,7 +77,7 @@ public class SheetView extends BaseActivity {
         apiService.getSheet((int) sheetId)
                 .enqueue(new Callback<RW<Composition, MetaData>>() {
                     @Override
-                    public void onResponse(Call<RW<Composition, MetaData>> call, retrofit2.Response<RW<Composition, MetaData>> response) {
+                    public void onResponse(Call<RW<Composition, MetaData>> call, Response<RW<Composition, MetaData>> response) {
                         int metaCode = response.body().getMeta().getCode();
                         if (metaCode != HttpURLConnection.HTTP_OK) {
                             Log.e(LOG_TAG, "Metadata status code not OK " + metaCode);
@@ -89,7 +90,7 @@ public class SheetView extends BaseActivity {
                     @Override
                     public void onFailure(Call<RW<Composition, MetaData>> call, Throwable t) {
                         mActionBar.setTitle("Error");
-                        Log.e(LOG_TAG, "Sheet music request failed");
+                        Log.e(LOG_TAG, "Sheet music request failed.\n" + t.getLocalizedMessage());
                     }
                 });
     }
