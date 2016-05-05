@@ -31,9 +31,9 @@ public class SearchQuery {
 
     private RetroShelf mApiService;
 
-    Callback<RW<List<Composition>, PagedMetaData>> queryFinishedAction = new Callback<RW<List<Composition>, PagedMetaData>>() {
+    Callback<RW<List<Composition>, PagedMeta>> queryFinishedAction = new Callback<RW<List<Composition>, PagedMeta>>() {
         @Override
-        public void onResponse(Call<RW<List<Composition>, PagedMetaData>> call, Response<RW<List<Composition>, PagedMetaData>> response) {
+        public void onResponse(Call<RW<List<Composition>, PagedMeta>> call, Response<RW<List<Composition>, PagedMeta>> response) {
             if (response == null || response.body() == null) {
                 onFailure(call, null);
                 return;
@@ -49,7 +49,7 @@ public class SearchQuery {
         }
 
         @Override
-        public void onFailure(Call<RW<List<Composition>, PagedMetaData>> call, Throwable t) {
+        public void onFailure(Call<RW<List<Composition>, PagedMeta>> call, Throwable t) {
             Log.e(QUERY_TAG, "Sheet music request failed");
         }
     };
@@ -58,7 +58,7 @@ public class SearchQuery {
         mApiService = apiService;
     }
 
-    public SearchQuery(RetroShelf apiService, Callback<RW<List<Composition>, PagedMetaData>> cb) {
+    public SearchQuery(RetroShelf apiService, Callback<RW<List<Composition>, PagedMeta>> cb) {
         mApiService = apiService;
         queryFinishedAction = cb;
     }

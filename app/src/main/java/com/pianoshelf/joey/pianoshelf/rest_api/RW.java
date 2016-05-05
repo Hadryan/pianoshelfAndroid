@@ -5,7 +5,7 @@ package com.pianoshelf.joey.pianoshelf.rest_api;
  * RW = ResponseWrapper
  * Dis some dumb shit if u ask me but whatever
  */
-public class RW<T1, T2> {
+public class RW<T1, T2 extends MetaData> implements RWInterface {
     public T1 data;
     public T2 meta;
 

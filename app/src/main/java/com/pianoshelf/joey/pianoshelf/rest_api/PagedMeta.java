@@ -5,7 +5,7 @@ package com.pianoshelf.joey.pianoshelf.rest_api;
  * <p/>
  * Implicitly gets the code field from MetaData
  */
-public class PagedMetaData extends MetaData {
+public class PagedMeta extends MetaData {
     private PageInfo pagination;
 
     public PageInfo getPagination() {

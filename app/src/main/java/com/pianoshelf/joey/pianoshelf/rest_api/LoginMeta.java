@@ -15,4 +15,9 @@ public class LoginMeta extends MetaData {
     public void setNon_field_errors(List<String> non_field_errors) {
         this.non_field_errors = non_field_errors;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + " " + non_field_errors.toString();
+    }
 }

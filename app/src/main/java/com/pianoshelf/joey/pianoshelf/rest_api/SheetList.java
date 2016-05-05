@@ -22,14 +22,14 @@ import java.util.List;
  * }
  */
 public class SheetList {
-    private PagedMetaData meta;
+    private PagedMeta meta;
     private List<Composition> data;
 
-    public PagedMetaData getMeta() {
+    public PagedMeta getMeta() {
         return meta;
     }
 
-    public void setMeta(PagedMetaData meta) {
+    public void setMeta(PagedMeta meta) {
         this.meta = meta;
     }
 

@@ -21,7 +21,7 @@ import com.pianoshelf.joey.pianoshelf.VolleySingleton;
 import com.pianoshelf.joey.pianoshelf.composition.ComposerListFragment;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
 import com.pianoshelf.joey.pianoshelf.rest_api.PageInfo;
-import com.pianoshelf.joey.pianoshelf.rest_api.PagedMetaData;
+import com.pianoshelf.joey.pianoshelf.rest_api.PagedMeta;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.rest_api.SearchQuery;
 
@@ -210,7 +210,7 @@ public class SheetListView extends BaseActivity {
     }
 
     @Subscribe
-    void onQueryFinished(RW<List<Composition>, PagedMetaData> sheetList) {
+    void onQueryFinished(RW<List<Composition>, PagedMeta> sheetList) {
         mState = SheetListState.SHEETMUSIC;
 
         //Populate the list with JSON objects

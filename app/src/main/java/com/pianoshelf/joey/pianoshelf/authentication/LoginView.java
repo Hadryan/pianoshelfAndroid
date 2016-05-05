@@ -10,6 +10,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.octo.android.robospice.persistence.DurationInMillis;
@@ -18,8 +20,10 @@ import com.octo.android.robospice.request.listener.RequestListener;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
+import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
 import com.pianoshelf.joey.pianoshelf.rest_api.LoginMeta;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
+import com.pianoshelf.joey.pianoshelf.rest_api.PSCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 
 import org.greenrobot.eventbus.EventBus;
@@ -113,31 +117,19 @@ public class LoginView extends BaseActivity {
     private void performRequest(Login login) {
         progressBar.setVisibility(View.VISIBLE);
 
-        apiService.login(login).enqueue(new Callback<RW<LoginResponse, LoginMeta>>() {
-            @Override
-            public void onResponse(Call<RW<LoginResponse, LoginMeta>> call,
-                                   Response<RW<LoginResponse, LoginMeta>> response) {
-                Log.e(C.AUTH, "Response error codes: " + response.code());
-                try {
-                    String error = response.errorBody().string();
-                    Log.e(C.AUTH, "Response error body: " + error);
-                    Type rwType = new TypeToken<RW<LoginResponse, LoginMeta>>(){}.getType();
-                    Log.e(C.AUTH, new Gson().fromJson(error, rwType).toString());
-                } catch (IOException e) {
-                    Log.e(C.AUTH, e.getLocalizedMessage());
-                }
-                if (response.code() != HttpURLConnection.HTTP_OK) {
-                    EventBus.getDefault().post(response.body().getMeta());
-                } else {
-                    EventBus.getDefault().post(response.body().getData());
-                }
-            }
-
+        apiService.login(login).enqueue(new PSCallback<RW<LoginResponse, LoginMeta>>() {
             @Override
             public void onFailure(Call<RW<LoginResponse, LoginMeta>> call, Throwable t) {
+                Log.e(C.NET, t.getLocalizedMessage());
                 Toast.makeText(LoginView.this, "Error during request: " +
                         t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 progressBar.setVisibility(View.INVISIBLE);
+
+            }
+            @Override
+            public RW<LoginResponse, LoginMeta> convert(String json) throws IOException {
+                return new ObjectMapper().readValue(json,
+                        new TypeReference<RW<LoginResponse, LoginMeta>>(){});
             }
         });
     }
@@ -152,8 +144,6 @@ public class LoginView extends BaseActivity {
         }
 
         // Log.i(LOG_TAG, loginResponse.getAuth_token());
-
-
         getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit()
                 .putString(C.USERNAME, mUsername)
                 .putString(AUTHORIZATION_TOKEN, response.getAuth_token())
@@ -166,7 +156,11 @@ public class LoginView extends BaseActivity {
 
     @Subscribe
     public void onLoginFailed(LoginMeta meta) {
-        Log.e(LOG_TAG, "Error handler");
+        progressBar.setVisibility(View.INVISIBLE);
+
+        Log.e(LOG_TAG, "Login failed, response: " + meta.toString());
+        String error = meta.getNon_field_errors().get(0);
+        errorMessage.setText(error);
     }
 
     @Override

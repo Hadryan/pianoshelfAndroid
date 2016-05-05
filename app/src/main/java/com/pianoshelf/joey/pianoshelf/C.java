@@ -25,7 +25,9 @@ public class C {
     // Logging tags
     public static final String
             FILE_IO = "fileIO",
-            AUTH = "djAuth";
+            AUTH = "djAuth",
+            NET = "Network",
+            EVENT = "Event";
 
     public static final int
             RESULT_FAILED = 1;

@@ -13,4 +13,9 @@ public class MetaData {
     public void setCode(int code) {
         this.code = code;
     }
+
+    @Override
+    public String toString() {
+        return "" + code;
+    }
 }
