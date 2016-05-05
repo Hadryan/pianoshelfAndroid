@@ -59,9 +59,6 @@ public class LoginView extends BaseActivity {
 
     private String mUsername;
     private final String LOG_TAG = "LoginView";
-    protected String lastRequestCacheKey;
-
-    private static final String KEY_LAST_REQUEST_CACHE_KEY = "lastRequestCacheKey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,11 +135,6 @@ public class LoginView extends BaseActivity {
     public void onLoginComplete(LoginResponse response) {
         progressBar.setVisibility(View.INVISIBLE);
 
-        if (response == null) {
-            errorMessage.setText(R.string.input_login_failure);
-            return;
-        }
-
         // Log.i(LOG_TAG, loginResponse.getAuth_token());
         getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit()
                 .putString(C.USERNAME, mUsername)
@@ -159,40 +151,8 @@ public class LoginView extends BaseActivity {
         progressBar.setVisibility(View.INVISIBLE);
 
         Log.e(LOG_TAG, "Login failed, response: " + meta.toString());
-        String error = meta.getNon_field_errors().get(0);
-        errorMessage.setText(error);
+        errorMessage.setText(R.string.input_login_failure);
     }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        if (!TextUtils.isEmpty(lastRequestCacheKey)) {
-            outState.putString(KEY_LAST_REQUEST_CACHE_KEY, lastRequestCacheKey);
-        }
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState.containsKey(KEY_LAST_REQUEST_CACHE_KEY)) {
-            lastRequestCacheKey = savedInstanceState
-                    .getString(KEY_LAST_REQUEST_CACHE_KEY);
-            spiceManager.getFromCache(LoginResponse.class,
-                    lastRequestCacheKey, DurationInMillis.ONE_MINUTE,
-                    new LoginRequestListener());
-        }
-    }
-
-    private class LoginRequestListener implements RequestListener<LoginResponse> {
-        @Override
-        public void onRequestFailure(SpiceException spiceException) {
-        }
-
-        @Override
-        public void onRequestSuccess(LoginResponse loginResponse) {
-        }
-    }
-
 
     private boolean checkUsername(String username) {
         if (TextUtils.isEmpty(username)) {
