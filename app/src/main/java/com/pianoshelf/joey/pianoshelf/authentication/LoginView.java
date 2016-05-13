@@ -135,11 +135,16 @@ public class LoginView extends BaseActivity {
     public void onLoginComplete(LoginResponse response) {
         progressBar.setVisibility(View.INVISIBLE);
 
+        String token = response.getAuth_token();
+
         // Log.i(LOG_TAG, loginResponse.getAuth_token());
         getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit()
                 .putString(C.USERNAME, mUsername)
-                .putString(AUTHORIZATION_TOKEN, response.getAuth_token())
+                .putString(AUTHORIZATION_TOKEN, token)
                 .apply();
+
+        // Announce token to other UI elements
+        EventBus.getDefault().post(new UserToken(mUsername, token));
 
         // exit from this login screen back to where we came from
         setResult(RESULT_OK);
