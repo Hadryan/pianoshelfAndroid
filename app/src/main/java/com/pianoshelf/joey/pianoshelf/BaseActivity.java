@@ -48,7 +48,8 @@ public class BaseActivity extends AppCompatActivity
             .baseUrl(C.SERVER_ADDR)
             .addConverterFactory(JacksonConverterFactory.create())
             .client(new OkHttpClient.Builder()
-                    .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+                    .addInterceptor(new HttpLoggingInterceptor()
+                            .setLevel(HttpLoggingInterceptor.Level.BASIC))
                     .build())
             .build();
 

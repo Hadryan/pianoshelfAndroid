@@ -12,6 +12,10 @@ public class UserToken {
         this.token = token;
     }
 
+    public static String encodeHeader(String token) {
+        return "HEADER " + token;
+    }
+
     public String getUsername() {
         return username;
     }

@@ -2,6 +2,7 @@ package com.pianoshelf.joey.pianoshelf.rest_api;
 
 import com.pianoshelf.joey.pianoshelf.authentication.Login;
 import com.pianoshelf.joey.pianoshelf.authentication.LoginResponse;
+import com.pianoshelf.joey.pianoshelf.authentication.LogoutResponse;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -24,7 +26,8 @@ public interface RetroShelf {
     String
             SHEET_EP = "api/sheetmusic/",
             SHELF_EP = "api/shelf/",
-            LOGIN_EP = "api/auth/login/";
+            LOGIN_EP = "api/auth/login/",
+            LOGOUT_EP = "api/auth/logout/";
 
     /* Sheet */
 
@@ -47,6 +50,9 @@ public interface RetroShelf {
 
     @POST(LOGIN_EP)
     Call<RW<LoginResponse, LoginMeta>> login(@Body Login login);
+
+    @POST(LOGOUT_EP)
+    Call<RW<LogoutResponse, MetaData>> logout(@Header("Authorization") String authToken);
 
     // TODO check what the api sends back
     @Headers("Authorization: TOKEN {authToken}")

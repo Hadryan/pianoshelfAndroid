@@ -21,11 +21,11 @@ import retrofit2.Response;
  * Created by joey on 04/05/16.
  */
 public abstract class DeserializeCB<T extends RW> implements Callback<T> {
-    
+
+    public abstract T convert(String json) throws IOException;
     public abstract void onSuccess(T response);
     public abstract void onInvalid(T response);
-    public abstract T convert(String json) throws IOException;
-    
+
     @Override
     public void onResponse(Call<T> call, Response<T> response) {
         Log.i(C.NET, "HTTP response code: " + response.code());

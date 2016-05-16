@@ -3,18 +3,30 @@ package com.pianoshelf.joey.pianoshelf;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.octo.android.robospice.persistence.DurationInMillis;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pianoshelf.joey.pianoshelf.authentication.LoginView;
-import com.pianoshelf.joey.pianoshelf.authentication.LogoutRequest;
+import com.pianoshelf.joey.pianoshelf.authentication.LogoutResponse;
 import com.pianoshelf.joey.pianoshelf.authentication.SignupView;
+import com.pianoshelf.joey.pianoshelf.authentication.UserToken;
 import com.pianoshelf.joey.pianoshelf.composition.ComposerView;
 import com.pianoshelf.joey.pianoshelf.profile.ProfileView;
+import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
+import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
+import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetListView;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetView;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.IOException;
+
+import retrofit2.Call;
 
 /**
  * This is the main logic page
@@ -86,13 +98,40 @@ public class MainActivity extends BaseActivity {
     }
 
     public void invokeLogout(View view) {
-        SharedPreferences sharedPreferences = getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
+        final SharedPreferences sharedPreferences = getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
         String authToken = sharedPreferences.getString(AUTHORIZATION_TOKEN, null);
-        LogoutRequest request = new LogoutRequest(authToken);
-        spiceManager.execute(request, null, DurationInMillis.ONE_MINUTE, null);
-        // Remove the authorization token. If logout fails, we don't care as logging in again
-        // still returns the token
-        sharedPreferences.edit().remove(AUTHORIZATION_TOKEN).apply();
+        if (authToken == null) {
+            Log.e(C.AUTH, "Attempt to logout without login token! Logout aborted.");
+            return;
+        }
+
+        apiService.logout(UserToken.encodeHeader(authToken))
+                .enqueue(new DeserializeCB<RW<LogoutResponse, MetaData>>() {
+                    @Override
+                    public void onSuccess(RW<LogoutResponse, MetaData> response) {
+                        sharedPreferences.edit().remove(AUTHORIZATION_TOKEN).apply();
+                        Log.i(C.AUTH, "Auth token removed");
+                        EventBus.getDefault().post(response.getData());
+                    }
+
+                    @Override
+                    public void onInvalid(RW<LogoutResponse, MetaData> response) {
+                        Log.e(C.AUTH, "Invalid Response from logout request! " + response.getMeta().getCode());
+                    }
+
+                    @Override
+                    public RW<LogoutResponse, MetaData> convert(String json) throws IOException {
+                        return new ObjectMapper().readValue(json,
+                                new TypeReference<RW<LogoutResponse, MetaData>>() {
+                                });
+                    }
+
+                    @Override
+                    public void onFailure(Call<RW<LogoutResponse, MetaData>> call, Throwable t) {
+                        t.printStackTrace();
+                        Log.e(C.AUTH, "Logout request failed! " + t.getLocalizedMessage());
+                    }
+                });
     }
 
     public void invokeRegistration(View view) {
