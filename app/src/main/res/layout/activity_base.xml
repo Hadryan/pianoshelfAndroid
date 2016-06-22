@@ -1,63 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:openDrawer="start">
 
+
+    <!-- This file serves as a guideline on how to implement activities -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?android:actionBarSize"
-            android:background="?colorPrimary" />
+        <!-- Toolbar -->
+        <include layout="@layout/toolbar_default" />
     </LinearLayout>
 
     <!-- Drawer -->
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true" />
+    <include layout="@layout/drawer_default" />
 
-    <!--
-    <LinearLayout
-        android:layout_width="@dimen/drawer_width"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_gravity="start">
-
-        <TextView
-            android:id="@+id/drawer_first_item"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/list_item_height"
-            android:paddingLeft="@dimen/drawer_horizontal_padding"
-            android:paddingRight="@dimen/drawer_horizontal_padding"
-            android:background="@color/list_item_background_normal"
-            android:gravity="center_vertical"
-            android:textColor="@color/list_item_text_dark"
-            android:textSize="@dimen/drawer_text_size"
-            android:clickable="true"
-            android:onClick="invokeFirstItem"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/drawer_divider_height"
-            android:background="@android:color/darker_gray" />
-
-        <ListView
-            android:id="@+id/drawer_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/list_item_background_normal"
-            android:textColor="@color/list_item_text_dark"
-            android:divider="@android:color/darker_gray"
-            android:dividerHeight="@dimen/drawer_divider_height"
-            android:textFilterEnabled="false" />
-    </LinearLayout>
-    -->
 </android.support.v4.widget.DrawerLayout>

@@ -18,5 +18,36 @@
     <color name="text_primary">#555</color>
     <color name="text_inverse">#DDD</color>
 
+    <color name="nav_header_bg">#d9d9d9</color>
+
+
+    <!-- Pianoshelf logo gradients -->
+    <color name="pianoshelf_dark">#416cb3</color>
+    <color name="pianoshelf_light">#6d93cc</color>
+
+    <!-- https://gitlab.com/pianoshelf/pianoshelf/blob/master/client/assets/css/variables/colors.sass -->
+    <color name="pianoshelf_blue_light">#6AA4FF</color>
+
+    <color name="pianoshelf_blue"> #4E78BB</color>
+    <color name="pianoshelf_green"> #81E452</color>
+    <color name="pianoshelf_orange"> #FFC45B</color>
+    <color name="pianoshelf_red"> #F15674</color>
+
+    <color name="pianoshelf_black"> #000</color>
+    <color name="pianoshelf_white"> #fff</color>
+
+    <color name="pianoshelf_grey_light"> #eee</color>
+    <color name="pianoshelf_grey_normal"> #ddd</color>
+    <color name="pianoshelf_grey_dark"> #bbb</color>
+
+    <color name="pianoshelf_grey_text_light"> #bbb</color>
+    <color name="pianoshelf_grey_text_normal"> #999</color>
+    <color name="pianoshelf_grey_text_dark"> #666</color>
+
+    <color name="pianoshelf_grey_reply_box"> #F5F5F5</color>
+
+    <!-- Third party -->
+    <color name="facebook"> #3B5998</color>
+    <color name="twitter"> #55acee</color>
 
 </resources>

@@ -9,4 +9,11 @@
         <item name="android:textColorPrimary">@color/primary_text_material_light</item>
     </style>
 
+    <!-- Fonts -->
+    <style name="nav_header" parent="@android:style/TextAppearance.Small">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text_primary</item>
+
+    </style>
 </resources>
