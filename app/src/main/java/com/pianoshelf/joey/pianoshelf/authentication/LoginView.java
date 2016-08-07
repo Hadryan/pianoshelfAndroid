@@ -1,6 +1,5 @@
 package com.pianoshelf.joey.pianoshelf.authentication;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,17 +11,10 @@ import android.widget.Toast;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.octo.android.robospice.persistence.DurationInMillis;
-import com.octo.android.robospice.persistence.exception.SpiceException;
-import com.octo.android.robospice.request.listener.RequestListener;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
-import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
-import com.pianoshelf.joey.pianoshelf.rest_api.LoginMeta;
-import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
+import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
 import com.pianoshelf.joey.pianoshelf.rest_api.PSCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 
@@ -30,12 +22,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * It seems impossible to execute two concurrent activities in android
@@ -75,18 +63,6 @@ public class LoginView extends BaseActivity {
     public void onBackPressed() {
         setResult(RESULT_CANCELED);
         super.onBackPressed();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
     }
 
     /**
@@ -137,11 +113,11 @@ public class LoginView extends BaseActivity {
 
         String token = response.getAuth_token();
 
+        // Save to disk
         // Log.i(LOG_TAG, loginResponse.getAuth_token());
-        getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit()
-                .putString(C.USERNAME, mUsername)
-                .putString(AUTHORIZATION_TOKEN, token)
-                .apply();
+        new SharedPreferenceHelper(this)
+                .setAuthToken(token)
+                .setUser(mUsername);
 
         // Announce token to other UI elements
         EventBus.getDefault().post(new UserToken(mUsername, token));

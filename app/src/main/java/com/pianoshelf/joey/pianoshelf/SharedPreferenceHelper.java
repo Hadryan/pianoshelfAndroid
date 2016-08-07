@@ -15,10 +15,8 @@ import java.util.Set;
  * Created by joey on 12/21/14.
  */
 public class SharedPreferenceHelper {
-    final Context context;
-    final SharedPreferences sharedPreferences;
-    final SharedPreferences.Editor preferenceEditor;
-    final Gson mGson;
+    private Context context;
+    private SharedPreferences sharedPreferences;
 
     public static final String PIANOSHELF = "pianoshelf";
     public static final String COMPOSITION_JSON_KEY = "COMPOSITION_JSON_KEY";
@@ -27,9 +25,47 @@ public class SharedPreferenceHelper {
     public SharedPreferenceHelper(Context context) {
         this.context = context;
         sharedPreferences = context.getSharedPreferences(PIANOSHELF, Context.MODE_PRIVATE);
-        preferenceEditor = sharedPreferences.edit();
-        mGson = new Gson();
     }
+
+    public SharedPreferences getSharedPreferences() {
+        return sharedPreferences;
+    }
+
+    /** Key Value Pairs **/
+
+    public SharedPreferenceHelper setAuthToken(String token) {
+        sharedPreferences.edit()
+                .putString(C.AUTHORIZATION_TOKEN, token)
+                .apply();
+        return this;
+    }
+
+    public SharedPreferenceHelper removeAuthToken() {
+        sharedPreferences.edit()
+                .remove(C.AUTHORIZATION_TOKEN)
+                .apply();
+        return this;
+    }
+
+    public SharedPreferenceHelper setUser(String user) {
+        sharedPreferences.edit()
+                .putString(C.USERNAME, user)
+                .apply();
+        return this;
+    }
+
+    public String getUser() {
+        return sharedPreferences.getString(C.USERNAME, null);
+    }
+
+    public SharedPreferenceHelper removeUser() {
+        sharedPreferences.edit()
+                .remove(C.USERNAME)
+                .apply();
+        return this;
+    }
+
+    /** Compositions **/
 
     /**
      * Check preferences for the set of keys. Create the set if it does not exist.
@@ -43,8 +79,9 @@ public class SharedPreferenceHelper {
         if (offlineCompositionKeysSet == null) {
             // Add an empty set of keys
             offlineCompositionKeysSet = new HashSet<>();
-            preferenceEditor.putStringSet(OFFLINE_COMPOSITIONS, offlineCompositionKeysSet);
-            preferenceEditor.apply();
+            sharedPreferences.edit()
+                    .putStringSet(OFFLINE_COMPOSITIONS, offlineCompositionKeysSet)
+                    .apply();
         }
         return offlineCompositionKeysSet;
     }
@@ -65,7 +102,7 @@ public class SharedPreferenceHelper {
             if (compositionJsonString == null) {
                 return defaultValue;
             } else {
-                return mGson.fromJson(compositionJsonString, Composition.class);
+                return new Gson().fromJson(compositionJsonString, Composition.class);
             }
         }
     }
@@ -74,14 +111,15 @@ public class SharedPreferenceHelper {
         SharedPreferences.Editor compositionEditor = context.
                 getSharedPreferences(compositionsName, Context.MODE_PRIVATE).edit();
         compositionEditor.putString(COMPOSITION_JSON_KEY,
-                mGson.toJson(composition, Composition.class));
+                new Gson().toJson(composition, Composition.class));
         compositionEditor.apply();
         // Check if the composition exists in the set of keys. Create it if it does not exist.
         HashSet<String> offlineCompositionKeys = (HashSet<String>) getOfflineCompositionKeys();
         if (!getOfflineCompositionKeys().contains(compositionsName)) {
             offlineCompositionKeys.add(compositionsName);
-            preferenceEditor.putStringSet(PIANOSHELF, offlineCompositionKeys);
-            preferenceEditor.apply();
+            sharedPreferences.edit()
+                    .putStringSet(PIANOSHELF, offlineCompositionKeys)
+                    .apply();
         }
     }
 

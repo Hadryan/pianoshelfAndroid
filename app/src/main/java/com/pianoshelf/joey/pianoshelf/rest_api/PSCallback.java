@@ -1,14 +1,6 @@
 package com.pianoshelf.joey.pianoshelf.rest_api;
 
-import android.util.Log;
-
-import com.google.gson.reflect.TypeToken;
-
 import org.greenrobot.eventbus.EventBus;
-
-import java.io.IOException;
-
-import retrofit2.Call;
 
 /**
  * Created by joey on 04/05/16.

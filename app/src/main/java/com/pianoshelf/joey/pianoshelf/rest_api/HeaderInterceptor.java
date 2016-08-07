@@ -2,10 +2,10 @@ package com.pianoshelf.joey.pianoshelf.rest_api;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.pianoshelf.joey.pianoshelf.C;
+import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
 
 import java.io.IOException;
 
@@ -17,11 +17,12 @@ import okhttp3.Response;
  * Created by joey on 22/06/16.
  */
 public class HeaderInterceptor implements Interceptor, SharedPreferences.OnSharedPreferenceChangeListener {
-    private String authToken;
+    private String mAuthToken;
 
-    public HeaderInterceptor(SharedPreferences sp) {
+    public HeaderInterceptor(Context context) {
+        SharedPreferences sp = new SharedPreferenceHelper(context).getSharedPreferences();
         sp.registerOnSharedPreferenceChangeListener(this);
-        authToken = sp.getString(C.AUTHORIZATION_TOKEN, null);
+        mAuthToken = sp.getString(C.AUTHORIZATION_TOKEN, null);
     }
 
     @Override
@@ -29,10 +30,10 @@ public class HeaderInterceptor implements Interceptor, SharedPreferences.OnShare
         // Intercept the chain
         Request request = chain.request();
 
-        if (authToken != null) {
+        if (mAuthToken != null) {
             // Attach header
             Request authRequest = request.newBuilder()
-                    .addHeader("Authorization", "TOKEN " + authToken)
+                    .addHeader("Authorization", "TOKEN " + mAuthToken)
                     .build();
             // move forward with the modified request
             return chain.proceed(authRequest);
@@ -44,7 +45,7 @@ public class HeaderInterceptor implements Interceptor, SharedPreferences.OnShare
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (C.AUTHORIZATION_TOKEN.equals(key)) {
-            authToken = sharedPreferences.getString(C.AUTHORIZATION_TOKEN, null);
+            mAuthToken = sharedPreferences.getString(C.AUTHORIZATION_TOKEN, null);
             Log.i(C.AUTH, "Header Interceptor updated token ");
         }
     }

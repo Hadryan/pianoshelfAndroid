@@ -1,7 +1,6 @@
 package com.pianoshelf.joey.pianoshelf.profile;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
@@ -16,6 +15,7 @@ import com.octo.android.robospice.request.listener.RequestListener;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
+import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetArrayListFragment;
 
 /**
@@ -40,8 +40,7 @@ public class ShelfView extends BaseActivity {
 
         Intent intent = getIntent();
         // Set the action bar title to myshelf if current user is the shelf owner.
-        SharedPreferences globalPreferences = getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
-        String loggedInUser = globalPreferences.getString(C.USERNAME, null);
+        String loggedInUser = new SharedPreferenceHelper(this).getUser();
         String intentUser = intent.getStringExtra(C.SHELF_USER);
 
         ActionBar actionBar = getSupportActionBar();

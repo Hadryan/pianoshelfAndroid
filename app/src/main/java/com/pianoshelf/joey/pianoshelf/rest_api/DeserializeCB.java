@@ -2,16 +2,9 @@ package com.pianoshelf.joey.pianoshelf.rest_api;
 
 import android.util.Log;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.pianoshelf.joey.pianoshelf.C;
-import com.pianoshelf.joey.pianoshelf.authentication.LoginResponse;
 
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 import retrofit2.Call;
 import retrofit2.Callback;

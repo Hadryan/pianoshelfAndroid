@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion '23.0.3'
 
     defaultConfig {
         applicationId "com.pianoshelf.joey.pianoshelf"
         minSdkVersion 16 // only 5% android devices are below this SDK version
-        targetSdkVersion 23
+        targetSdkVersion 24
         versionCode 1
         versionName "1.0"
     }
@@ -35,11 +35,11 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:23.3.0'
-    compile 'com.android.support:design:23.3.0'
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:cardview-v7:23.3.0'
-    compile 'com.android.support:recyclerview-v7:23.3.0'
+    compile 'com.android.support:support-v4:24.0.0'
+    compile 'com.android.support:design:24.0.0'
+    compile 'com.android.support:appcompat-v7:24.0.0'
+    compile 'com.android.support:cardview-v7:24.0.0'
+    compile 'com.android.support:recyclerview-v7:24.0.0'
     compile 'com.octo.android.robospice:robospice:1.4.14'
     compile 'com.octo.android.robospice:robospice-spring-android:1.4.14'
     // compile 'com.octo.android.robospice:robospice-retrofit:1.4.14'

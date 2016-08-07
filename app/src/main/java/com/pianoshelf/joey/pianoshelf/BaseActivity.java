@@ -1,7 +1,6 @@
 package com.pianoshelf.joey.pianoshelf;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.res.ResourcesCompat;
@@ -10,7 +9,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.EventLog;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +24,6 @@ import com.pianoshelf.joey.pianoshelf.authentication.LoginResponse;
 import com.pianoshelf.joey.pianoshelf.authentication.LoginView;
 import com.pianoshelf.joey.pianoshelf.authentication.LogoutMeta;
 import com.pianoshelf.joey.pianoshelf.authentication.LogoutResponse;
-import com.pianoshelf.joey.pianoshelf.authentication.UserToken;
 import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
 import com.pianoshelf.joey.pianoshelf.rest_api.HeaderInterceptor;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
@@ -62,7 +59,6 @@ public class BaseActivity extends AppCompatActivity
 
     // Retrofit
     protected Retrofit retrofit;
-
     protected RetroShelf apiService;
 
     // UI
@@ -71,8 +67,6 @@ public class BaseActivity extends AppCompatActivity
     protected Toolbar mToolbar;
     private ImageView mProfileImage;
     private TextView mUsername;
-
-    private boolean userLoggedIn = false;
 
     @Override
     protected void onStart() {
@@ -90,14 +84,14 @@ public class BaseActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Instantiate retrofit here since we need SharedPreferences
+        // Instantiate retrofit here since we need SharedPreferences from activity context
         retrofit = new Retrofit.Builder()
                 .baseUrl(C.SERVER_ADDR)
                 .addConverterFactory(JacksonConverterFactory.create())
                 .client(new OkHttpClient.Builder()
                         .addInterceptor(new HttpLoggingInterceptor()
                                 .setLevel(HttpLoggingInterceptor.Level.BASIC))
-                        .addInterceptor(new HeaderInterceptor(getSharedPreferences(C.PIANOSHELF, MODE_PRIVATE)))
+                        .addInterceptor(new HeaderInterceptor(this))
                         .build())
                 .build();
         apiService = retrofit.create(RetroShelf.class);
@@ -289,9 +283,8 @@ public class BaseActivity extends AppCompatActivity
 
     // Authentication
     public void logout() {
-        final SharedPreferences sharedPreferences = getSharedPreferences(C.PIANOSHELF, MODE_PRIVATE);
-        String authToken = sharedPreferences.getString(C.AUTHORIZATION_TOKEN, null);
-        if (authToken == null) {
+        final SharedPreferenceHelper spHelper = new SharedPreferenceHelper(this);
+        if (!isUserLoggedIn()) {
             Log.w(C.AUTH, "Attempt to logout without login token! Logout aborted.");
             return;
         }
@@ -300,8 +293,8 @@ public class BaseActivity extends AppCompatActivity
                 .enqueue(new DeserializeCB<RW<LogoutResponse, LogoutMeta>>() {
                     @Override
                     public void onSuccess(RW<LogoutResponse, LogoutMeta> response) {
-                        sharedPreferences.edit().remove(C.AUTHORIZATION_TOKEN).apply();
-                        userLoggedIn = false;
+                        spHelper.removeAuthToken()
+                                .removeUser();
                         Log.i(C.AUTH, "Auth token removed");
                         EventBus.getDefault().post(response.getData());
                     }
@@ -314,8 +307,7 @@ public class BaseActivity extends AppCompatActivity
                     @Override
                     public RW<LogoutResponse, LogoutMeta> convert(String json) throws IOException {
                         return new ObjectMapper().readValue(json,
-                                new TypeReference<RW<LogoutResponse, MetaData>>() {
-                                });
+                                new TypeReference<RW<LogoutResponse, MetaData>>() {});
                     }
 
                     @Override
@@ -326,17 +318,8 @@ public class BaseActivity extends AppCompatActivity
                 });
     }
 
-    @Subscribe
-    public void loginSuccess(UserToken userToken) {
-        userLoggedIn = true;
-    }
-
     public boolean isUserLoggedIn() {
-        return userLoggedIn;
-    }
-
-    public SpiceManager getSpiceManager() {
-        return spiceManager;
+        return null != new SharedPreferenceHelper(this).getUser();
     }
 
    /* @Override

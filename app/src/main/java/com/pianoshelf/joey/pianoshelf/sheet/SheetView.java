@@ -1,7 +1,6 @@
 package com.pianoshelf.joey.pianoshelf.sheet;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,28 +13,29 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.octo.android.robospice.persistence.DurationInMillis;
-import com.octo.android.robospice.persistence.exception.SpiceException;
-import com.octo.android.robospice.request.listener.RequestListener;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
+import com.pianoshelf.joey.pianoshelf.authentication.LogoutResponse;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
 import com.pianoshelf.joey.pianoshelf.composition.CompositionUtil;
-import com.pianoshelf.joey.pianoshelf.rest_api.AddSheetToShelfRequest;
+import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
+import com.pianoshelf.joey.pianoshelf.rest_api.PSCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
+import com.pianoshelf.joey.pianoshelf.rest_api.ShelfSheetMusic;
+import com.pianoshelf.joey.pianoshelf.shelf.ShelfUpdateResponse;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.net.HttpURLConnection;
+import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by joey on 24/10/14.
@@ -70,41 +70,23 @@ public class SheetView extends BaseActivity {
         long sheetId = intent.getLongExtra(SHEET_ID_INTENT, -1);
         Log.i(LOG_TAG, "Loading sheet ID: " + sheetId);
 
-
         mViewPager = (ViewPager) findViewById(R.id.sheetViewPager);
         mActionBar = getSupportActionBar();
 
         apiService.getSheet((int) sheetId)
-                .enqueue(new Callback<RW<Composition, MetaData>>() {
+                .enqueue(new PSCallback<RW<Composition, MetaData>>() {
                     @Override
-                    public void onResponse(Call<RW<Composition, MetaData>> call, Response<RW<Composition, MetaData>> response) {
-                        int metaCode = response.body().getMeta().getCode();
-                        if (metaCode != HttpURLConnection.HTTP_OK) {
-                            Log.e(LOG_TAG, "Metadata status code not OK " + metaCode);
-                            onFailure(call, null);
-                        } else {
-                            EventBus.getDefault().post(response.body().getData());
-                        }
+                    public RW<Composition, MetaData> convert(String json) throws IOException {
+                        return new ObjectMapper().readValue(json,
+                                new TypeReference<RW<LogoutResponse, MetaData>>() {});
                     }
 
                     @Override
                     public void onFailure(Call<RW<Composition, MetaData>> call, Throwable t) {
-                        mActionBar.setTitle("Error");
-                        Log.e(LOG_TAG, "Sheet music request failed.\n" + t.getLocalizedMessage());
+                        mActionBar.setTitle("Error while loading sheet");
+                        Log.e(C.NET, "Sheet music request failed. " + t.getLocalizedMessage());
                     }
                 });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
     }
 
     @Subscribe
@@ -143,13 +125,12 @@ public class SheetView extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.sheet_url_view, menu);
+
         //downloadAction = menu.findItem(R.id.sheet_download);
         //downloadAction.setVisible(false);
+
         // Disable add to shelf when user is not logged in.
-        if (!getSharedPreferences(C.PIANOSHELF, MODE_PRIVATE).
-                contains(C.AUTHORIZATION_TOKEN)) {
-            (menu.findItem(R.id.sheet_add_to_shelf)).setEnabled(false);
-        }
+        menu.findItem(R.id.sheet_add_to_shelf).setEnabled(isUserLoggedIn());
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -266,34 +247,37 @@ public class SheetView extends BaseActivity {
         return true;
     }
 
-    public boolean invokeAddToShelf(MenuItem item) {
-        SharedPreferences globalPreferences =
-                getSharedPreferences(C.PIANOSHELF, MODE_PRIVATE);
-        //TODO Add a check to see if the sheet is already present in the user's shelf
-        if (globalPreferences.contains(C.AUTHORIZATION_TOKEN)) {
-            performRequest(mComposition.getId(),
-                    globalPreferences.getString(C.AUTHORIZATION_TOKEN, null));
-        }
-        return true;
-    }
+    public void invokeAddToShelf(MenuItem item) {
+        apiService.shelfAddSheet(new ShelfSheetMusic(mComposition.getId()))
+                .enqueue(new DeserializeCB<RW<ShelfUpdateResponse, MetaData>>() {
+                    @Override
+                    public void onSuccess(RW<ShelfUpdateResponse, MetaData> response) {
+                        EventBus.getDefault().post(response.getData());
+                        Toast.makeText(SheetView.this,
+                                R.string.add_shelf_success,
+                                Toast.LENGTH_LONG).show();
+                    }
 
-    private void performRequest(int id, String authToken) {
-        AddSheetToShelfRequest request = new AddSheetToShelfRequest(id, authToken);
-        spiceManager.execute(request, null, DurationInMillis.ONE_MINUTE,
-                new AddSheetToShelfRequestListener());
-    }
+                    @Override
+                    public void onInvalid(RW<ShelfUpdateResponse, MetaData> response) {
+                        Log.e(C.NET, "Invalid Response from shelf add request! Meta: "
+                                + response.getMeta().getCode());
+                    }
 
-    private class AddSheetToShelfRequestListener implements RequestListener<Void> {
-        @Override
-        public void onRequestFailure(SpiceException spiceException) {
-            Toast.makeText(SheetView.this, "Error during request: " +
-                    spiceException.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-        }
+                    @Override
+                    public RW<ShelfUpdateResponse, MetaData> convert(String json) throws IOException {
+                        return new ObjectMapper().readValue(json,
+                                new TypeReference<RW<LogoutResponse, MetaData>>() {});
+                    }
 
-        @Override
-        public void onRequestSuccess(Void aVoid) {
-            Toast.makeText(SheetView.this, R.string.add_shelf_success, Toast.LENGTH_LONG).show();
-        }
+                    @Override
+                    public void onFailure(Call<RW<ShelfUpdateResponse, MetaData>> call, Throwable t) {
+                        Toast.makeText(SheetView.this,
+                                "Failed to add sheet to shelf.",
+                                Toast.LENGTH_LONG).show();
+                        Log.e(C.NET, "Shelf add request failed. " + t.getLocalizedMessage());
+                    }
+                });
     }
 
     private class SheetViewPagerAdapter extends FragmentPagerAdapter {
