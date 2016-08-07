@@ -1,4 +1,6 @@
-package com.pianoshelf.joey.pianoshelf.rest_api;
+package com.pianoshelf.joey.pianoshelf.authentication;
+
+import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 
 import java.util.List;
 
