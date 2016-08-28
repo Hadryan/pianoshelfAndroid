@@ -6,6 +6,7 @@ import org.greenrobot.eventbus.EventBus;
  * Created by joey on 04/05/16.
  * PianoShelfCallback
  * Only used when both Data and Meta are both unique Objects
+ * DO NOT USE WITH GENERIC MetaData AS THE DATA FIELD
  */
 public abstract class PSCallback<T extends RW> extends DeserializeCB<T> {
     @Override

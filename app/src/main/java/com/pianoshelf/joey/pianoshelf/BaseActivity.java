@@ -18,8 +18,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.octo.android.robospice.GsonSpringAndroidSpiceService;
-import com.octo.android.robospice.SpiceManager;
 import com.pianoshelf.joey.pianoshelf.authentication.LoginResponse;
 import com.pianoshelf.joey.pianoshelf.authentication.LoginView;
 import com.pianoshelf.joey.pianoshelf.authentication.LogoutMeta;
@@ -40,7 +38,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
-import roboguice.util.temp.Ln;
 
 /**
  * Base activity for the purpose of implementing left panel on all activities.
@@ -48,8 +45,6 @@ import roboguice.util.temp.Ln;
  */
 public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-    protected SpiceManager spiceManager = new SpiceManager(GsonSpringAndroidSpiceService.class);
 
     private static final String LOG_TAG = "BaseActivity";
 
@@ -69,18 +64,6 @@ public class BaseActivity extends AppCompatActivity
     private TextView mUsername;
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        spiceManager.start(this);
-    }
-
-    @Override
-    protected void onStop() {
-        spiceManager.shouldStop();
-        super.onStop();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -95,8 +78,6 @@ public class BaseActivity extends AppCompatActivity
                         .build())
                 .build();
         apiService = retrofit.create(RetroShelf.class);
-
-        Ln.getConfig().setLoggingLevel(Log.ERROR);
 
         EventBus.getDefault().register(this);
 

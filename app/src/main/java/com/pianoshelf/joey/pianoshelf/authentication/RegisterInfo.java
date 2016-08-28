@@ -3,19 +3,19 @@ package com.pianoshelf.joey.pianoshelf.authentication;
 /**
  * Created by joey on 03/07/15.
  */
-public class Register {
-    String username;
-    String password1;
-    String password2;
-    String email;
+public class RegisterInfo {
+    private String username;
+    private String password1;
+    private String password2;
+    private String email;
 
-    public Register(String username, String password1, String password2) {
+    public RegisterInfo(String username, String password1, String password2) {
         this.username = username;
         this.password1 = password1;
         this.password2 = password2;
     }
 
-    public Register(String username, String password1, String password2, String email) {
+    public RegisterInfo(String username, String password1, String password2, String email) {
         this.username = username;
         this.password1 = password1;
         this.password2 = password2;

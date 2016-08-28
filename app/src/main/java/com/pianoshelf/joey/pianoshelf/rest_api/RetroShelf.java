@@ -5,7 +5,13 @@ import com.pianoshelf.joey.pianoshelf.authentication.LoginMeta;
 import com.pianoshelf.joey.pianoshelf.authentication.LoginResponse;
 import com.pianoshelf.joey.pianoshelf.authentication.LogoutMeta;
 import com.pianoshelf.joey.pianoshelf.authentication.LogoutResponse;
+import com.pianoshelf.joey.pianoshelf.authentication.RegisterInfo;
+import com.pianoshelf.joey.pianoshelf.authentication.RegistrationMeta;
+import com.pianoshelf.joey.pianoshelf.authentication.RegistrationResponse;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.profile.Profile;
+import com.pianoshelf.joey.pianoshelf.profile.ProfileMeta;
+import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
 import com.pianoshelf.joey.pianoshelf.shelf.ShelfUpdateResponse;
 
 import java.util.List;
@@ -23,14 +29,18 @@ import retrofit2.http.QueryMap;
 /**
  * Created by joey on 29/04/16.
  * Retrofit + Pianoshelf
+ * function definitions here should lead with a noun followed by the verb
+ * where the verb being the action and the noun being the acted
+ * with the exception of get/set actions
  */
 public interface RetroShelf {
     // EP -> ENDPOINT
-    String
-            SHEET_EP = "api/sheetmusic/",
+    String  SHEET_EP = "api/sheetmusic/",
             SHELF_EP = "api/shelf/",
             LOGIN_EP = "api/auth/login/",
-            LOGOUT_EP = "api/auth/logout/";
+            LOGOUT_EP = "api/auth/logout/",
+            REGISTER_EP = "api/auth/register/",
+            PROFILE_EP = "api/profile/";
 
     /* Sheet */
 
@@ -38,13 +48,13 @@ public interface RetroShelf {
     Call<RW<Composition, MetaData>> getSheet(@Path("id") int sheetId);
 
     @GET(SHEET_EP)
-    Call<RW<List<Composition>, PagedMeta>> querySheetList(
+    Call<RW<List<Composition>, PagedMeta>> sheetListQuery(
             @QueryMap Map<String, String> order,
             @Query("page") int pageNumber,
             @Query("page_size") int pageSize);
 
     @GET(SHEET_EP)
-    Call<RW<List<Composition>, PagedMeta>> queryTrendingSheetList(
+    Call<RW<List<Composition>, PagedMeta>> sheetListTrendingQuery(
             @QueryMap Map<String, String> order,
             @Query("days") int days,
             @Query("results") int sheetCount);
@@ -57,14 +67,24 @@ public interface RetroShelf {
     @POST(LOGOUT_EP)
     Call<RW<LogoutResponse, LogoutMeta>> logout();
 
+    @POST(REGISTER_EP)
+    Call<RW<RegistrationResponse, RegistrationMeta>> webRegistration(@Body RegisterInfo credentials);
+
 
     /* Shelf */
 
-    // We don't care what these items return aside from the meta
+    @GET(SHELF_EP)
+    Call<RW<Shelf, MetaData>> getShelf(@Query("username") String username);
+
     @POST(SHELF_EP)
-    Call<RW<ShelfUpdateResponse, MetaData>> shelfAddSheet(@Body ShelfSheetMusic sheetId);
+    Call<RW<Shelf, MetaData>> shelfAddSheet(@Body ShelfSheetMusic sheetId);
 
     @DELETE(SHELF_EP)
-    Call<RW<ShelfUpdateResponse, MetaData>> shelfRemoveSheet(@Body ShelfSheetMusic sheetId);
+    Call<RW<Shelf, MetaData>> shelfRemoveSheet(@Body ShelfSheetMusic sheetId);
+
+
+    @GET(PROFILE_EP)
+    Call<RW<Profile, ProfileMeta>> getProfile(@Query("username") String username);
 
 }
+

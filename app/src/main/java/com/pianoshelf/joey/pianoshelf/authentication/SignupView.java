@@ -8,11 +8,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.octo.android.robospice.persistence.DurationInMillis;
-import com.octo.android.robospice.persistence.exception.SpiceException;
-import com.octo.android.robospice.request.listener.RequestListener;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.R;
+import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
+import com.pianoshelf.joey.pianoshelf.rest_api.PSCallback;
+import com.pianoshelf.joey.pianoshelf.rest_api.RW;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.io.IOException;
+
+import retrofit2.Call;
 
 /**
  * Created by joey on 12/6/14.
@@ -21,10 +30,8 @@ public class SignupView extends BaseActivity {
     private ProgressBar progressBar;
     private TextView errorMessage;
     private TextView warningMessage;
-    protected String lastRequestCacheKey;
-    private final String LOG_TAG = "SignupView";
 
-    private static final String KEY_LAST_REQUEST_CACHE_KEY = "lastRequestCacheKey";
+    private RegisterInfo mCredentials;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,54 +55,78 @@ public class SignupView extends BaseActivity {
         boolean signupCheck = checkUsername(username) && checkPassword(password, passwordRepeat)
                 && checkEmail(email);
         if (signupCheck) {
-            Register credentials = new Register(username, password, passwordRepeat, email);
-            performRequest(credentials);
+            mCredentials = new RegisterInfo(username, password, passwordRepeat, email);
+            performRequest(mCredentials);
         }
     }
 
-    private void performRequest(Register credentials) {
+    private void performRequest(RegisterInfo credentials) {
         progressBar.setVisibility(View.VISIBLE);
-        RegisterRequest request = new RegisterRequest(credentials);
-        lastRequestCacheKey = request.createCacheKey();
-        spiceManager.execute(request, lastRequestCacheKey, DurationInMillis.ONE_MINUTE,
-                new SignupRequestListener());
+
+        apiService.webRegistration(credentials).enqueue(new PSCallback<RW<RegistrationResponse, RegistrationMeta>>() {
+            @Override
+            public RW<RegistrationResponse, RegistrationMeta> convert(String json) throws IOException {
+                return new ObjectMapper().readValue(json,
+                        new TypeReference<RW<RegistrationResponse, RegistrationMeta>>(){});
+            }
+
+            @Override
+            public void onFailure(Call<RW<RegistrationResponse, RegistrationMeta>> call, Throwable t) {
+                Toast.makeText(SignupView.this, "Network error: " +
+                        t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        if (!TextUtils.isEmpty(lastRequestCacheKey)) {
-            outState.putString(KEY_LAST_REQUEST_CACHE_KEY, lastRequestCacheKey);
-        }
-        super.onSaveInstanceState(outState);
+    @Subscribe
+    public void onRegistrationSuccess(RegistrationResponse response) {
+        progressBar.setVisibility(View.INVISIBLE);
+        Toast.makeText(SignupView.this, R.string.registration_success, Toast.LENGTH_LONG).show();
+
+        // Login the user with another request, leave activity when finished
+        apiService.login(new Login(mCredentials.getUsername(), mCredentials.getPassword1()))
+                .enqueue(new PSCallback<RW<LoginResponse, LoginMeta>>() {
+                    @Override
+                    public RW<LoginResponse, LoginMeta> convert(String json) throws IOException {
+                        return new ObjectMapper().readValue(json,
+                                new TypeReference<RW<LoginResponse, LoginMeta>>(){});
+                    }
+
+                    @Override
+                    public void onFailure(Call<RW<LoginResponse, LoginMeta>> call, Throwable t) {
+                        Toast.makeText(SignupView.this, "Network error: " +
+                                t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.INVISIBLE);
+
+                    }
+                });
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState.containsKey(KEY_LAST_REQUEST_CACHE_KEY)) {
-            lastRequestCacheKey = savedInstanceState
-                    .getString(KEY_LAST_REQUEST_CACHE_KEY);
-            spiceManager.getFromCache(RegisterResponse.class,
-                    lastRequestCacheKey, DurationInMillis.ALWAYS_EXPIRED,
-                    new SignupRequestListener());
-        }
+    @Subscribe
+    public void onRegistrationFailure(RegistrationMeta meta) {
+        progressBar.setVisibility(View.GONE);
+        errorMessage.setText(meta.toString());
     }
 
-    private class SignupRequestListener implements RequestListener<RegisterResponse> {
-        @Override
-        public void onRequestFailure(SpiceException spiceException) {
-            progressBar.setVisibility(View.GONE);
-            errorMessage.setText(spiceException.getCause().getMessage());
-        }
+    @Subscribe
+    public void onLoginComplete(LoginResponse response) {
+        progressBar.setVisibility(View.INVISIBLE);
 
-        @Override
-        public void onRequestSuccess(RegisterResponse registerResponse) {
-            progressBar.setVisibility(View.INVISIBLE);
-            Toast.makeText(SignupView.this, R.string.registration_success, Toast.LENGTH_LONG).show();
-            finish();
-        }
+        String token = response.getAuth_token();
+
+        // Save to disk
+        // Log.i(LOG_TAG, loginResponse.getAuth_token());
+        new SharedPreferenceHelper(this)
+                .setAuthToken(token)
+                .setUser(mCredentials.getUsername());
+
+        // Announce token to other UI elements
+        EventBus.getDefault().post(new UserToken(mCredentials.getUsername(), token));
+
+        // exit from this login screen back to where we came from
+        finish();
     }
-
 
     private boolean checkUsername(String username) {
         if (username == null || username.isEmpty()) {

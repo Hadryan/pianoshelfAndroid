@@ -3,7 +3,7 @@ package com.pianoshelf.joey.pianoshelf.authentication;
 /**
  * Created by joey on 03/07/15.
  */
-public class RegisterResponse {
+public class RegistrationResponse {
     String username;
     String email;
     String first_name;
