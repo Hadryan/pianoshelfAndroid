@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
-import com.pianoshelf.joey.pianoshelf.rest_api.PSCallback;
+import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 
 import org.greenrobot.eventbus.EventBus;
@@ -22,6 +22,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.IOException;
 
 import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by joey on 12/6/14.
@@ -63,13 +64,8 @@ public class SignupView extends BaseActivity {
     private void performRequest(RegisterInfo credentials) {
         progressBar.setVisibility(View.VISIBLE);
 
-        apiService.webRegistration(credentials).enqueue(new PSCallback<RW<RegistrationResponse, RegistrationMeta>>() {
-            @Override
-            public RW<RegistrationResponse, RegistrationMeta> convert(String json) throws IOException {
-                return new ObjectMapper().readValue(json,
-                        new TypeReference<RW<RegistrationResponse, RegistrationMeta>>(){});
-            }
-
+        apiService.webRegistration(credentials).enqueue(
+                new DeserializeCB<RW<RegistrationResponse, RegistrationMeta>>() {
             @Override
             public void onFailure(Call<RW<RegistrationResponse, RegistrationMeta>> call, Throwable t) {
                 Toast.makeText(SignupView.this, "Network error: " +
@@ -86,19 +82,12 @@ public class SignupView extends BaseActivity {
 
         // Login the user with another request, leave activity when finished
         apiService.login(new Login(mCredentials.getUsername(), mCredentials.getPassword1()))
-                .enqueue(new PSCallback<RW<LoginResponse, LoginMeta>>() {
-                    @Override
-                    public RW<LoginResponse, LoginMeta> convert(String json) throws IOException {
-                        return new ObjectMapper().readValue(json,
-                                new TypeReference<RW<LoginResponse, LoginMeta>>(){});
-                    }
-
+                .enqueue(new DeserializeCB<RW<LoginResponse,LoginMeta>>() {
                     @Override
                     public void onFailure(Call<RW<LoginResponse, LoginMeta>> call, Throwable t) {
                         Toast.makeText(SignupView.this, "Network error: " +
                                 t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                         progressBar.setVisibility(View.INVISIBLE);
-
                     }
                 });
     }

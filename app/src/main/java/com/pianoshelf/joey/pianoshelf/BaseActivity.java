@@ -39,6 +39,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
@@ -78,8 +79,8 @@ public class BaseActivity extends AppCompatActivity
                 .client(new OkHttpClient.Builder()
                         .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
                         //.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
-                        .addInterceptor(new HeaderInterceptor(this))
                         .addInterceptor(new ResponseInterceptor(this))
+                        .addInterceptor(new HeaderInterceptor(this))
                         .build())
                 .build();
         apiService = retrofit.create(RetroShelf.class);
@@ -278,22 +279,16 @@ public class BaseActivity extends AppCompatActivity
         apiService.logout()
                 .enqueue(new DeserializeCB<RW<LogoutResponse, LogoutMeta>>() {
                     @Override
-                    public void onSuccess(RW<LogoutResponse, LogoutMeta> response) {
-                        spHelper.removeAuthToken()
-                                .removeUser();
-                        Log.i(C.AUTH, "Auth token removed");
-                        EventBus.getDefault().post(response.getData());
-                    }
-
-                    @Override
-                    public void onInvalid(RW<LogoutResponse, LogoutMeta> response) {
-                        Log.e(C.AUTH, "Invalid Response from logout request! " + response.getMeta().getCode());
-                    }
-
-                    @Override
-                    public RW<LogoutResponse, LogoutMeta> convert(String json) throws IOException {
-                        return new ObjectMapper().readValue(json,
-                                new TypeReference<RW<LogoutResponse, MetaData>>() {});
+                    public void onResponse(Call<RW<LogoutResponse, LogoutMeta>> call, Response<RW<LogoutResponse, LogoutMeta>> response) {
+                        super.onResponse(call, response);
+                        int statusCode = response.body().getMeta().getCode();
+                        if (statusCode == 200) {
+                            spHelper.removeAuthToken()
+                                    .removeUser();
+                            Log.i(C.AUTH, "Auth token removed");
+                        } else {
+                            Log.e(C.AUTH, "Invalid Response from logout request! " + statusCode);
+                        }
                     }
 
                     @Override

@@ -14,9 +14,9 @@ import com.pianoshelf.joey.pianoshelf.authentication.SignupView;
 import com.pianoshelf.joey.pianoshelf.composition.ComposerView;
 import com.pianoshelf.joey.pianoshelf.profile.Profile;
 import com.pianoshelf.joey.pianoshelf.profile.ProfileView;
+import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
 import com.pianoshelf.joey.pianoshelf.rest_api.DetailMeta;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
-import com.pianoshelf.joey.pianoshelf.rest_api.PSCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetListView;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetView;
@@ -115,18 +115,12 @@ public class MainActivity extends BaseActivity {
 
     public void updateDescription(View view) {
         apiService.profileUpdateDescription(UUID.randomUUID().toString())
-                .enqueue(new PSCallback<RW<Profile, MetaData>>() {
-            @Override
-            public RW<Profile, MetaData> convert(String json) throws IOException {
-                return new ObjectMapper().readValue(json,
-                        new TypeReference<RW<Profile, DetailMeta>>(){});
-            }
+                .enqueue(new DeserializeCB<RW<Profile, MetaData>>() {
+                    @Override
+                    public void onFailure(Call<RW<Profile, MetaData>> call, Throwable t) {
 
-            @Override
-            public void onFailure(Call<RW<Profile, MetaData>> call, Throwable t) {
-
-            }
-        });
+                    }
+                });
     }
 
     @Override

@@ -24,7 +24,6 @@ import com.pianoshelf.joey.pianoshelf.composition.Composition;
 import com.pianoshelf.joey.pianoshelf.composition.CompositionUtil;
 import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
-import com.pianoshelf.joey.pianoshelf.rest_api.PSCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.rest_api.ShelfSheetMusic;
 import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
@@ -37,6 +36,7 @@ import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by joey on 24/10/14.
@@ -77,20 +77,13 @@ public class SheetView extends BaseActivity {
         apiService.getSheet((int) sheetId)
                 .enqueue(new DeserializeCB<RW<Composition, MetaData>>() {
                     @Override
-                    public RW<Composition, MetaData> convert(String json) throws IOException {
-                        return new ObjectMapper().readValue(json,
-                                new TypeReference<RW<Composition, MetaData>>() {});
-                    }
-
-                    @Override
-                    public void onSuccess(RW<Composition, MetaData> response) {
-                        EventBus.getDefault().post(response.getData());
-                    }
-
-                    @Override
-                    public void onInvalid(RW<Composition, MetaData> response) {
-                        mActionBar.setTitle("Invalid sheet response");
-                        Log.w(C.NET, "Sheet music request invalid. " + response.getMeta());
+                    public void onResponse(Call<RW<Composition, MetaData>> call, Response<RW<Composition, MetaData>> response) {
+                        super.onResponse(call, response);
+                        int statusCode = response.body().getMeta().getCode();
+                        if (statusCode != 200) {
+                            mActionBar.setTitle("Invalid sheet response");
+                            Log.w(C.NET, "Sheet music request invalid. " + statusCode);
+                        }
                     }
 
                     @Override
@@ -264,23 +257,16 @@ public class SheetView extends BaseActivity {
         apiService.shelfAddSheet(new ShelfSheetMusic(mComposition.getId()))
                 .enqueue(new DeserializeCB<RW<Shelf, MetaData>>() {
                     @Override
-                    public void onSuccess(RW<Shelf, MetaData> response) {
-                        EventBus.getDefault().post(response.getData());
-                        Toast.makeText(SheetView.this,
-                                R.string.add_shelf_success,
-                                Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onInvalid(RW<Shelf, MetaData> response) {
-                        Log.e(C.NET, "Invalid Response from shelf add request! Meta: "
-                                + response.getMeta().getCode());
-                    }
-
-                    @Override
-                    public RW<Shelf, MetaData> convert(String json) throws IOException {
-                        return new ObjectMapper().readValue(json,
-                                new TypeReference<RW<LogoutResponse, MetaData>>() {});
+                    public void onResponse(Call<RW<Shelf, MetaData>> call, Response<RW<Shelf, MetaData>> response) {
+                        int statusCode = response.body().getMeta().getCode();
+                        if (statusCode == 200) {
+                            Toast.makeText(SheetView.this,
+                                    R.string.add_shelf_success,
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Log.e(C.NET, "Invalid Response from shelf add request! Meta: "
+                                    + statusCode);
+                        }
                     }
 
                     @Override

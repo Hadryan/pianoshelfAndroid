@@ -15,7 +15,7 @@ import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
-import com.pianoshelf.joey.pianoshelf.rest_api.PSCallback;
+import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 
 import org.greenrobot.eventbus.EventBus;
@@ -90,7 +90,7 @@ public class LoginView extends BaseActivity {
     private void performRequest(Login login) {
         progressBar.setVisibility(View.VISIBLE);
 
-        apiService.login(login).enqueue(new PSCallback<RW<LoginResponse, LoginMeta>>() {
+        apiService.login(login).enqueue(new DeserializeCB<RW<LoginResponse, LoginMeta>>() {
             @Override
             public void onFailure(Call<RW<LoginResponse, LoginMeta>> call, Throwable t) {
                 Log.e(C.NET, t.getLocalizedMessage());
@@ -98,11 +98,6 @@ public class LoginView extends BaseActivity {
                         t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 progressBar.setVisibility(View.INVISIBLE);
 
-            }
-            @Override
-            public RW<LoginResponse, LoginMeta> convert(String json) throws IOException {
-                return new ObjectMapper().readValue(json,
-                        new TypeReference<RW<LoginResponse, LoginMeta>>(){});
             }
         });
     }
