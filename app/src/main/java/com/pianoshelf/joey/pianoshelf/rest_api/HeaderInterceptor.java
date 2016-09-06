@@ -35,6 +35,7 @@ public class HeaderInterceptor implements Interceptor, SharedPreferences.OnShare
             Request authRequest = request.newBuilder()
                     .addHeader("Authorization", "TOKEN " + mAuthToken)
                     .build();
+            Log.v(C.NET, "DEBUG" + authRequest.headers().toString());
             // move forward with the modified request
             return chain.proceed(authRequest);
         } else {

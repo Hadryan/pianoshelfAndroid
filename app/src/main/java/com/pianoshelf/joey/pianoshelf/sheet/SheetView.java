@@ -27,6 +27,7 @@ import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.PSCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.rest_api.ShelfSheetMusic;
+import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
 import com.pianoshelf.joey.pianoshelf.shelf.ShelfUpdateResponse;
 
 import org.greenrobot.eventbus.EventBus;
@@ -74,16 +75,28 @@ public class SheetView extends BaseActivity {
         mActionBar = getSupportActionBar();
 
         apiService.getSheet((int) sheetId)
-                .enqueue(new PSCallback<RW<Composition, MetaData>>() {
+                .enqueue(new DeserializeCB<RW<Composition, MetaData>>() {
                     @Override
                     public RW<Composition, MetaData> convert(String json) throws IOException {
                         return new ObjectMapper().readValue(json,
-                                new TypeReference<RW<LogoutResponse, MetaData>>() {});
+                                new TypeReference<RW<Composition, MetaData>>() {});
+                    }
+
+                    @Override
+                    public void onSuccess(RW<Composition, MetaData> response) {
+                        EventBus.getDefault().post(response.getData());
+                    }
+
+                    @Override
+                    public void onInvalid(RW<Composition, MetaData> response) {
+                        mActionBar.setTitle("Invalid sheet response");
+                        Log.w(C.NET, "Sheet music request invalid. " + response.getMeta());
                     }
 
                     @Override
                     public void onFailure(Call<RW<Composition, MetaData>> call, Throwable t) {
                         mActionBar.setTitle("Error while loading sheet");
+                        t.printStackTrace();
                         Log.e(C.NET, "Sheet music request failed. " + t.getLocalizedMessage());
                     }
                 });
@@ -249,9 +262,9 @@ public class SheetView extends BaseActivity {
 
     public void invokeAddToShelf(MenuItem item) {
         apiService.shelfAddSheet(new ShelfSheetMusic(mComposition.getId()))
-                .enqueue(new DeserializeCB<RW<ShelfUpdateResponse, MetaData>>() {
+                .enqueue(new DeserializeCB<RW<Shelf, MetaData>>() {
                     @Override
-                    public void onSuccess(RW<ShelfUpdateResponse, MetaData> response) {
+                    public void onSuccess(RW<Shelf, MetaData> response) {
                         EventBus.getDefault().post(response.getData());
                         Toast.makeText(SheetView.this,
                                 R.string.add_shelf_success,
@@ -259,19 +272,19 @@ public class SheetView extends BaseActivity {
                     }
 
                     @Override
-                    public void onInvalid(RW<ShelfUpdateResponse, MetaData> response) {
+                    public void onInvalid(RW<Shelf, MetaData> response) {
                         Log.e(C.NET, "Invalid Response from shelf add request! Meta: "
                                 + response.getMeta().getCode());
                     }
 
                     @Override
-                    public RW<ShelfUpdateResponse, MetaData> convert(String json) throws IOException {
+                    public RW<Shelf, MetaData> convert(String json) throws IOException {
                         return new ObjectMapper().readValue(json,
                                 new TypeReference<RW<LogoutResponse, MetaData>>() {});
                     }
 
                     @Override
-                    public void onFailure(Call<RW<ShelfUpdateResponse, MetaData>> call, Throwable t) {
+                    public void onFailure(Call<RW<Shelf, MetaData>> call, Throwable t) {
                         Toast.makeText(SheetView.this,
                                 "Failed to add sheet to shelf.",
                                 Toast.LENGTH_LONG).show();

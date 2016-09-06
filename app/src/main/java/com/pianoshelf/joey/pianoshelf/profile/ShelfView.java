@@ -9,14 +9,21 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.octo.android.robospice.persistence.DurationInMillis;
-import com.octo.android.robospice.persistence.exception.SpiceException;
-import com.octo.android.robospice.request.listener.RequestListener;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
+import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
+import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
+import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetArrayListFragment;
+import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
+
+import java.io.IOException;
+
+import retrofit2.Call;
 
 /**
  * Created by joey on 1/2/15.
@@ -26,6 +33,8 @@ public class ShelfView extends BaseActivity {
     private MenuItem mEditIcon;
     private int mEditIconResource = R.drawable.ic_mode_edit_24dp;
     private SheetArrayListFragment mSheetList;
+
+    private Shelf mShelf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +65,30 @@ public class ShelfView extends BaseActivity {
 
         if (!TextUtils.isEmpty(intentUser)) {
             Log.v(LOG_TAG, "Loading user " + intentUser);
-            ProfileRequest request = new ProfileRequest(intentUser);
-            spiceManager.execute(request, request.createCacheKey(),
-                    DurationInMillis.ONE_HOUR, new ProfileRequestListener());
+
+            apiService.getShelf(intentUser).enqueue(new DeserializeCB<RW<Shelf, MetaData>>() {
+                @Override
+                public RW<Shelf, MetaData> convert(String json) throws IOException {
+                    return new ObjectMapper().readValue(json,
+                            new TypeReference<RW<Shelf, MetaData>>(){});
+                }
+
+                @Override
+                public void onSuccess(RW<Shelf, MetaData> response) {
+                    mShelf = response.getData();
+                    mSheetList.setSheetList(response.getData().getSheetmusic());
+                }
+
+                @Override
+                public void onInvalid(RW<Shelf, MetaData> response) {
+                    Log.e(C.NET, "Profile request invalid response " + response.getMeta());
+                }
+
+                @Override
+                public void onFailure(Call<RW<Shelf, MetaData>> call, Throwable t) {
+                    Log.e(C.NET, "Profile request failed " + t.getMessage());
+                }
+            });
         }
     }
 
@@ -85,18 +115,6 @@ public class ShelfView extends BaseActivity {
                 mSheetList.disableDelete();
                 break;
             }
-        }
-    }
-
-    private class ProfileRequestListener implements RequestListener<Profile> {
-        @Override
-        public void onRequestSuccess(Profile profile) {
-            mSheetList.setSheetList(profile.getShelf().getSheetmusic());
-        }
-
-        @Override
-        public void onRequestFailure(SpiceException spiceException) {
-            Log.e(LOG_TAG, "Profile request failed " + spiceException.getMessage());
         }
     }
 }

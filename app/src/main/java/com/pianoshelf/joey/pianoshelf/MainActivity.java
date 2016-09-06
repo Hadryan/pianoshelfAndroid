@@ -7,12 +7,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pianoshelf.joey.pianoshelf.authentication.LoginView;
 import com.pianoshelf.joey.pianoshelf.authentication.SignupView;
 import com.pianoshelf.joey.pianoshelf.composition.ComposerView;
+import com.pianoshelf.joey.pianoshelf.profile.Profile;
 import com.pianoshelf.joey.pianoshelf.profile.ProfileView;
+import com.pianoshelf.joey.pianoshelf.rest_api.DetailMeta;
+import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
+import com.pianoshelf.joey.pianoshelf.rest_api.PSCallback;
+import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetListView;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetView;
+
+import java.io.IOException;
+import java.util.UUID;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * This is the main logic page
@@ -77,6 +91,10 @@ public class MainActivity extends BaseActivity {
         startActivity(intent);
     }
 
+    public void invokeLogout(View view) {
+        logout();
+    }
+
     public void invokeRegistration(View view) {
         Intent intent = new Intent(this, SignupView.class);
         startActivity(intent);
@@ -88,6 +106,27 @@ public class MainActivity extends BaseActivity {
         Intent intent = new Intent(this, ProfileView.class);
         intent.putExtra("username", "hello");
         startActivity(intent);
+    }
+
+    public void randomizeToken(View view) {
+        SharedPreferenceHelper sph = new SharedPreferenceHelper(this);
+        sph.setAuthToken(UUID.randomUUID().toString());
+    }
+
+    public void updateDescription(View view) {
+        apiService.profileUpdateDescription(UUID.randomUUID().toString())
+                .enqueue(new PSCallback<RW<Profile, MetaData>>() {
+            @Override
+            public RW<Profile, MetaData> convert(String json) throws IOException {
+                return new ObjectMapper().readValue(json,
+                        new TypeReference<RW<Profile, DetailMeta>>(){});
+            }
+
+            @Override
+            public void onFailure(Call<RW<Profile, MetaData>> call, Throwable t) {
+
+            }
+        });
     }
 
     @Override

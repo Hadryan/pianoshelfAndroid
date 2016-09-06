@@ -26,6 +26,7 @@ import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
 import com.pianoshelf.joey.pianoshelf.rest_api.HeaderInterceptor;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
+import com.pianoshelf.joey.pianoshelf.rest_api.ResponseInterceptor;
 import com.pianoshelf.joey.pianoshelf.rest_api.RetroShelf;
 
 import org.greenrobot.eventbus.EventBus;
@@ -33,7 +34,9 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
 
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -70,11 +73,13 @@ public class BaseActivity extends AppCompatActivity
         // Instantiate retrofit here since we need SharedPreferences from activity context
         retrofit = new Retrofit.Builder()
                 .baseUrl(C.SERVER_ADDR)
+                //.baseUrl(new HttpUrl.Builder().scheme("http").host("192.168.0.102").port(80).build())
                 .addConverterFactory(JacksonConverterFactory.create())
                 .client(new OkHttpClient.Builder()
-                        .addInterceptor(new HttpLoggingInterceptor()
-                                .setLevel(HttpLoggingInterceptor.Level.BASIC))
+                        .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+                        //.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
                         .addInterceptor(new HeaderInterceptor(this))
+                        .addInterceptor(new ResponseInterceptor(this))
                         .build())
                 .build();
         apiService = retrofit.create(RetroShelf.class);

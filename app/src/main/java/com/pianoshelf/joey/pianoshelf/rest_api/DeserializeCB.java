@@ -2,7 +2,10 @@ package com.pianoshelf.joey.pianoshelf.rest_api;
 
 import android.util.Log;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pianoshelf.joey.pianoshelf.C;
+import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
 
 import java.io.IOException;
 
@@ -22,6 +25,9 @@ public abstract class DeserializeCB<T extends RW> implements Callback<T> {
     @Override
     public void onResponse(Call<T> call, Response<T> response) {
         Log.i(C.NET, "HTTP response code: " + response.code());
+        Log.i(C.NET, "Response body: " + response.body());
+        Log.i(C.NET, "Response error body: " + response.errorBody());
+
         if (response.isSuccessful()) {
             onSuccess(response.body());
         } else {
@@ -35,9 +41,13 @@ public abstract class DeserializeCB<T extends RW> implements Callback<T> {
 
                 // due to Java's Type Erasure, convert cannot determine the type of T,
                 // hence it must be stated explicitly for each usage of DeserializeCB
+
                 T errorBodyObject = convert(json);
 
                 Log.i(C.NET, errorBodyObject.getClass().toString());
+
+
+
                 onInvalid(errorBodyObject);
             } catch (IOException e) {
                 // hand off to failure case

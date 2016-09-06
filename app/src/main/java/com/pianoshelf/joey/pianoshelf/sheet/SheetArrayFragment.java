@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.shelf.ShelfSheetInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;

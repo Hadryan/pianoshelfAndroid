@@ -72,7 +72,7 @@ public class SearchQuery {
         Map<String, String> order = new HashMap<>();
         order.put(ORDER, "popular");
         order.put(SORT, "desc");
-        mApiService.querySheetList(order, page, PAGE_SIZE)
+        mApiService.sheetListQuery(order, page, PAGE_SIZE)
                 .enqueue(queryFinishedAction);
 
     }
@@ -81,7 +81,7 @@ public class SearchQuery {
         Map<String, String> order = new HashMap<>();
         order.put(ORDER, "new");
         order.put(SORT, "desc");
-        mApiService.querySheetList(order, page, PAGE_SIZE)
+        mApiService.sheetListQuery(order, page, PAGE_SIZE)
                 .enqueue(queryFinishedAction);
     }
 
@@ -89,7 +89,7 @@ public class SearchQuery {
         Map<String, String> order = new HashMap<>();
         order.put(ORDER, "difficulty");
         order.put(SORT, "desc");
-        mApiService.querySheetList(order, page, PAGE_SIZE)
+        mApiService.sheetListQuery(order, page, PAGE_SIZE)
                 .enqueue(queryFinishedAction);
     }
 
@@ -97,14 +97,14 @@ public class SearchQuery {
         Map<String, String> order = new HashMap<>();
         order.put(ORDER, "difficulty");
         order.put(SORT, "asc");
-        mApiService.querySheetList(order, page, PAGE_SIZE)
+        mApiService.sheetListQuery(order, page, PAGE_SIZE)
                 .enqueue(queryFinishedAction);
     }
 
     public void getTrending(int page) {
         Map<String, String> order = new HashMap<>();
         order.put(ORDER, "trending");
-        mApiService.queryTrendingSheetList(order, TRENDING_SHEET_SIZE, PAGE_SIZE)
+        mApiService.sheetListTrendingQuery(order, TRENDING_SHEET_SIZE, PAGE_SIZE)
                 .enqueue(queryFinishedAction);
     }
 }

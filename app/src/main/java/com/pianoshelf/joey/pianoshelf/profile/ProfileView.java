@@ -17,6 +17,7 @@ import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.rest_api.DetailMeta;
 import com.pianoshelf.joey.pianoshelf.rest_api.PSCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetArrayListFragment;
@@ -70,16 +71,17 @@ public class ProfileView extends BaseActivity {
         if (TextUtils.isEmpty(username)) {
             throw new RuntimeException("Empty username given to ProfileView.");
         } else {
-            apiService.getProfile(username).enqueue(new PSCallback<RW<Profile, ProfileMeta>>() {
+            apiService.getProfile(username).enqueue(new PSCallback<RW<Profile, DetailMeta>>() {
                 @Override
-                public RW<Profile, ProfileMeta> convert(String json) throws IOException {
+                public RW<Profile, DetailMeta> convert(String json) throws IOException {
                     return new ObjectMapper().readValue(json,
-                            new TypeReference<RW<Profile, ProfileMeta>>(){});
+                            new TypeReference<RW<Profile, DetailMeta>>(){});
                 }
 
                 @Override
-                public void onFailure(Call<RW<Profile, ProfileMeta>> call, Throwable t) {
-                    Log.e(C.NET, "User " + username + " failed to load");
+                public void onFailure(Call<RW<Profile, DetailMeta>> call, Throwable t) {
+                    t.printStackTrace();
+                    Log.e(C.NET, "User " + username + " failed to load" + t.getLocalizedMessage());
                     progressBar.setVisibility(View.GONE);
                 }
             });
@@ -121,7 +123,7 @@ public class ProfileView extends BaseActivity {
     }
 
     @Subscribe
-    public void onProfileError(ProfileMeta meta) {
+    public void onProfileError(DetailMeta meta) {
         progressBar.setVisibility(View.GONE);
         Log.e(LOG_TAG, "Requested user " + username + " does not exist");
         Toast.makeText(this,

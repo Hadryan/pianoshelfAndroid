@@ -3,6 +3,7 @@ package com.pianoshelf.joey.pianoshelf.sheet;
 import android.support.v7.widget.RecyclerView;
 
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.shelf.ShelfSheetInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;
