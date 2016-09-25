@@ -16,15 +16,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pianoshelf.joey.pianoshelf.authentication.LoginResponse;
 import com.pianoshelf.joey.pianoshelf.authentication.LoginView;
 import com.pianoshelf.joey.pianoshelf.authentication.LogoutMeta;
 import com.pianoshelf.joey.pianoshelf.authentication.LogoutResponse;
 import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
 import com.pianoshelf.joey.pianoshelf.rest_api.HeaderInterceptor;
-import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.rest_api.ResponseInterceptor;
 import com.pianoshelf.joey.pianoshelf.rest_api.RetroShelf;
@@ -32,11 +29,7 @@ import com.pianoshelf.joey.pianoshelf.rest_api.RetroShelf;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.io.IOException;
-
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Response;

@@ -7,26 +7,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pianoshelf.joey.pianoshelf.authentication.LoginView;
 import com.pianoshelf.joey.pianoshelf.authentication.SignupView;
 import com.pianoshelf.joey.pianoshelf.composition.ComposerView;
 import com.pianoshelf.joey.pianoshelf.profile.Profile;
 import com.pianoshelf.joey.pianoshelf.profile.ProfileView;
 import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
-import com.pianoshelf.joey.pianoshelf.rest_api.DetailMeta;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetListView;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetView;
 
-import java.io.IOException;
 import java.util.UUID;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * This is the main logic page

@@ -11,8 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
@@ -24,7 +22,6 @@ import com.pianoshelf.joey.pianoshelf.sheet.SheetArrayListFragment;
 
 import org.greenrobot.eventbus.Subscribe;
 
-import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;

@@ -2,11 +2,8 @@ package com.pianoshelf.joey.pianoshelf.rest_api;
 
 import android.util.Log;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pianoshelf.joey.pianoshelf.BuildConfig;
 import com.pianoshelf.joey.pianoshelf.C;
-import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
 
 import org.greenrobot.eventbus.EventBus;
 

@@ -11,7 +11,6 @@ import com.pianoshelf.joey.pianoshelf.authentication.RegistrationResponse;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
 import com.pianoshelf.joey.pianoshelf.profile.Profile;
 import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
-import com.pianoshelf.joey.pianoshelf.shelf.ShelfUpdateResponse;
 
 import java.util.List;
 import java.util.Map;

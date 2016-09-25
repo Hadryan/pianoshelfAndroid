@@ -1,8 +1,6 @@
 package com.pianoshelf.joey.pianoshelf.composition;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.List;
 

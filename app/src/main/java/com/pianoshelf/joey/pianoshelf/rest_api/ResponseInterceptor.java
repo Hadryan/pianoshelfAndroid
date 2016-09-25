@@ -1,20 +1,14 @@
 package com.pianoshelf.joey.pianoshelf.rest_api;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
-import com.pianoshelf.joey.pianoshelf.composition.Composition;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import okhttp3.Interceptor;
-import okhttp3.Request;
 import okhttp3.Response;
 
 /**
