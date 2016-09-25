@@ -3,6 +3,7 @@ package com.pianoshelf.joey.pianoshelf;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,9 +13,9 @@ import com.pianoshelf.joey.pianoshelf.authentication.RegistrationView;
 import com.pianoshelf.joey.pianoshelf.composition.ComposerView;
 import com.pianoshelf.joey.pianoshelf.profile.Profile;
 import com.pianoshelf.joey.pianoshelf.profile.ProfileView;
-import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
+import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetListView;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetView;
 
@@ -103,8 +104,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void randomizeToken(View view) {
-        SharedPreferenceHelper sph = new SharedPreferenceHelper(this);
-        sph.setAuthToken(UUID.randomUUID().toString());
+        mSPHelper.setAuthToken(UUID.randomUUID().toString());
     }
 
     public void updateDescription(View view) {
@@ -112,15 +112,9 @@ public class MainActivity extends BaseActivity {
                 .enqueue(new RWCallback<RW<Profile, MetaData>>() {
                     @Override
                     public void onFailure(Call<RW<Profile, MetaData>> call, Throwable t) {
-
+                        Log.e(C.NET, "Profile update failed" + t.getLocalizedMessage());
                     }
                 });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-        }
-    }
 }

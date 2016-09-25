@@ -19,55 +19,54 @@ import java.util.Set;
  */
 public class SharedPreferenceHelper {
     private Context context;
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences mSP;
 
-    public static final String PIANOSHELF = "pianoshelf";
-    public static final String COMPOSITION_JSON_KEY = "COMPOSITION_JSON_KEY";
-    public static final String OFFLINE_COMPOSITIONS = "offline_compositions";
+    private static final String PIANOSHELF = "pianoshelf";
+    private static final String COMPOSITION_JSON_KEY = "COMPOSITION_JSON_KEY";
+    private static final String OFFLINE_COMPOSITIONS = "offline_compositions";
 
     public SharedPreferenceHelper(Context context) {
         this.context = context;
-        sharedPreferences = context.getSharedPreferences(PIANOSHELF, Context.MODE_PRIVATE);
+        mSP = context.getSharedPreferences(PIANOSHELF, Context.MODE_PRIVATE);
         EventBus.getDefault().register(this);
     }
 
-    public SharedPreferences getSharedPreferences() {
-        return sharedPreferences;
+    /** Key Value Pairs **/
+    public boolean userLoggedIn() {
+        return null != getUser();
     }
 
-    /** Key Value Pairs **/
-
     public String getAuthToken() {
-        return sharedPreferences.getString(C.AUTHORIZATION_TOKEN, null);
+        return mSP.getString(C.AUTHORIZATION_TOKEN, null);
     }
 
     public SharedPreferenceHelper setAuthToken(String token) {
-        sharedPreferences.edit()
+        mSP.edit()
                 .putString(C.AUTHORIZATION_TOKEN, token)
                 .apply();
         return this;
     }
 
     public SharedPreferenceHelper removeAuthToken() {
-        sharedPreferences.edit()
+        mSP.edit()
                 .remove(C.AUTHORIZATION_TOKEN)
                 .apply();
         return this;
     }
 
     public SharedPreferenceHelper setUser(String user) {
-        sharedPreferences.edit()
+        mSP.edit()
                 .putString(C.USERNAME, user)
                 .apply();
         return this;
     }
 
     public String getUser() {
-        return sharedPreferences.getString(C.USERNAME, null);
+        return mSP.getString(C.USERNAME, null);
     }
 
     public SharedPreferenceHelper removeUser() {
-        sharedPreferences.edit()
+        mSP.edit()
                 .remove(C.USERNAME)
                 .apply();
         return this;
@@ -83,11 +82,11 @@ public class SharedPreferenceHelper {
      */
     private Set<String> getOfflineCompositionKeys() {
         HashSet<String> offlineCompositionKeysSet =
-                (HashSet<String>) sharedPreferences.getStringSet(OFFLINE_COMPOSITIONS, null);
+                (HashSet<String>) mSP.getStringSet(OFFLINE_COMPOSITIONS, null);
         if (offlineCompositionKeysSet == null) {
             // Add an empty set of keys
             offlineCompositionKeysSet = new HashSet<>();
-            sharedPreferences.edit()
+            mSP.edit()
                     .putStringSet(OFFLINE_COMPOSITIONS, offlineCompositionKeysSet)
                     .apply();
         }
@@ -125,7 +124,7 @@ public class SharedPreferenceHelper {
         HashSet<String> offlineCompositionKeys = (HashSet<String>) getOfflineCompositionKeys();
         if (!getOfflineCompositionKeys().contains(compositionsName)) {
             offlineCompositionKeys.add(compositionsName);
-            sharedPreferences.edit()
+            mSP.edit()
                     .putStringSet(PIANOSHELF, offlineCompositionKeys)
                     .apply();
         }

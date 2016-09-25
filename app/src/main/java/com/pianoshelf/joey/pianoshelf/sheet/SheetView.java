@@ -16,12 +16,11 @@ import android.widget.Toast;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
-import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
 import com.pianoshelf.joey.pianoshelf.composition.CompositionUtil;
-import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
+import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.ShelfSheetMusic;
 import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
 
@@ -92,10 +91,7 @@ public class SheetView extends BaseActivity {
     @Subscribe
     public void onSheetInfoEvent(Composition sheetInfo) {
         mComposition = sheetInfo;
-        mOfflineImages = (new SharedPreferenceHelper(this)).
-                getOfflineCompositionImages(mComposition.getUniqueurl(), null);
-
-        // Log.i(LOG_TAG, "SheetInfo: \n" + new Gson().toJson(mComposition));
+        mOfflineImages = mSPHelper.getOfflineCompositionImages(mComposition.getUniqueurl(), null);
 
         // Set actionbar title
         mActionBar.setTitle(mComposition.getTitle());
@@ -130,7 +126,7 @@ public class SheetView extends BaseActivity {
         //downloadAction.setVisible(false);
 
         // Disable add to shelf when user is not logged in.
-        menu.findItem(R.id.sheet_add_to_shelf).setEnabled(isUserLoggedIn());
+        menu.findItem(R.id.sheet_add_to_shelf).setEnabled(mSPHelper.userLoggedIn());
         return super.onCreateOptionsMenu(menu);
     }
 

@@ -80,6 +80,7 @@ public interface RetroShelf {
     @DELETE(SHELF_EP)
     Call<RW<Shelf, MetaData>> shelfRemoveSheet(@Body ShelfSheetMusic sheetId);
 
+    /* Profile */
 
     @GET(PROFILE_EP)
     Call<RW<Profile, DetailMeta>> getProfile(@Query("username") String username);

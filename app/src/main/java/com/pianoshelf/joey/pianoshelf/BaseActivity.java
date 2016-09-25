@@ -16,14 +16,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.pianoshelf.joey.pianoshelf.authentication.UserInfo;
 import com.pianoshelf.joey.pianoshelf.authentication.LoginView;
 import com.pianoshelf.joey.pianoshelf.authentication.LogoutMeta;
 import com.pianoshelf.joey.pianoshelf.authentication.LogoutResponse;
+import com.pianoshelf.joey.pianoshelf.authentication.UserInfo;
 import com.pianoshelf.joey.pianoshelf.authentication.UserToken;
-import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.HeaderInterceptor;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
+import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.ResponseInterceptor;
 import com.pianoshelf.joey.pianoshelf.rest_api.RetroShelf;
 
@@ -63,9 +63,14 @@ public class BaseActivity extends AppCompatActivity
     private ImageView mProfileImage;
     private TextView mUsername;
 
+    // Storage
+    protected SharedPreferenceHelper mSPHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mSPHelper = new SharedPreferenceHelper(this);
 
         // Instantiate retrofit here since we need SharedPreferences from activity context
         retrofit = new Retrofit.Builder()
@@ -76,12 +81,10 @@ public class BaseActivity extends AppCompatActivity
                         .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
                         //.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
                         .addInterceptor(new ResponseInterceptor())
-                        .addInterceptor(new HeaderInterceptor(new SharedPreferenceHelper(this).getAuthToken()))
+                        .addInterceptor(new HeaderInterceptor(mSPHelper.getAuthToken()))
                         .build())
                 .build();
         apiService = retrofit.create(RetroShelf.class);
-
-        EventBus.getDefault().register(this);
 
         // Base activity should never define the toolbar
         //setContentView(R.layout.activity_base);
@@ -94,6 +97,18 @@ public class BaseActivity extends AppCompatActivity
         drawerList.setAdapter(new DrawerAdapter(this,
                 R.layout.adapter_drawer_list_item, listItems));
         drawerList.setOnItemClickListener(new DrawerItemClickListener());*/
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -203,8 +218,7 @@ public class BaseActivity extends AppCompatActivity
         Log.i(LOG_TAG, "User logged in " + response);
         String token = response.getAuth_token();
         // Save to non-volatile storage
-        new SharedPreferenceHelper(this)
-                .setAuthToken(token)
+        mSPHelper.setAuthToken(token)
                 .setUser(response.getUsername());
         // Announce token to interceptors
         EventBus.getDefault().post(new UserToken(response.getUsername(), token));
@@ -287,8 +301,7 @@ public class BaseActivity extends AppCompatActivity
 
     // Authentication
     public void logout() {
-        final SharedPreferenceHelper spHelper = new SharedPreferenceHelper(this);
-        if (!isUserLoggedIn()) {
+        if (!mSPHelper.userLoggedIn()) {
             Log.w(C.AUTH, "Attempt to logout without login token! Logout aborted.");
             return;
         }
@@ -300,7 +313,7 @@ public class BaseActivity extends AppCompatActivity
                         super.onResponse(call, response);
                         int statusCode = response.body().getMeta().getCode();
                         if (statusCode == 200) {
-                            spHelper.removeAuthToken()
+                            mSPHelper.removeAuthToken()
                                     .removeUser();
                             Log.i(C.AUTH, "Auth token removed");
                         } else {
@@ -314,10 +327,6 @@ public class BaseActivity extends AppCompatActivity
                         Log.e(C.AUTH, "Logout request failed! " + t.getLocalizedMessage());
                     }
                 });
-    }
-
-    public boolean isUserLoggedIn() {
-        return null != new SharedPreferenceHelper(this).getUser();
     }
 
    /* @Override

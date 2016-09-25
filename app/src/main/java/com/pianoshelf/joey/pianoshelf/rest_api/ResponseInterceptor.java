@@ -1,10 +1,8 @@
 package com.pianoshelf.joey.pianoshelf.rest_api;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.pianoshelf.joey.pianoshelf.C;
-import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
 
 import java.io.IOException;
 import java.util.Arrays;

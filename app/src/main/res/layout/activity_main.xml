@@ -62,6 +62,12 @@
             android:layout_height="wrap_content"
             android:text="set random token"
             android:onClick="randomizeToken"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="set random profile description"
+            android:onClick="updateDescription"/>
+
     </LinearLayout>
 
     <!-- Drawer -->

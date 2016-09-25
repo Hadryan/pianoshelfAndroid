@@ -12,8 +12,8 @@ import android.widget.Toast;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
-import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
+import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -91,10 +91,6 @@ public class RegistrationView extends BaseActivity {
                         Log.e(C.NET, "Network error: " + t.getLocalizedMessage());
                     }
                 });
-
-        // Race condition?
-        Log.i(LOG_TAG, "Exiting");
-        finish();
     }
 
     @Subscribe
@@ -102,6 +98,17 @@ public class RegistrationView extends BaseActivity {
         Log.i(LOG_TAG, "Registration failed " + meta);
         progressBar.setVisibility(View.GONE);
         errorMessage.setText(meta.toString());
+    }
+
+    @Subscribe
+    public void onUserLogin(UserInfo info) {
+        Log.i(LOG_TAG, "User login confirmed. Exiting");
+        finish();
+    }
+
+    public void onUserLoginFailure(LoginMeta meta) {
+        Log.w(LOG_TAG, "User login failed. Exiting " + meta);
+        finish();
     }
 
     private boolean checkUsername(String username) {

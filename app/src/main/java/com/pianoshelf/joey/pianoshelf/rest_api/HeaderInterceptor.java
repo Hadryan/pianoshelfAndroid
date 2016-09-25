@@ -1,8 +1,5 @@
 package com.pianoshelf.joey.pianoshelf.rest_api;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.EventLog;
 import android.util.Log;
 
 import com.fasterxml.jackson.core.type.TypeReference;
