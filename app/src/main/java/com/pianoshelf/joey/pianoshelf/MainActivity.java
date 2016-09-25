@@ -8,11 +8,11 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.pianoshelf.joey.pianoshelf.authentication.LoginView;
-import com.pianoshelf.joey.pianoshelf.authentication.SignupView;
+import com.pianoshelf.joey.pianoshelf.authentication.RegistrationView;
 import com.pianoshelf.joey.pianoshelf.composition.ComposerView;
 import com.pianoshelf.joey.pianoshelf.profile.Profile;
 import com.pianoshelf.joey.pianoshelf.profile.ProfileView;
-import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
+import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetListView;
@@ -90,7 +90,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void invokeRegistration(View view) {
-        Intent intent = new Intent(this, SignupView.class);
+        Intent intent = new Intent(this, RegistrationView.class);
         startActivity(intent);
     }
 
@@ -109,7 +109,7 @@ public class MainActivity extends BaseActivity {
 
     public void updateDescription(View view) {
         apiService.profileUpdateDescription(UUID.randomUUID().toString())
-                .enqueue(new DeserializeCB<RW<Profile, MetaData>>() {
+                .enqueue(new RWCallback<RW<Profile, MetaData>>() {
                     @Override
                     public void onFailure(Call<RW<Profile, MetaData>> call, Throwable t) {
 

@@ -2,6 +2,7 @@ package com.pianoshelf.joey.pianoshelf.authentication;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -9,12 +10,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
+import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
-import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
-import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
+import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import retrofit2.Call;
@@ -22,12 +22,13 @@ import retrofit2.Call;
 /**
  * Created by joey on 12/6/14.
  */
-public class SignupView extends BaseActivity {
+public class RegistrationView extends BaseActivity {
+    public static final String LOG_TAG = "RegistrationView";
     private ProgressBar progressBar;
     private TextView errorMessage;
     private TextView warningMessage;
 
-    private RegisterInfo mCredentials;
+    private RegistrationInfo mCredentials;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,20 +52,21 @@ public class SignupView extends BaseActivity {
         boolean signupCheck = checkUsername(username) && checkPassword(password, passwordRepeat)
                 && checkEmail(email);
         if (signupCheck) {
-            mCredentials = new RegisterInfo(username, password, passwordRepeat, email);
+            mCredentials = new RegistrationInfo(username, password, passwordRepeat, email);
             performRequest(mCredentials);
         }
     }
 
-    private void performRequest(RegisterInfo credentials) {
+    private void performRequest(RegistrationInfo credentials) {
         progressBar.setVisibility(View.VISIBLE);
 
         apiService.webRegistration(credentials).enqueue(
-                new DeserializeCB<RW<RegistrationResponse, RegistrationMeta>>() {
+                new RWCallback<RW<RegistrationResponse, RegistrationMeta>>() {
             @Override
             public void onFailure(Call<RW<RegistrationResponse, RegistrationMeta>> call, Throwable t) {
-                Toast.makeText(SignupView.this, "Network error: " +
+                Toast.makeText(RegistrationView.this, "Network error: " +
                         t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                errorMessage.setText("Network error.");
                 progressBar.setVisibility(View.INVISIBLE);
             }
         });
@@ -73,43 +75,33 @@ public class SignupView extends BaseActivity {
     @Subscribe
     public void onRegistrationSuccess(RegistrationResponse response) {
         progressBar.setVisibility(View.INVISIBLE);
-        Toast.makeText(SignupView.this, R.string.registration_success, Toast.LENGTH_LONG).show();
+        Log.i(LOG_TAG, "Registration success " + response);
+        Toast.makeText(RegistrationView.this, R.string.registration_success, Toast.LENGTH_LONG).show();
 
-        // Login the user with another request, leave activity when finished
+        if (!mCredentials.getUsername().equals(response.getUsername())) {
+            throw new RuntimeException("Response username different from sent username. \n" +
+                    "Sent: " + mCredentials.getUsername() + " Response: " + response.getUsername());
+        }
+
+        // Login the user with another request, let BaseActivity handle the logic
         apiService.login(new Login(mCredentials.getUsername(), mCredentials.getPassword1()))
-                .enqueue(new DeserializeCB<RW<LoginResponse,LoginMeta>>() {
+                .enqueue(new RWCallback<RW<UserInfo, LoginMeta>>() {
                     @Override
-                    public void onFailure(Call<RW<LoginResponse, LoginMeta>> call, Throwable t) {
-                        Toast.makeText(SignupView.this, "Network error: " +
-                                t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.INVISIBLE);
+                    public void onFailure(Call<RW<UserInfo, LoginMeta>> call, Throwable t) {
+                        Log.e(C.NET, "Network error: " + t.getLocalizedMessage());
                     }
                 });
+
+        // Race condition?
+        Log.i(LOG_TAG, "Exiting");
+        finish();
     }
 
     @Subscribe
     public void onRegistrationFailure(RegistrationMeta meta) {
+        Log.i(LOG_TAG, "Registration failed " + meta);
         progressBar.setVisibility(View.GONE);
         errorMessage.setText(meta.toString());
-    }
-
-    @Subscribe
-    public void onLoginComplete(LoginResponse response) {
-        progressBar.setVisibility(View.INVISIBLE);
-
-        String token = response.getAuth_token();
-
-        // Save to disk
-        // Log.i(LOG_TAG, loginResponse.getAuth_token());
-        new SharedPreferenceHelper(this)
-                .setAuthToken(token)
-                .setUser(mCredentials.getUsername());
-
-        // Announce token to other UI elements
-        EventBus.getDefault().post(new UserToken(mCredentials.getUsername(), token));
-
-        // exit from this login screen back to where we came from
-        finish();
     }
 
     private boolean checkUsername(String username) {

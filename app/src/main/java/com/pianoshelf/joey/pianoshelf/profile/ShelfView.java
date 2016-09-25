@@ -13,7 +13,7 @@ import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
-import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
+import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetArrayListFragment;
@@ -63,7 +63,7 @@ public class ShelfView extends BaseActivity {
         if (!TextUtils.isEmpty(intentUser)) {
             Log.v(LOG_TAG, "Loading user " + intentUser);
 
-            apiService.getShelf(intentUser).enqueue(new DeserializeCB<RW<Shelf, MetaData>>() {
+            apiService.getShelf(intentUser).enqueue(new RWCallback<RW<Shelf, MetaData>>() {
                 @Override
                 public void onResponse(Call<RW<Shelf, MetaData>> call, Response<RW<Shelf, MetaData>> response) {
                     int statusCode = response.body().getMeta().getCode();

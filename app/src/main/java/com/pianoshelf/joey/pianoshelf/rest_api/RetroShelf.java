@@ -2,12 +2,12 @@ package com.pianoshelf.joey.pianoshelf.rest_api;
 
 import com.pianoshelf.joey.pianoshelf.authentication.Login;
 import com.pianoshelf.joey.pianoshelf.authentication.LoginMeta;
-import com.pianoshelf.joey.pianoshelf.authentication.LoginResponse;
 import com.pianoshelf.joey.pianoshelf.authentication.LogoutMeta;
 import com.pianoshelf.joey.pianoshelf.authentication.LogoutResponse;
-import com.pianoshelf.joey.pianoshelf.authentication.RegisterInfo;
+import com.pianoshelf.joey.pianoshelf.authentication.RegistrationInfo;
 import com.pianoshelf.joey.pianoshelf.authentication.RegistrationMeta;
 import com.pianoshelf.joey.pianoshelf.authentication.RegistrationResponse;
+import com.pianoshelf.joey.pianoshelf.authentication.UserInfo;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
 import com.pianoshelf.joey.pianoshelf.profile.Profile;
 import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
@@ -60,13 +60,13 @@ public interface RetroShelf {
     /* Auth */
 
     @POST(LOGIN_EP)
-    Call<RW<LoginResponse, LoginMeta>> login(@Body Login login);
+    Call<RW<UserInfo, LoginMeta>> login(@Body Login login);
 
     @POST(LOGOUT_EP)
     Call<RW<LogoutResponse, LogoutMeta>> logout();
 
     @POST(REGISTER_EP)
-    Call<RW<RegistrationResponse, RegistrationMeta>> webRegistration(@Body RegisterInfo credentials);
+    Call<RW<RegistrationResponse, RegistrationMeta>> webRegistration(@Body RegistrationInfo credentials);
 
 
     /* Shelf */

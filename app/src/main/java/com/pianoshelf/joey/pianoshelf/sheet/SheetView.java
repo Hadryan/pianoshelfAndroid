@@ -19,7 +19,7 @@ import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
 import com.pianoshelf.joey.pianoshelf.composition.CompositionUtil;
-import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
+import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.rest_api.ShelfSheetMusic;
@@ -69,7 +69,7 @@ public class SheetView extends BaseActivity {
         mActionBar = getSupportActionBar();
 
         apiService.getSheet((int) sheetId)
-                .enqueue(new DeserializeCB<RW<Composition, MetaData>>() {
+                .enqueue(new RWCallback<RW<Composition, MetaData>>() {
                     @Override
                     public void onResponse(Call<RW<Composition, MetaData>> call, Response<RW<Composition, MetaData>> response) {
                         super.onResponse(call, response);
@@ -249,7 +249,7 @@ public class SheetView extends BaseActivity {
 
     public void invokeAddToShelf(MenuItem item) {
         apiService.shelfAddSheet(new ShelfSheetMusic(mComposition.getId()))
-                .enqueue(new DeserializeCB<RW<Shelf, MetaData>>() {
+                .enqueue(new RWCallback<RW<Shelf, MetaData>>() {
                     @Override
                     public void onResponse(Call<RW<Shelf, MetaData>> call, Response<RW<Shelf, MetaData>> response) {
                         int statusCode = response.body().getMeta().getCode();

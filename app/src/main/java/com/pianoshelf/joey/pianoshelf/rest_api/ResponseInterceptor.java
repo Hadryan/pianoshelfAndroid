@@ -7,6 +7,9 @@ import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import okhttp3.Interceptor;
 import okhttp3.Response;
@@ -16,12 +19,7 @@ import okhttp3.Response;
  */
 public class ResponseInterceptor implements Interceptor {
     public static final String LOG_TAG = "ResponseInterceptor";
-    int[] fakableStatusCodes = {400};
-    SharedPreferenceHelper sph;
-
-    public ResponseInterceptor(Context context) {
-        sph = new SharedPreferenceHelper(context);
-    }
+    private Set<Integer> fakableStatusCodes = new HashSet<>(Arrays.asList(400));
 
     @Override
     public Response intercept(Chain chain) throws IOException {
@@ -31,12 +29,10 @@ public class ResponseInterceptor implements Interceptor {
         int statusCode = response.code();
         Log.i(C.NET, "Response status code " + statusCode);
 
-        for(int fakableStatusCode : fakableStatusCodes) {
-            if (fakableStatusCode == statusCode) {
-                // fake the status code to trigger deserialization code
-                response = response.newBuilder().code(200).build();
-                break;
-            }
+        // fake the status code if we can safely do so
+        // otherwise let UI code handle the rest
+        if (fakableStatusCodes.contains(statusCode)) {
+            response = response.newBuilder().code(200).build();
         }
 
         Log.v(LOG_TAG, "Done");

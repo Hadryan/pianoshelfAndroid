@@ -6,6 +6,9 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +28,7 @@ public class SharedPreferenceHelper {
     public SharedPreferenceHelper(Context context) {
         this.context = context;
         sharedPreferences = context.getSharedPreferences(PIANOSHELF, Context.MODE_PRIVATE);
+        EventBus.getDefault().register(this);
     }
 
     public SharedPreferences getSharedPreferences() {
@@ -32,6 +36,10 @@ public class SharedPreferenceHelper {
     }
 
     /** Key Value Pairs **/
+
+    public String getAuthToken() {
+        return sharedPreferences.getString(C.AUTHORIZATION_TOKEN, null);
+    }
 
     public SharedPreferenceHelper setAuthToken(String token) {
         sharedPreferences.edit()
@@ -159,4 +167,15 @@ public class SharedPreferenceHelper {
         }
     }
 
+
+
+
+    /*** EventBus Actions ***/
+    public static class RemoveUserAndToken {}
+
+    @Subscribe
+    public void onUserRemoveRequest(RemoveUserAndToken request) {
+        removeAuthToken();
+        removeUser();
+    }
 }

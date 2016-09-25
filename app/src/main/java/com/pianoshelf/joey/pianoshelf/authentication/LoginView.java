@@ -12,11 +12,9 @@ import android.widget.Toast;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
-import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
-import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
+import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import retrofit2.Call;
@@ -86,9 +84,9 @@ public class LoginView extends BaseActivity {
     private void performRequest(Login login) {
         progressBar.setVisibility(View.VISIBLE);
 
-        apiService.login(login).enqueue(new DeserializeCB<RW<LoginResponse, LoginMeta>>() {
+        apiService.login(login).enqueue(new RWCallback<RW<UserInfo, LoginMeta>>() {
             @Override
-            public void onFailure(Call<RW<LoginResponse, LoginMeta>> call, Throwable t) {
+            public void onFailure(Call<RW<UserInfo, LoginMeta>> call, Throwable t) {
                 Log.e(C.NET, t.getLocalizedMessage());
                 Toast.makeText(LoginView.this, "Error during request: " +
                         t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
@@ -99,22 +97,9 @@ public class LoginView extends BaseActivity {
     }
 
     @Subscribe
-    public void onLoginComplete(LoginResponse response) {
+    public void onLoginComplete(UserInfo response) {
         progressBar.setVisibility(View.INVISIBLE);
 
-        String token = response.getAuth_token();
-
-        // Save to disk
-        // Log.i(LOG_TAG, loginResponse.getAuth_token());
-        new SharedPreferenceHelper(this)
-                .setAuthToken(token)
-                .setUser(mUsername);
-
-        // Announce token to other UI elements
-        EventBus.getDefault().post(new UserToken(mUsername, token));
-
-        // exit from this login screen back to where we came from
-        setResult(RESULT_OK);
         finish();
     }
 

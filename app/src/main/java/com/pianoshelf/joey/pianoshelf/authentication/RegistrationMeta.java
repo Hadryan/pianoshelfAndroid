@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,8 +18,21 @@ public class RegistrationMeta extends MetaData {
 
     @Override
     public String toString() {
-        return TextUtils.join(", ", username) + ", " + TextUtils.join(", ", password1) + ", " +
-                TextUtils.join(", ", password2) + ", " + TextUtils.join(", ", username);
+        List<String> errorMessage = new ArrayList<>();
+        // Glorious java programming language
+        if (username != null) {
+            errorMessage.addAll(username);
+        }
+        if (password1 != null) {
+            errorMessage.addAll(password1);
+        }
+        if (password2 != null) {
+            errorMessage.addAll(password2);
+        }
+        if (email != null) {
+            errorMessage.addAll(email);
+        }
+        return TextUtils.join("\n", errorMessage);
     }
 
     public List<String> getUsername() {

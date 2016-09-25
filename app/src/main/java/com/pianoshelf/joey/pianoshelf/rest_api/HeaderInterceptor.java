@@ -2,12 +2,17 @@ package com.pianoshelf.joey.pianoshelf.rest_api;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.EventLog;
 import android.util.Log;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
+import com.pianoshelf.joey.pianoshelf.authentication.UserToken;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
 
@@ -19,16 +24,13 @@ import okhttp3.ResponseBody;
 /**
  * Created by joey on 22/06/16.
  */
-public class HeaderInterceptor implements Interceptor, SharedPreferences.OnSharedPreferenceChangeListener {
+public class HeaderInterceptor implements Interceptor {
     public static final String LOG_TAG = "HeaderInterceptor";
     private String mAuthToken;
-    SharedPreferenceHelper mSph;
 
-    public HeaderInterceptor(Context context) {
-        mSph = new SharedPreferenceHelper(context);
-        SharedPreferences sp = mSph.getSharedPreferences();
-        sp.registerOnSharedPreferenceChangeListener(this);
-        mAuthToken = sp.getString(C.AUTHORIZATION_TOKEN, null);
+    public HeaderInterceptor(String token) {
+        mAuthToken = token;
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -57,6 +59,7 @@ public class HeaderInterceptor implements Interceptor, SharedPreferences.OnShare
         String responseBody = response.body().string();
         Log.v(C.NET, responseBody);
 
+        // Handle invalid token case here
         try {
             RW<String, DetailMeta> json = new ObjectMapper()
                     .readValue(responseBody, new TypeReference<RW<String, DetailMeta>>() {
@@ -64,7 +67,7 @@ public class HeaderInterceptor implements Interceptor, SharedPreferences.OnShare
             if ("Invalid token.".equals(json.getMeta().getDetail())) {
                 // void the stored token and user
                 Log.i(C.NET, "Interceptor removing Authorization token");
-                mSph.removeAuthToken().removeUser();
+                EventBus.getDefault().post(new SharedPreferenceHelper.RemoveUserAndToken());
                 // redo the request without the token if we have the authentication token in the header
                 // the request might not even require the token in the first place!
                 if (null != response.request().headers().get("Authorization")) {
@@ -81,7 +84,7 @@ public class HeaderInterceptor implements Interceptor, SharedPreferences.OnShare
             }
         } catch (IOException e) {
             // we can safely fail here if some other error occurs, just handle it in the UI
-            Log.w(C.NET, "Passing onto next in chain. Failure while serializing response json.");
+            Log.w(C.NET, "Passing onto next in chain. Failure while serializing response json." + e.getLocalizedMessage());
         }
 
         Log.v(LOG_TAG, "Done");
@@ -90,11 +93,9 @@ public class HeaderInterceptor implements Interceptor, SharedPreferences.OnShare
                 .build();
     }
 
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (C.AUTHORIZATION_TOKEN.equals(key)) {
-            mAuthToken = sharedPreferences.getString(C.AUTHORIZATION_TOKEN, null);
-            Log.i(C.AUTH, "Header Interceptor updated token ");
-        }
+    @Subscribe
+    public void onUserAuthChanged(UserToken userToken) {
+        mAuthToken = userToken.getToken();
+        Log.i(C.AUTH, "Header Interceptor updated token ");
     }
 }

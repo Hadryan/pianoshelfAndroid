@@ -16,11 +16,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.pianoshelf.joey.pianoshelf.authentication.LoginResponse;
+import com.pianoshelf.joey.pianoshelf.authentication.UserInfo;
 import com.pianoshelf.joey.pianoshelf.authentication.LoginView;
 import com.pianoshelf.joey.pianoshelf.authentication.LogoutMeta;
 import com.pianoshelf.joey.pianoshelf.authentication.LogoutResponse;
-import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
+import com.pianoshelf.joey.pianoshelf.authentication.UserToken;
+import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.HeaderInterceptor;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.rest_api.ResponseInterceptor;
@@ -28,6 +29,8 @@ import com.pianoshelf.joey.pianoshelf.rest_api.RetroShelf;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.net.URL;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -72,8 +75,8 @@ public class BaseActivity extends AppCompatActivity
                 .client(new OkHttpClient.Builder()
                         .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
                         //.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
-                        .addInterceptor(new ResponseInterceptor(this))
-                        .addInterceptor(new HeaderInterceptor(this))
+                        .addInterceptor(new ResponseInterceptor())
+                        .addInterceptor(new HeaderInterceptor(new SharedPreferenceHelper(this).getAuthToken()))
                         .build())
                 .build();
         apiService = retrofit.create(RetroShelf.class);
@@ -188,29 +191,49 @@ public class BaseActivity extends AppCompatActivity
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START);
     }
 
+    // All actions that needs to trigger when the user logs in is here
     @Subscribe
-    public void setProfileInfo(LoginResponse response) {
+    public void onUserLogin(UserInfo response) {
+        onTokenChanged(response);
+        onUserNameChanged(response);
+        onProfileImageChanged(response);
+    }
 
-        // Set profile name and description
+    private void onTokenChanged(UserInfo response) {
+        Log.i(LOG_TAG, "User logged in " + response);
+        String token = response.getAuth_token();
+        // Save to non-volatile storage
+        new SharedPreferenceHelper(this)
+                .setAuthToken(token)
+                .setUser(response.getUsername());
+        // Announce token to interceptors
+        EventBus.getDefault().post(new UserToken(response.getUsername(), token));
+    }
+
+    // Set profile name and description
+    private void onUserNameChanged(UserInfo response) {
         String profileUsername = response.getUsername();
         if (mUsername != null) {
             mUsername.setText(profileUsername);
         } else {
             Log.w(LOG_TAG, "Profile username textview not present");
         }
+    }
 
-        // Set profile image
-        String profileImageUrl = response.getProfile_picture().toString();
-        Log.i(C.AUTH, "Profile image url: " + profileImageUrl);
-        if (mProfileImage != null) {
+    // Set profile image
+    private void onProfileImageChanged(UserInfo response) {
+        if (response.getProfile_picture() != null && mProfileImage != null) {
+            URL profileImageUrl = response.getProfile_picture();
+            Log.i(C.AUTH, "Profile image url: " + profileImageUrl);
             Glide.with(this)
-                    .load(profileImageUrl)
+                    .load(profileImageUrl.toString())
                     .fitCenter()
                     .crossFade()
                     .into(mProfileImage);
             Log.i(LOG_TAG, "profile image set");
         } else {
-            Log.i(LOG_TAG, "Profile imageview not present " + mProfileImage);
+            Log.i(LOG_TAG, "Profile imageview " + mProfileImage +
+                    " User image " + response.getProfile_picture());
         }
     }
 
@@ -219,9 +242,10 @@ public class BaseActivity extends AppCompatActivity
     protected void resetProfileImage(LogoutResponse response) {
         Log.i(C.AUTH, "Logout response: " + response.getDetail());
         if (mProfileImage != null) {
-            mProfileImage
-                    .setImageDrawable(ResourcesCompat
-                            .getDrawable(getResources(), R.drawable.pianoshelf_logo_solid, null));
+            mProfileImage.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                            getResources(),
+                            R.drawable.pianoshelf_logo_solid, null));
 
         }
     }
@@ -270,7 +294,7 @@ public class BaseActivity extends AppCompatActivity
         }
 
         apiService.logout()
-                .enqueue(new DeserializeCB<RW<LogoutResponse, LogoutMeta>>() {
+                .enqueue(new RWCallback<RW<LogoutResponse, LogoutMeta>>() {
                     @Override
                     public void onResponse(Call<RW<LogoutResponse, LogoutMeta>> call, Response<RW<LogoutResponse, LogoutMeta>> response) {
                         super.onResponse(call, response);

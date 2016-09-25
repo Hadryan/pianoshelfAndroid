@@ -12,7 +12,7 @@ public class C {
     public static final String
             PIANOSHELF = "pianoshelf",
             //SERVER_ADDR = "https://www.pianoshelf.com/", <<<<<<<<<<<
-            SERVER_ADDR = "http://192.168.0.103/",
+            SERVER_ADDR = "http://192.168.1.74/",
             USERNAME = "USERNAME",
             TOKEN_PREFIX = "TOKEN ",
             AUTHORIZATION_TOKEN = "AUTHORIZATION_TOKEN",
