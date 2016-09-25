@@ -1,8 +1,9 @@
 package com.pianoshelf.joey.pianoshelf;
 
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -10,16 +11,33 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.octo.android.robospice.GsonSpringAndroidSpiceService;
-import com.octo.android.robospice.SpiceManager;
+import com.bumptech.glide.Glide;
+import com.pianoshelf.joey.pianoshelf.authentication.UserInfo;
+import com.pianoshelf.joey.pianoshelf.authentication.LoginView;
+import com.pianoshelf.joey.pianoshelf.authentication.LogoutMeta;
+import com.pianoshelf.joey.pianoshelf.authentication.LogoutResponse;
+import com.pianoshelf.joey.pianoshelf.authentication.UserToken;
+import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
+import com.pianoshelf.joey.pianoshelf.rest_api.HeaderInterceptor;
+import com.pianoshelf.joey.pianoshelf.rest_api.RW;
+import com.pianoshelf.joey.pianoshelf.rest_api.ResponseInterceptor;
 import com.pianoshelf.joey.pianoshelf.rest_api.RetroShelf;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.net.URL;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
-import roboguice.util.temp.Ln;
 
 /**
  * Base activity for the purpose of implementing left panel on all activities.
@@ -27,51 +45,43 @@ import roboguice.util.temp.Ln;
  */
 public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private DrawerLayout mDrawerLayout;
-    private android.support.v7.app.ActionBarDrawerToggle mDrawerToggle;
-
-    protected Toolbar mToolbar;
-
-    protected SpiceManager spiceManager = new SpiceManager(GsonSpringAndroidSpiceService.class);
 
     private static final String LOG_TAG = "BaseActivity";
 
     // Protected Constants
-    protected static final String SERVER_ADDR = C.SERVER_ADDR;
-    protected static final String PIANOSHELF = C.PIANOSHELF;
-    protected static final String AUTHORIZATION_TOKEN = "AUTHORIZATION_TOKEN";
     protected static final String ACTION_LOGIN = "ACTION_LOGIN";
     protected static final int RESULT_FAILED = 1;
-    protected static final int TOKEN_REQUEST = 1;
 
-    protected Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(C.SERVER_ADDR)
-            .addConverterFactory(JacksonConverterFactory.create())
-            .client(new OkHttpClient.Builder()
-                    .addInterceptor(new HttpLoggingInterceptor()
-                            .setLevel(HttpLoggingInterceptor.Level.BASIC))
-                    .build())
-            .build();
+    // Retrofit
+    protected Retrofit retrofit;
+    protected RetroShelf apiService;
 
-    protected RetroShelf apiService = retrofit.create(RetroShelf.class);
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        spiceManager.start(this);
-    }
-
-    @Override
-    protected void onStop() {
-        spiceManager.shouldStop();
-        super.onStop();
-    }
+    // UI
+    private DrawerLayout mDrawerLayout;
+    private android.support.v7.app.ActionBarDrawerToggle mDrawerToggle;
+    protected Toolbar mToolbar;
+    private ImageView mProfileImage;
+    private TextView mUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Ln.getConfig().setLoggingLevel(Log.ERROR);
+        // Instantiate retrofit here since we need SharedPreferences from activity context
+        retrofit = new Retrofit.Builder()
+                .baseUrl(C.SERVER_ADDR)
+                //.baseUrl(new HttpUrl.Builder().scheme("http").host("192.168.0.102").port(80).build())
+                .addConverterFactory(JacksonConverterFactory.create())
+                .client(new OkHttpClient.Builder()
+                        .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+                        //.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
+                        .addInterceptor(new ResponseInterceptor())
+                        .addInterceptor(new HeaderInterceptor(new SharedPreferenceHelper(this).getAuthToken()))
+                        .build())
+                .build();
+        apiService = retrofit.create(RetroShelf.class);
+
+        EventBus.getDefault().register(this);
 
         // Base activity should never define the toolbar
         //setContentView(R.layout.activity_base);
@@ -84,15 +94,6 @@ public class BaseActivity extends AppCompatActivity
         drawerList.setAdapter(new DrawerAdapter(this,
                 R.layout.adapter_drawer_list_item, listItems));
         drawerList.setOnItemClickListener(new DrawerItemClickListener());*/
-
-        // Set the value for the first item of the list
-        SharedPreferences sharedPreferences = getSharedPreferences(PIANOSHELF, MODE_PRIVATE);
-        // Check the login token from shared preferences
-        if (sharedPreferences.contains(AUTHORIZATION_TOKEN)) {
-            //firstItem.setText(getString(R.string.profile));
-        } else {
-            //firstItem.setText(getString(R.string.login));
-        }
     }
 
     @Override
@@ -145,17 +146,17 @@ public class BaseActivity extends AppCompatActivity
             mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         }
 
-        if (mToolbar != null) {
-            mToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
-        } else {
+        if (mToolbar == null) {
             Log.e(LOG_TAG, "DrawerLayout without toolbar.");
             return;
+        } else {
+            mToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
         }
 
         // Attach listener to drawer open/close events
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
                 R.string.drawer_open, R.string.drawer_closed);
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
         // Nav View is the actual drawer hidden from sight,
@@ -163,14 +164,22 @@ public class BaseActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
+            View navHeader = navigationView.getHeaderView(0);
+            if (navHeader != null) {
+                mProfileImage = (ImageView) navHeader.findViewById(R.id.profile_image);
+                Log.v(LOG_TAG, "Profile image view set " + mProfileImage);
+
+                mUsername = (TextView) navHeader.findViewById(R.id.profile_username);
+            }
         } else {
+            mProfileImage = null;
             Log.e(LOG_TAG, "no drawer found.");
         }
 
     }
 
     /**
-     * Naviagtion drawer actions
+     * Navigation drawer actions
      */
     protected void closeNavDrawer() {
         if (mDrawerLayout != null) {
@@ -182,6 +191,65 @@ public class BaseActivity extends AppCompatActivity
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START);
     }
 
+    // All actions that needs to trigger when the user logs in is here
+    @Subscribe
+    public void onUserLogin(UserInfo response) {
+        onTokenChanged(response);
+        onUserNameChanged(response);
+        onProfileImageChanged(response);
+    }
+
+    private void onTokenChanged(UserInfo response) {
+        Log.i(LOG_TAG, "User logged in " + response);
+        String token = response.getAuth_token();
+        // Save to non-volatile storage
+        new SharedPreferenceHelper(this)
+                .setAuthToken(token)
+                .setUser(response.getUsername());
+        // Announce token to interceptors
+        EventBus.getDefault().post(new UserToken(response.getUsername(), token));
+    }
+
+    // Set profile name and description
+    private void onUserNameChanged(UserInfo response) {
+        String profileUsername = response.getUsername();
+        if (mUsername != null) {
+            mUsername.setText(profileUsername);
+        } else {
+            Log.w(LOG_TAG, "Profile username textview not present");
+        }
+    }
+
+    // Set profile image
+    private void onProfileImageChanged(UserInfo response) {
+        if (response.getProfile_picture() != null && mProfileImage != null) {
+            URL profileImageUrl = response.getProfile_picture();
+            Log.i(C.AUTH, "Profile image url: " + profileImageUrl);
+            Glide.with(this)
+                    .load(profileImageUrl.toString())
+                    .fitCenter()
+                    .crossFade()
+                    .into(mProfileImage);
+            Log.i(LOG_TAG, "profile image set");
+        } else {
+            Log.i(LOG_TAG, "Profile imageview " + mProfileImage +
+                    " User image " + response.getProfile_picture());
+        }
+    }
+
+    // Listens to logoutResponse
+    @Subscribe
+    protected void resetProfileImage(LogoutResponse response) {
+        Log.i(C.AUTH, "Logout response: " + response.getDetail());
+        if (mProfileImage != null) {
+            mProfileImage.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                            getResources(),
+                            R.drawable.pianoshelf_logo_solid, null));
+
+        }
+    }
+
 
     /**
      * Handle when a drawer item is selected
@@ -191,6 +259,15 @@ public class BaseActivity extends AppCompatActivity
      */
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.nav_login:
+                Intent intent = new Intent(ACTION_LOGIN, null, this, LoginView.class);
+                startActivity(intent);
+                break;
+            case R.id.nav_logout:
+                logout();
+                break;
+        }
         return false;
     }
 
@@ -208,8 +285,39 @@ public class BaseActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public SpiceManager getSpiceManager() {
-        return spiceManager;
+    // Authentication
+    public void logout() {
+        final SharedPreferenceHelper spHelper = new SharedPreferenceHelper(this);
+        if (!isUserLoggedIn()) {
+            Log.w(C.AUTH, "Attempt to logout without login token! Logout aborted.");
+            return;
+        }
+
+        apiService.logout()
+                .enqueue(new RWCallback<RW<LogoutResponse, LogoutMeta>>() {
+                    @Override
+                    public void onResponse(Call<RW<LogoutResponse, LogoutMeta>> call, Response<RW<LogoutResponse, LogoutMeta>> response) {
+                        super.onResponse(call, response);
+                        int statusCode = response.body().getMeta().getCode();
+                        if (statusCode == 200) {
+                            spHelper.removeAuthToken()
+                                    .removeUser();
+                            Log.i(C.AUTH, "Auth token removed");
+                        } else {
+                            Log.e(C.AUTH, "Invalid Response from logout request! " + statusCode);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<RW<LogoutResponse, LogoutMeta>> call, Throwable t) {
+                        t.printStackTrace();
+                        Log.e(C.AUTH, "Logout request failed! " + t.getLocalizedMessage());
+                    }
+                });
+    }
+
+    public boolean isUserLoggedIn() {
+        return null != new SharedPreferenceHelper(this).getUser();
     }
 
    /* @Override

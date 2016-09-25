@@ -13,9 +13,6 @@
         android:icon="@drawable/pianoshelf_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <service
-            android:name="com.octo.android.robospice.GsonSpringAndroidSpiceService"
-            android:exported="false" />
 
         <activity
             android:name=".MainActivity"
@@ -44,7 +41,7 @@
         </activity>
         <!-- The sign up page -->
         <activity
-            android:name=".authentication.SignupView">
+            android:name=".authentication.RegistrationView">
         </activity>
         <!-- The profile page -->
         <activity

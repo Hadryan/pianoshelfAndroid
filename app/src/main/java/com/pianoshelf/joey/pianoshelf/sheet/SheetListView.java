@@ -25,7 +25,6 @@ import com.pianoshelf.joey.pianoshelf.rest_api.PagedMeta;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.rest_api.SearchQuery;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 
@@ -103,18 +102,6 @@ public class SheetListView extends BaseActivity {
         // Default action, opens the first page of popular sheets
         getSheetList(1);
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
     }
 
     @Override

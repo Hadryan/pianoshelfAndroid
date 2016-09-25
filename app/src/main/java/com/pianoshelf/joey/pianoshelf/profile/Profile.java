@@ -1,8 +1,6 @@
 package com.pianoshelf.joey.pianoshelf.profile;
 
-import com.pianoshelf.joey.pianoshelf.composition.Composition;
-
-import java.util.List;
+import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
 
 /**
  * Created by joey on 12/29/14.
@@ -10,10 +8,11 @@ import java.util.List;
 public class Profile {
     private String username;
     private String full_name;
-    private ProfileShelf shelf;
+    private Shelf shelf;
     private String description;
     private String small_profile_picture;
     private String large_profile_picture;
+    private String user_since;
 
     public String getUsername() {
         return username;
@@ -31,11 +30,11 @@ public class Profile {
         this.full_name = full_name;
     }
 
-    public ProfileShelf getShelf() {
+    public Shelf getShelf() {
         return shelf;
     }
 
-    public void setShelf(ProfileShelf shelf) {
+    public void setShelf(Shelf shelf) {
         this.shelf = shelf;
     }
 
@@ -63,16 +62,11 @@ public class Profile {
         this.small_profile_picture = small_profile_picture;
     }
 
+    public String getUser_since() {
+        return user_since;
+    }
 
-    public class ProfileShelf {
-        private List<Composition> sheetmusic;
-
-        public List<Composition> getSheetmusic() {
-            return sheetmusic;
-        }
-
-        public void setSheetmusic(List<Composition> sheetmusic) {
-            this.sheetmusic = sheetmusic;
-        }
+    public void setUser_since(String user_since) {
+        this.user_since = user_since;
     }
 }

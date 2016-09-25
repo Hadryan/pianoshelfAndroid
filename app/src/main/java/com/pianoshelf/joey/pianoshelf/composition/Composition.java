@@ -1,5 +1,7 @@
 package com.pianoshelf.joey.pianoshelf.composition;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 /**
@@ -9,32 +11,11 @@ import java.util.List;
  * Needs a util that automatically queries the full Composition object given an id/composition
  * <p/>
  * Cannot use containers with Gson, defer to Java arrays instead
+ *
+ * Example JSON:
+ * C.SERVER_ADDR/api/sheetmusic/1/
  */
-/* Sample JSON Input
-    {
-        "id":304,
-        "title":"op.27 no.2 Moonlight Sonata",
-        "style":"Sonata",
-        "key":"C-sharp minor",
-        "date":"1801",
-        "file_size":1051448,
-        "composer_name":"Beethoven",
-        "license":"Public Domain",
-        "license_name":"Public Domain",
-        "license_url":null,
-        "tags":[
-            "sonata",
-            "classical"
-        ],
-        "submitted_by":1,
-        "thumbnail_url":"https://sheetmusic.pianoshelf.com/thumbnails/beethoven-op.27-no.2-moonlight-sonata-304.jpg",
-        "original_format":"pdf",
-        "pop":13714,
-        "view_count":22317,
-        "uniqueurl":"beethoven-op.27-no.2-moonlight-sonata-304",
-        "difficulty":4
-        }
-*/
+
 public class Composition {
 
     // sheet info
@@ -50,7 +31,11 @@ public class Composition {
     // techical
     private int id;
     private String file_size;
-    private String submitted_by; // userid of submission
+    // suspected deserialization because of conflict between:
+    // http://pianoshelf.com/api/profile/?username=hello
+    // http://pianoshelf.com/api/sheetmusic/1/
+    @JsonIgnore
+    private SubmittedBy submitted_by; // userid of submission
     private boolean upload_complete;
 
     // API
@@ -208,10 +193,12 @@ public class Composition {
         this.videos = videos;
     }
 
+    @Deprecated
     public List<CommentInfo> getComments() {
         return comments;
     }
 
+    @Deprecated
     public void setComments(List<CommentInfo> comments) {
         this.comments = comments;
     }
@@ -228,11 +215,13 @@ public class Composition {
         this.tags = tags;
     }
 
-    public String getSubmitted_by() {
+    @JsonIgnore
+    public SubmittedBy getSubmitted_by() {
         return submitted_by;
     }
 
-    public void setSubmitted_by(String submitted_by) {
+    @JsonIgnore
+    public void setSubmitted_by(SubmittedBy submitted_by) {
         this.submitted_by = submitted_by;
     }
 

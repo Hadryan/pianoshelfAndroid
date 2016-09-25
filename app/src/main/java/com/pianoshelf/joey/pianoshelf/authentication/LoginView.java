@@ -1,6 +1,5 @@
 package com.pianoshelf.joey.pianoshelf.authentication;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -10,32 +9,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.octo.android.robospice.persistence.DurationInMillis;
-import com.octo.android.robospice.persistence.exception.SpiceException;
-import com.octo.android.robospice.request.listener.RequestListener;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
-import com.pianoshelf.joey.pianoshelf.rest_api.DeserializeCB;
-import com.pianoshelf.joey.pianoshelf.rest_api.LoginMeta;
-import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
-import com.pianoshelf.joey.pianoshelf.rest_api.PSCallback;
+import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * It seems impossible to execute two concurrent activities in android
@@ -77,18 +59,6 @@ public class LoginView extends BaseActivity {
         super.onBackPressed();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
-
     /**
      * POST login if mUsername and password are valid
      *
@@ -114,40 +84,22 @@ public class LoginView extends BaseActivity {
     private void performRequest(Login login) {
         progressBar.setVisibility(View.VISIBLE);
 
-        apiService.login(login).enqueue(new PSCallback<RW<LoginResponse, LoginMeta>>() {
+        apiService.login(login).enqueue(new RWCallback<RW<UserInfo, LoginMeta>>() {
             @Override
-            public void onFailure(Call<RW<LoginResponse, LoginMeta>> call, Throwable t) {
+            public void onFailure(Call<RW<UserInfo, LoginMeta>> call, Throwable t) {
                 Log.e(C.NET, t.getLocalizedMessage());
                 Toast.makeText(LoginView.this, "Error during request: " +
                         t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 progressBar.setVisibility(View.INVISIBLE);
 
             }
-            @Override
-            public RW<LoginResponse, LoginMeta> convert(String json) throws IOException {
-                return new ObjectMapper().readValue(json,
-                        new TypeReference<RW<LoginResponse, LoginMeta>>(){});
-            }
         });
     }
 
     @Subscribe
-    public void onLoginComplete(LoginResponse response) {
+    public void onLoginComplete(UserInfo response) {
         progressBar.setVisibility(View.INVISIBLE);
 
-        String token = response.getAuth_token();
-
-        // Log.i(LOG_TAG, loginResponse.getAuth_token());
-        getSharedPreferences(PIANOSHELF, MODE_PRIVATE).edit()
-                .putString(C.USERNAME, mUsername)
-                .putString(AUTHORIZATION_TOKEN, token)
-                .apply();
-
-        // Announce token to other UI elements
-        EventBus.getDefault().post(new UserToken(mUsername, token));
-
-        // exit from this login screen back to where we came from
-        setResult(RESULT_OK);
         finish();
     }
 

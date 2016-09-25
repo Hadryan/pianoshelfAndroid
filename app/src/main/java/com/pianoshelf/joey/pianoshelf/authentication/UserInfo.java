@@ -5,7 +5,7 @@ import java.net.URL;
 /**
  * Created by joey on 03/07/15.
  */
-public class LoginResponse {
+public class UserInfo {
     String username;
     String email;
     String first_name;

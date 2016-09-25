@@ -1,6 +1,5 @@
 package com.pianoshelf.joey.pianoshelf.profile;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -9,18 +8,23 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.octo.android.robospice.persistence.DurationInMillis;
-import com.octo.android.robospice.persistence.exception.SpiceException;
-import com.octo.android.robospice.request.listener.RequestListener;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
+import com.pianoshelf.joey.pianoshelf.rest_api.DetailMeta;
+import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetArrayListFragment;
 
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.List;
+
+import retrofit2.Call;
 
 /**
  * Created by joey on 12/29/14.
@@ -30,8 +34,8 @@ public class ProfileView extends BaseActivity {
     private static final int PREVIEW_VALUE = 5;
 
     private String username;
-
     private Profile mProfile;
+
     private ProgressBar progressBar;
     private SheetArrayListFragment myShelf;
 
@@ -39,7 +43,7 @@ public class ProfileView extends BaseActivity {
     private TextView userName;
     private TextView description;
 
-    private ImageView avatar;
+    private ImageView mAvatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +56,7 @@ public class ProfileView extends BaseActivity {
         userName = (TextView) findViewById(R.id.profile_username);
         description = (TextView) findViewById(R.id.profile_description);
 
-        avatar = (ImageView) findViewById(R.id.profile_avatar);
+        mAvatar = (ImageView) findViewById(R.id.profile_avatar);
 
         myShelf = SheetArrayListFragment.newInstance();
         getSupportFragmentManager().beginTransaction()
@@ -64,10 +68,14 @@ public class ProfileView extends BaseActivity {
         if (TextUtils.isEmpty(username)) {
             throw new RuntimeException("Empty username given to ProfileView.");
         } else {
-            ProfileRequest request = new ProfileRequest(username);
-            spiceManager.execute(request, request.createCacheKey(),
-                    DurationInMillis.ONE_HOUR, new ProfileRequestListener(this));
-
+            apiService.getProfile(username).enqueue(new RWCallback<RW<Profile,DetailMeta>>() {
+                @Override
+                public void onFailure(Call<RW<Profile, DetailMeta>> call, Throwable t) {
+                    t.printStackTrace();
+                    Log.e(C.NET, "User " + username + " failed to load" + t.getLocalizedMessage());
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
         }
     }
 
@@ -77,44 +85,41 @@ public class ProfileView extends BaseActivity {
         startActivity(intent);
     }
 
-    private class ProfileRequestListener implements RequestListener<Profile> {
-        private Context mContext;
 
-        public ProfileRequestListener(Context context) {
-            mContext = context;
+    @Subscribe
+    public void onProfileReceived(Profile profile) {
+        progressBar.setVisibility(View.GONE);
+        mProfile = profile;
+
+        // user info
+        fullName.setText(profile.getFull_name());
+        userName.setText(profile.getUsername());
+        description.setText(profile.getDescription());
+
+        // Fetch the image from network if a url is provided.
+        // Otherwise use the default mAvatar image
+        String avatarUrl = profile.getLarge_profile_picture();
+        if (TextUtils.isEmpty(avatarUrl)) {
+            mAvatar.setImageResource(R.drawable.default_avatar);
+        } else {
+            Glide.with(this).load(avatarUrl).into(mAvatar);
+        }
+        // Load a preview of the user's shelf
+        List<Composition> sheetList = profile.getShelf().getSheetmusic();
+        if (sheetList.size() > PREVIEW_VALUE) {
+            sheetList.subList(sheetList.size() - 1 - PREVIEW_VALUE, sheetList.size()).clear();
         }
 
-        @Override
-        public void onRequestSuccess(Profile profile) {
-            progressBar.setVisibility(View.GONE);
-            mProfile = profile;
-
-            // user info
-            fullName.setText(profile.getFull_name());
-            userName.setText(profile.getUsername());
-            description.setText(profile.getDescription());
-
-            // Fetch the image from network if a url is provided.
-            // Otherwise use the default avatar image
-            String avatarUrl = profile.getLarge_profile_picture();
-            if (TextUtils.isEmpty(avatarUrl)) {
-                avatar.setImageResource(R.drawable.default_avatar);
-            } else {
-                Glide.with(mContext).load(avatarUrl).into(avatar);
-            }
-            // Load a preview of the user's shelf
-            List<Composition> sheetList = profile.getShelf().getSheetmusic();
-            if (sheetList.size() > PREVIEW_VALUE) {
-                sheetList.subList(sheetList.size() - 1 - PREVIEW_VALUE, sheetList.size()).clear();
-            }
-
-            myShelf.setSheetList(sheetList);
-        }
-
-        @Override
-        public void onRequestFailure(SpiceException spiceException) {
-            progressBar.setVisibility(View.GONE);
-            Log.e(LOG_TAG, "User " + username + " failed to load");
-        }
+        myShelf.setSheetList(sheetList);
     }
+
+    @Subscribe
+    public void onProfileError(DetailMeta meta) {
+        progressBar.setVisibility(View.GONE);
+        Log.e(LOG_TAG, "Requested user " + username + " does not exist");
+        Toast.makeText(this,
+                "User " + username + " does not exist",
+                Toast.LENGTH_SHORT).show();
+    }
+
 }
