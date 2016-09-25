@@ -43,7 +43,8 @@ public abstract class RWCallback<T extends RW> implements Callback<T> {
             // which means if a class has 2 requests both with the response type as metadata there
             // would be a conflict
         } else {
-            throw new RuntimeException("Request response not handled");
+            onFailure(call, new RuntimeException("Request response not handled. "+
+                    "Code: " + response.code() + " Body:" + response.errorBody()));
         }
     }
 }

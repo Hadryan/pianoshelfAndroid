@@ -12,6 +12,7 @@ import com.pianoshelf.joey.pianoshelf.authentication.LoginView;
 import com.pianoshelf.joey.pianoshelf.authentication.RegistrationView;
 import com.pianoshelf.joey.pianoshelf.composition.ComposerView;
 import com.pianoshelf.joey.pianoshelf.profile.Profile;
+import com.pianoshelf.joey.pianoshelf.profile.ProfileDescription;
 import com.pianoshelf.joey.pianoshelf.profile.ProfileView;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
@@ -108,7 +109,8 @@ public class MainActivity extends BaseActivity {
     }
 
     public void updateDescription(View view) {
-        apiService.profileUpdateDescription(UUID.randomUUID().toString())
+        apiService.profileUpdateDescription(
+                new ProfileDescription(UUID.randomUUID().toString().replace("-", "")))
                 .enqueue(new RWCallback<RW<Profile, MetaData>>() {
                     @Override
                     public void onFailure(Call<RW<Profile, MetaData>> call, Throwable t) {

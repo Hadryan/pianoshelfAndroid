@@ -10,6 +10,7 @@ import com.pianoshelf.joey.pianoshelf.authentication.RegistrationResponse;
 import com.pianoshelf.joey.pianoshelf.authentication.UserInfo;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
 import com.pianoshelf.joey.pianoshelf.profile.Profile;
+import com.pianoshelf.joey.pianoshelf.profile.ProfileDescription;
 import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
 
 import java.util.List;
@@ -86,7 +87,7 @@ public interface RetroShelf {
     Call<RW<Profile, DetailMeta>> getProfile(@Query("username") String username);
 
     @POST(PROFILE_EP)
-    Call<RW<Profile, MetaData>> profileUpdateDescription(@Query("description") String description);
+    Call<RW<Profile, MetaData>> profileUpdateDescription(@Body ProfileDescription description);
 
 }
 
