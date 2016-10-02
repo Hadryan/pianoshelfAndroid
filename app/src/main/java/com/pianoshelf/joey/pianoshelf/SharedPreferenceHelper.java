@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.pianoshelf.joey.pianoshelf.authentication.UserToken;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
 
 import org.greenrobot.eventbus.EventBus;
@@ -36,40 +37,29 @@ public class SharedPreferenceHelper {
         return null != getUser();
     }
 
+    public SharedPreferenceHelper setUserAndToken(String user, String token) {
+        mSP.edit().putString(C.USERNAME, user)
+                .putString(C.AUTHORIZATION_TOKEN, token)
+                .apply();
+        EventBus.getDefault().post(new UserToken(user, token));
+        return this;
+    }
+
+    public SharedPreferenceHelper removeUserAndToken() {
+        mSP.edit()
+                .remove(C.USERNAME)
+                .remove(C.AUTHORIZATION_TOKEN)
+                .apply();
+        EventBus.getDefault().post(new UserToken(null, null));
+        return this;
+    }
+
     public String getAuthToken() {
         return mSP.getString(C.AUTHORIZATION_TOKEN, null);
     }
 
-    public SharedPreferenceHelper setAuthToken(String token) {
-        mSP.edit()
-                .putString(C.AUTHORIZATION_TOKEN, token)
-                .apply();
-        return this;
-    }
-
-    public SharedPreferenceHelper removeAuthToken() {
-        mSP.edit()
-                .remove(C.AUTHORIZATION_TOKEN)
-                .apply();
-        return this;
-    }
-
-    public SharedPreferenceHelper setUser(String user) {
-        mSP.edit()
-                .putString(C.USERNAME, user)
-                .apply();
-        return this;
-    }
-
     public String getUser() {
         return mSP.getString(C.USERNAME, null);
-    }
-
-    public SharedPreferenceHelper removeUser() {
-        mSP.edit()
-                .remove(C.USERNAME)
-                .apply();
-        return this;
     }
 
     /** Compositions **/
@@ -174,7 +164,6 @@ public class SharedPreferenceHelper {
 
     @Subscribe
     public void onUserRemoveRequest(RemoveUserAndToken request) {
-        removeAuthToken();
-        removeUser();
+        removeUserAndToken();
     }
 }

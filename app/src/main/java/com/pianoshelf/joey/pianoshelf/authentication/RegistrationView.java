@@ -101,7 +101,7 @@ public class RegistrationView extends BaseActivity {
     }
 
     @Subscribe
-    public void onUserLogin(UserInfo info) {
+    public void onUserLoginSuccess(UserInfo info) {
         Log.i(LOG_TAG, "User login confirmed. Exiting");
         finish();
     }

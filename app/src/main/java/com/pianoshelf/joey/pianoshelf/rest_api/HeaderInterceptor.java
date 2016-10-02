@@ -48,15 +48,12 @@ public class HeaderInterceptor implements Interceptor {
             response = chain.proceed(request);
         }
 
-        Log.v(LOG_TAG, "Processing response");
+        // response.body().string() can only be invoked once
+        String responseBody = response.body().string();
+        Log.v(C.NET, "Processing response. Body: " + responseBody);
 
         // Handles the case where token is invalid
         // resend the request without the header token, if it fails we let the UI code handle the rest
-
-        String responseBody = response.body().string();
-        Log.v(C.NET, responseBody);
-
-        // Handle invalid token case here
         try {
             RW<String, DetailMeta> json = new ObjectMapper()
                     .readValue(responseBody, new TypeReference<RW<String, DetailMeta>>() {
@@ -74,6 +71,8 @@ public class HeaderInterceptor implements Interceptor {
                             .build();
 
                     response = chain.proceed(noAuth);
+                    Log.v(LOG_TAG, "Done");
+                    return response;
                 } else {
                     // We pass the error to be handled by the UI code
                     Log.i(C.NET, "Passing invalid response down the chain");
@@ -93,6 +92,6 @@ public class HeaderInterceptor implements Interceptor {
     @Subscribe
     public void onUserAuthChanged(UserToken userToken) {
         mAuthToken = userToken.getToken();
-        Log.i(C.AUTH, "Header Interceptor updated token ");
+        Log.i(C.AUTH, "Header Interceptor updated token");
     }
 }

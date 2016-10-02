@@ -2,6 +2,7 @@ package com.pianoshelf.joey.pianoshelf;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -14,14 +15,20 @@ import com.pianoshelf.joey.pianoshelf.composition.ComposerView;
 import com.pianoshelf.joey.pianoshelf.profile.Profile;
 import com.pianoshelf.joey.pianoshelf.profile.ProfileDescription;
 import com.pianoshelf.joey.pianoshelf.profile.ProfileView;
+import com.pianoshelf.joey.pianoshelf.rest_api.DetailMeta;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
+import com.pianoshelf.joey.pianoshelf.sdcard.UriUtils;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetListView;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetView;
 
+import java.io.File;
 import java.util.UUID;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 
 /**
@@ -105,7 +112,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void randomizeToken(View view) {
-        mSPHelper.setAuthToken(UUID.randomUUID().toString());
+        mSPHelper.setUserAndToken(null, UUID.randomUUID().toString());
     }
 
     public void updateDescription(View view) {
@@ -119,4 +126,34 @@ public class MainActivity extends BaseActivity {
                 });
     }
 
+    public static final int IMAGE_REQUEST = 123;
+    public void updateProfileImage(View view) {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, IMAGE_REQUEST);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case IMAGE_REQUEST: {
+                if (resultCode == RESULT_OK) {
+                    Uri imageUri = data.getData();
+                    File imageFile = new File(UriUtils.getRealPathFromURI(this, imageUri));
+
+                    MultipartBody.Part imageBody =
+                            MultipartBody.Part.createFormData("file", imageFile.getName(),
+                                    RequestBody.create(MediaType.parse("multipart/form-data"), imageFile)) ;
+                    apiService.profileUpdatePicture(imageBody).enqueue(new RWCallback<RW<Profile, DetailMeta>>() {
+                        @Override
+                        public void onFailure(Call<RW<Profile, DetailMeta>> call, Throwable t) {
+                            Log.e(C.NET, "Failure " + t.getLocalizedMessage());
+                        }
+                    });
+                }
+            }
+        }
+    }
 }

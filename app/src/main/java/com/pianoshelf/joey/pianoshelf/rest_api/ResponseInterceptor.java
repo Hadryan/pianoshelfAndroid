@@ -31,6 +31,7 @@ public class ResponseInterceptor implements Interceptor {
         // otherwise let UI code handle the rest
         if (fakableStatusCodes.contains(statusCode)) {
             response = response.newBuilder().code(200).build();
+            Log.i(C.NET, "Response status code updated to 200");
         }
 
         Log.v(LOG_TAG, "Done");

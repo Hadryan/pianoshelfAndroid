@@ -67,6 +67,11 @@
             android:layout_height="wrap_content"
             android:text="set random profile description"
             android:onClick="updateDescription"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="set profile picture"
+            android:onClick="updateProfileImage"/>
 
     </LinearLayout>
 

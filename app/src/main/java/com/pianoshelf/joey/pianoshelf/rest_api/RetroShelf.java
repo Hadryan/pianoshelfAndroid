@@ -16,14 +16,19 @@ import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
+
+import static com.pianoshelf.joey.pianoshelf.rest_api.RetroShelf.PROFILE_EP;
 
 /**
  * Created by joey on 29/04/16.
@@ -88,6 +93,10 @@ public interface RetroShelf {
 
     @POST(PROFILE_EP)
     Call<RW<Profile, MetaData>> profileUpdateDescription(@Body ProfileDescription description);
+
+    @Multipart
+    @POST(PROFILE_EP + "picture/")
+    Call<RW<Profile, DetailMeta>> profileUpdatePicture(@Part MultipartBody.Part file);
 
 }
 

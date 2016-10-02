@@ -100,14 +100,14 @@ public class BaseActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         EventBus.getDefault().register(this);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         EventBus.getDefault().unregister(this);
     }
 
@@ -207,8 +207,10 @@ public class BaseActivity extends AppCompatActivity
     }
 
     // All actions that needs to trigger when the user logs in is here
+    // marked final here since derived classes will also @Subscribe their inherited onUserLogin
+    // creating duplication
     @Subscribe
-    public void onUserLogin(UserInfo response) {
+    public final void onUserLogin(UserInfo response) {
         onTokenChanged(response);
         onUserNameChanged(response);
         onProfileImageChanged(response);
@@ -217,11 +219,11 @@ public class BaseActivity extends AppCompatActivity
     private void onTokenChanged(UserInfo response) {
         Log.i(LOG_TAG, "User logged in " + response);
         String token = response.getAuth_token();
-        // Save to non-volatile storage
-        mSPHelper.setAuthToken(token)
-                .setUser(response.getUsername());
-        // Announce token to interceptors
-        EventBus.getDefault().post(new UserToken(response.getUsername(), token));
+        if (!token.equals(mSPHelper.getAuthToken())) {
+            mSPHelper.setUserAndToken(response.getUsername(), token);
+        } else {
+            Log.w(LOG_TAG, "Duplicate token");
+        }
     }
 
     // Set profile name and description
@@ -313,8 +315,7 @@ public class BaseActivity extends AppCompatActivity
                         super.onResponse(call, response);
                         int statusCode = response.body().getMeta().getCode();
                         if (statusCode == 200) {
-                            mSPHelper.removeAuthToken()
-                                    .removeUser();
+                            mSPHelper.removeUserAndToken();
                             Log.i(C.AUTH, "Auth token removed");
                         } else {
                             Log.e(C.AUTH, "Invalid Response from logout request! " + statusCode);
