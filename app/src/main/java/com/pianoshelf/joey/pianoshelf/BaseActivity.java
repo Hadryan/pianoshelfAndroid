@@ -53,8 +53,18 @@ public class BaseActivity extends AppCompatActivity
     protected static final int RESULT_FAILED = 1;
 
     // Retrofit
-    protected Retrofit retrofit;
-    protected RetroShelf apiService;
+    protected Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(C.SERVER_ADDR)
+            .addConverterFactory(JacksonConverterFactory.create())
+            .client(new OkHttpClient.Builder()
+                    .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+                    //.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
+                    .addInterceptor(new ResponseInterceptor())
+                    .addInterceptor(new HeaderInterceptor())
+                    .build())
+            .build();
+
+    protected RetroShelf apiService = retrofit.create(RetroShelf.class);
 
     // UI
     private DrawerLayout mDrawerLayout;
@@ -71,20 +81,7 @@ public class BaseActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         mSPHelper = new SharedPreferenceHelper(this);
-
-        // Instantiate retrofit here since we need SharedPreferences from activity context
-        retrofit = new Retrofit.Builder()
-                .baseUrl(C.SERVER_ADDR)
-                //.baseUrl(new HttpUrl.Builder().scheme("http").host("192.168.0.102").port(80).build())
-                .addConverterFactory(JacksonConverterFactory.create())
-                .client(new OkHttpClient.Builder()
-                        .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
-                        //.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
-                        .addInterceptor(new ResponseInterceptor())
-                        .addInterceptor(new HeaderInterceptor(mSPHelper.getAuthToken()))
-                        .build())
-                .build();
-        apiService = retrofit.create(RetroShelf.class);
+        mSPHelper.announceUserAndToken();
 
         // Base activity should never define the toolbar
         //setContentView(R.layout.activity_base);
@@ -207,10 +204,10 @@ public class BaseActivity extends AppCompatActivity
     }
 
     // All actions that needs to trigger when the user logs in is here
-    // marked final here since derived classes will also @Subscribe their inherited onUserLogin
-    // creating duplication
     @Subscribe
     public final void onUserLogin(UserInfo response) {
+        // Derived classes shall not duplicate sending this event
+        Log.e(C.EVENT, "Class: " + getClass() + " " + BaseActivity.class);
         onTokenChanged(response);
         onUserNameChanged(response);
         onProfileImageChanged(response);

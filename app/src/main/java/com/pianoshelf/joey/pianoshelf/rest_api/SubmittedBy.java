@@ -1,6 +1,7 @@
-package com.pianoshelf.joey.pianoshelf.composition;
+package com.pianoshelf.joey.pianoshelf.rest_api;
 
 import java.net.URL;
+import java.util.Date;
 
 /**
  * Created by joey on 05/09/16.
@@ -11,7 +12,7 @@ public class SubmittedBy {
     URL small_profile_picture;
     URL large_profile_picture;
     // ISO 8601
-    String user_since;
+    Date user_since;
 
     public String getUsername() {
         return username;
@@ -45,11 +46,11 @@ public class SubmittedBy {
         this.large_profile_picture = large_profile_picture;
     }
 
-    public String getUser_since() {
+    public Date getUser_since() {
         return user_since;
     }
 
-    public void setUser_since(String user_since) {
+    public void setUser_since(Date user_since) {
         this.user_since = user_since;
     }
 }

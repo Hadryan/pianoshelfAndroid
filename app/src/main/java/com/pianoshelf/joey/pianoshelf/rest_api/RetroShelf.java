@@ -8,6 +8,7 @@ import com.pianoshelf.joey.pianoshelf.authentication.RegistrationInfo;
 import com.pianoshelf.joey.pianoshelf.authentication.RegistrationMeta;
 import com.pianoshelf.joey.pianoshelf.authentication.RegistrationResponse;
 import com.pianoshelf.joey.pianoshelf.authentication.UserInfo;
+import com.pianoshelf.joey.pianoshelf.comment.Comment;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
 import com.pianoshelf.joey.pianoshelf.profile.Profile;
 import com.pianoshelf.joey.pianoshelf.profile.ProfileDescription;
@@ -28,7 +29,6 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
-import static com.pianoshelf.joey.pianoshelf.rest_api.RetroShelf.PROFILE_EP;
 
 /**
  * Created by joey on 29/04/16.
@@ -44,7 +44,8 @@ public interface RetroShelf {
             LOGIN_EP = "api/auth/login/",
             LOGOUT_EP = "api/auth/logout/",
             REGISTER_EP = "api/auth/register/",
-            PROFILE_EP = "api/profile/";
+            PROFILE_EP = "api/profile/",
+            COMMENT_EP = "/api/comment/";
 
     /* Sheet */
 
@@ -62,6 +63,17 @@ public interface RetroShelf {
             @QueryMap Map<String, String> order,
             @Query("days") int days,
             @Query("results") int sheetCount);
+
+    /* Comment */
+
+    @GET(COMMENT_EP)
+    Call<RW<List<Comment>, DetailMeta>> getComment(
+            @Query("username") String username,
+            @Query("orderby") String order,
+            @Query("results") Integer resultCount);
+
+    @POST(COMMENT_EP)
+    Call<RW<>> commentPost()
 
     /* Auth */
 

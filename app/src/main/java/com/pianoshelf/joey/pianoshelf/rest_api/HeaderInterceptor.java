@@ -25,6 +25,10 @@ public class HeaderInterceptor implements Interceptor {
     public static final String LOG_TAG = "HeaderInterceptor";
     private String mAuthToken;
 
+    public HeaderInterceptor() {
+        EventBus.getDefault().register(this);
+    }
+
     public HeaderInterceptor(String token) {
         mAuthToken = token;
         EventBus.getDefault().register(this);
@@ -92,6 +96,6 @@ public class HeaderInterceptor implements Interceptor {
     @Subscribe
     public void onUserAuthChanged(UserToken userToken) {
         mAuthToken = userToken.getToken();
-        Log.i(C.AUTH, "Header Interceptor updated token");
+        Log.i(C.AUTH, "Header Interceptor updated token " + java.lang.System.identityHashCode(this));
     }
 }
