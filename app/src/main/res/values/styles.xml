@@ -16,4 +16,23 @@
         <item name="android:textColor">@color/text_primary</item>
 
     </style>
+
+    <style name="username_text">
+
+    </style>
+
+    <!-- Header -->
+    <style name="horizontal_header">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/vertical_header_height</item>
+        <item name="android:layout_marginLeft">@dimen/vertical_header_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/vertical_header_horizontal_margin</item>
+
+    </style>
+
+    <style name="header_font">
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
 </resources>

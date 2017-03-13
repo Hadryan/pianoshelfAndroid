@@ -74,17 +74,12 @@
                 <!-- this layout is clickable and leads to the full shelf -->
                 <RelativeLayout
                     android:id="@+id/shelf_header"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/vertical_header_height"
-                    android:layout_marginLeft="@dimen/vertical_header_horizontal_margin"
-                    android:layout_marginRight="@dimen/vertical_header_horizontal_margin">
+                    style="@style/horizontal_header">
 
                     <TextView
+                        style="@style/header_font"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
                         android:text="@string/profile_shelf" />
                 </RelativeLayout>
 

@@ -7,6 +7,7 @@
     <string name="action_title">@string/app_name</string>
     <string name="search_hint">Inspired Today?</string>
 
+    <string name="sample">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin a nunc scelerisque, posuere arcu id, consequat arcu. Nam ut rutrum odio, non vulputate sem. Curabitur viverra nunc vitae massa finibus egestas. Cras tristique tincidunt est sit amet semper. Donec sagittis neque ut blandit aliquam. Cras sit amet purus ac mi lobortis pharetra vitae in augue. Ut vestibulum consectetur malesuada. Quisque non risus blandit, pretium nunc cursus, tristique elit. Fusce et consectetur enim. Donec at est eu est hendrerit varius fermentum tempus velit. In non lacus lectus.</string>
 
     <string name="search_title">Search</string>
     <string name="cancel">Cancel</string>
@@ -65,4 +66,7 @@
 
     <string name="profile_shelf">Shelf</string>
 
+
+    <string name="media_submitted_by">Submitted by</string>
+    <string name="media_rating">Your rating</string>
 </resources>

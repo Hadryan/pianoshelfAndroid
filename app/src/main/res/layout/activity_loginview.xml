@@ -55,6 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_margin="@dimen/activity_vertical_margin_minor"
                     android:indeterminate="true"
                     android:visibility="invisible" />
 
@@ -83,4 +84,6 @@
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
+    <!-- Drawer -->
+    <include layout="@layout/drawer_default" />
 </android.support.v4.widget.DrawerLayout>
