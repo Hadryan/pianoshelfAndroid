@@ -72,8 +72,8 @@ public interface RetroShelf {
             @Query("orderby") String order,
             @Query("results") Integer resultCount);
 
-    @POST(COMMENT_EP)
-    Call<RW<>> commentPost()
+    //@POST(COMMENT_EP)
+    //Call<RW<>> commentPost()
 
     /* Auth */
 

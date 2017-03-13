@@ -45,6 +45,10 @@
     <dimen name="vertical_header_horizontal_margin">15dp</dimen>
     <dimen name="header_text_margin">5dp</dimen>
 
+    <!-- Login Page -->
+    <dimen name="login_logo_size">50dp</dimen>
+    <dimen name="login_logo_vertical_margin">40dp</dimen>
+
     <!-- Material Design -->
     <dimen name="subtitle_height">48dp</dimen>
 </resources>

@@ -33,24 +33,26 @@ import retrofit2.Call;
  * Created by root on 11/25/14.
  */
 public class LoginView extends BaseActivity {
+    private final String LOG_TAG = "LoginView";
     private ProgressBar progressBar;
     private TextView warningMessage;
     private TextView errorMessage;
     private EditText mUserNameText;
     private EditText mPasswordText;
-
     private String mUsername;
-    private final String LOG_TAG = "LoginView";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loginview);
+
         progressBar = (ProgressBar) findViewById(R.id.loginview_progress);
         warningMessage = (TextView) findViewById(R.id.loginview_warning_message);
         errorMessage = (TextView) findViewById(R.id.loginview_error_message);
         mUserNameText = (EditText) findViewById(R.id.loginview_username);
         mPasswordText = (EditText) findViewById(R.id.loginview_password);
+
+        setTitle("Login");
     }
 
     @Override

@@ -330,6 +330,10 @@ public class BaseActivity extends AppCompatActivity
                 });
     }
 
+    protected void setTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
+
    /* @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {

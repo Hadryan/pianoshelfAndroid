@@ -36,6 +36,7 @@ import retrofit2.Call;
  * This does not have to be the front page
  */
 public class MainActivity extends BaseActivity {
+    public static final int IMAGE_REQUEST = 123;
     private String LOG_TAG = "MainActivity";
 
     @Override
@@ -45,7 +46,7 @@ public class MainActivity extends BaseActivity {
 
         SharedPreferences sharedPreferences = getSharedPreferences(C.PIANOSHELF, MODE_PRIVATE);
 
-        getSupportActionBar().setTitle("PianoShelf");
+        setTitle("PianoShelf");
     }
 
     @Override
@@ -126,7 +127,6 @@ public class MainActivity extends BaseActivity {
                 });
     }
 
-    public static final int IMAGE_REQUEST = 123;
     public void updateProfileImage(View view) {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
