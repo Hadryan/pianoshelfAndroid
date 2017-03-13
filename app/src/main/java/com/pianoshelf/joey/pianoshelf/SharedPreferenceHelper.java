@@ -2,6 +2,7 @@ package com.pianoshelf.joey.pianoshelf;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.pianoshelf.joey.pianoshelf.authentication.UserToken;
@@ -37,15 +38,21 @@ public class SharedPreferenceHelper {
         return null != getUser();
     }
 
-    public SharedPreferenceHelper setUserAndToken(String user, String token) {
+    void announceUserAndToken() {
+        Log.i(C.EVENT, "Announce token");
+        EventBus.getDefault().post(new UserToken(getUser(), getAuthToken()));
+    }
+
+    SharedPreferenceHelper setUserAndToken(String user, String token) {
         mSP.edit().putString(C.USERNAME, user)
                 .putString(C.AUTHORIZATION_TOKEN, token)
                 .apply();
+        Log.i(C.EVENT, "Update token");
         EventBus.getDefault().post(new UserToken(user, token));
         return this;
     }
 
-    public SharedPreferenceHelper removeUserAndToken() {
+    SharedPreferenceHelper removeUserAndToken() {
         mSP.edit()
                 .remove(C.USERNAME)
                 .remove(C.AUTHORIZATION_TOKEN)
@@ -89,7 +96,7 @@ public class SharedPreferenceHelper {
      * @param compositionName
      * @return
      */
-    public Composition getOfflineComposition(String compositionName, Composition defaultValue) {
+    Composition getOfflineComposition(String compositionName, Composition defaultValue) {
         if (!getOfflineCompositionKeys().contains(compositionName)) {
             return defaultValue;
         } else {
@@ -104,7 +111,7 @@ public class SharedPreferenceHelper {
         }
     }
 
-    public void setOfflineCompositions(String compositionsName, Composition composition) {
+    void setOfflineCompositions(String compositionsName, Composition composition) {
         SharedPreferences.Editor compositionEditor = context.
                 getSharedPreferences(compositionsName, Context.MODE_PRIVATE).edit();
         compositionEditor.putString(COMPOSITION_JSON_KEY,
@@ -146,7 +153,7 @@ public class SharedPreferenceHelper {
      * @param compositionName
      * @param compositionImages
      */
-    public void setOfflineCompositionImages(String compositionName, List<String> compositionImages) {
+    void setOfflineCompositionImages(String compositionName, List<String> compositionImages) {
         Composition offlineComposition = getOfflineComposition(compositionName, null);
         if (offlineComposition == null) {
             throw new RuntimeException(compositionName + " does not exist");

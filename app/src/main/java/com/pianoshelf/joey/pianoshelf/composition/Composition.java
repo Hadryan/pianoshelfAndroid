@@ -1,6 +1,7 @@
 package com.pianoshelf.joey.pianoshelf.composition;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pianoshelf.joey.pianoshelf.rest_api.SubmittedBy;
 
 import java.util.List;
 
