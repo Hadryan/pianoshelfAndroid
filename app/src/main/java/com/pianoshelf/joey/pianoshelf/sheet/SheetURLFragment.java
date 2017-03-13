@@ -20,11 +20,29 @@ import com.pianoshelf.joey.pianoshelf.R;
  * Created by joey on 10/29/14.
  */
 public class SheetURLFragment extends Fragment implements RequestListener<String, GlideDrawable> {
-    private String sheetUrl;
     private static final String SHEET_URL_ARGUMENT = "sheetUrl";
     private static final String LOG_TAG = "SheetURLFragment";
+    private String sheetUrl;
     private ProgressBar progressBar;
     private ImageView mImageView;
+
+    /**
+     * We do not override the onCreate method for parameters, instead we use the
+     * newInstance and Bundle static factory design pattern.
+     * <p/>
+     * We will pass in the url of the sheet (later) from SheetFragment
+     * to specify which page to load
+     * <p/>
+     * TODO Consider overloading this class with a Bundle parameter
+     */
+    public static SheetURLFragment newInstance(String sheetUrl) {
+        SheetURLFragment sheet = new SheetURLFragment();
+        Bundle args = new Bundle();
+
+        args.putString(SHEET_URL_ARGUMENT, sheetUrl);
+        sheet.setArguments(args);
+        return sheet;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,7 +56,7 @@ public class SheetURLFragment extends Fragment implements RequestListener<String
 
     // Currently the progressBar only shows upon first entering the Fragment
     // Need to implement the onResume, onPaused, etc functions to display
-    // the spinning progressbar correctly 
+    // the spinning progressbar correctly
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_sheet, container, false);
@@ -71,23 +89,5 @@ public class SheetURLFragment extends Fragment implements RequestListener<String
     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
         progressBar.setVisibility(View.GONE);
         return false;
-    }
-
-    /**
-     * We do not override the onCreate method for parameters, instead we use the
-     * newInstance and Bundle static factory design pattern.
-     * <p/>
-     * We will pass in the url of the sheet (later) from SheetView
-     * to specify which page to load
-     * <p/>
-     * TODO Consider overloading this class with a Bundle parameter
-     */
-    public static SheetURLFragment newInstance(String sheetUrl) {
-        SheetURLFragment sheet = new SheetURLFragment();
-        Bundle args = new Bundle();
-
-        args.putString(SHEET_URL_ARGUMENT, sheetUrl);
-        sheet.setArguments(args);
-        return sheet;
     }
 }

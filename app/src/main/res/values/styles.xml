@@ -35,4 +35,9 @@
         <item name="android:layout_centerVertical">true</item>
     </style>
 
+
+    <style name="sheet_bottom">
+        <item name="android:background">#f23332</item>
+    </style>
+
 </resources>

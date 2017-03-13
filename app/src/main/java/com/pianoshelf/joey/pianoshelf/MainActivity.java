@@ -20,8 +20,9 @@ import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.sdcard.UriUtils;
+import com.pianoshelf.joey.pianoshelf.sheet.SheetFragment;
+import com.pianoshelf.joey.pianoshelf.sheet.SheetFrameView;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetListView;
-import com.pianoshelf.joey.pianoshelf.sheet.SheetView;
 
 import java.io.File;
 import java.util.UUID;
@@ -73,8 +74,8 @@ public class MainActivity extends BaseActivity {
     }
 
     public void invokeSheetView(View view) {
-        Intent intent = new Intent(this, SheetView.class);
-        intent.putExtra(SheetView.SHEET_ID_INTENT, 1L);
+        Intent intent = new Intent(this, SheetFrameView.class);
+        intent.putExtra(SheetFragment.SHEET_ID_INTENT, 1L);
         startActivity(intent);
     }
 
