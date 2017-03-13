@@ -25,8 +25,8 @@ public class C {
 
     // Logging tags
     public static final String
-            FILE_IO = "fileIO",
-            AUTH = "djAuth",
+            FILE_IO = "FileIO",
+            AUTH = "DjangoAuth",
             NET = "Network",
             EVENT = "Event";
 

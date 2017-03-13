@@ -16,11 +16,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pianoshelf.joey.pianoshelf.authentication.LoginView;
 import com.pianoshelf.joey.pianoshelf.authentication.LogoutMeta;
 import com.pianoshelf.joey.pianoshelf.authentication.LogoutResponse;
 import com.pianoshelf.joey.pianoshelf.authentication.UserInfo;
-import com.pianoshelf.joey.pianoshelf.authentication.UserToken;
 import com.pianoshelf.joey.pianoshelf.rest_api.HeaderInterceptor;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
@@ -46,25 +47,21 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String LOG_TAG = "BaseActivity";
-
     // Protected Constants
     protected static final String ACTION_LOGIN = "ACTION_LOGIN";
     protected static final int RESULT_FAILED = 1;
-
+    private static final String LOG_TAG = "BaseActivity";
     // Retrofit
     protected Retrofit retrofit;
     protected RetroShelf apiService;
-
+    protected Toolbar mToolbar;
+    // Storage
+    protected SharedPreferenceHelper mSPHelper;
     // UI
     private DrawerLayout mDrawerLayout;
     private android.support.v7.app.ActionBarDrawerToggle mDrawerToggle;
-    protected Toolbar mToolbar;
     private ImageView mProfileImage;
     private TextView mUsername;
-
-    // Storage
-    protected SharedPreferenceHelper mSPHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,10 +73,17 @@ public class BaseActivity extends AppCompatActivity
         retrofit = new Retrofit.Builder()
                 .baseUrl(C.SERVER_ADDR)
                 //.baseUrl(new HttpUrl.Builder().scheme("http").host("192.168.0.102").port(80).build())
-                .addConverterFactory(JacksonConverterFactory.create())
+                .addConverterFactory(
+                        JacksonConverterFactory.create(new ObjectMapper()
+                                // if we ignore unknown fields in the received json
+                                // we do not need to manually list every field in the POJO
+                                // corresponding to the JSON
+                                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)))
                 .client(new OkHttpClient.Builder()
-                        .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
-                        //.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
+                        .addNetworkInterceptor(new HttpLoggingInterceptor()
+                                .setLevel(HttpLoggingInterceptor.Level.BASIC))
+                        //.addNetworkInterceptor( new HttpLoggingInterceptor()
+                        //      .setLevel(HttpLoggingInterceptor.Level.HEADERS))
                         .addInterceptor(new ResponseInterceptor())
                         .addInterceptor(new HeaderInterceptor(mSPHelper.getAuthToken()))
                         .build())

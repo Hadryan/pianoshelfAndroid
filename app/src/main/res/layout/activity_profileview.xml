@@ -1,101 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin_minor"
-    android:paddingRight="@dimen/activity_horizontal_margin_minor">
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
 
-
-    <ProgressBar
-        android:id="@+id/profile_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:indeterminate="true"
-        android:visibility="visible" />
-
-    <ImageView
-        android:id="@+id/profile_avatar"
-        android:layout_width="@dimen/profile_avatar_width"
-        android:layout_height="@dimen/profile_avatar_height"
-        android:padding="@dimen/profile_avatar_padding"
-        android:contentDescription="@string/profile_avatar_description" />
-
-    <TextView
-        android:id="@+id/profile_fullname"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/profile_avatar"
-        android:paddingTop="@dimen/profile_name_top_padding"
-        android:paddingLeft="@dimen/profile_name_horizontal_padding"
-        android:paddingRight="@dimen/profile_name_horizontal_padding"
-
-        android:textSize="@dimen/font_title" />
-
-    <TextView
-        android:id="@+id/profile_username"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/profile_avatar"
-        android:layout_below="@id/profile_fullname"
-        android:layout_marginTop="@dimen/profile_name_top_margin"
-        android:paddingLeft="@dimen/profile_name_horizontal_padding"
-        android:paddingRight="@dimen/profile_name_horizontal_padding"
-
-        android:textStyle="bold|italic" />
-
-    <TextView
-        android:id="@+id/profile_description"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/profile_avatar"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        android:textSize="@dimen/font_title_minor"
-        android:gravity="center" />
+        <!-- The toolbar behaves like a regular view and takes up space -->
+        <include layout="@layout/toolbar_default" />
 
-    <RelativeLayout
-        android:id="@+id/profile_myshelf_banner"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/content_min_height"
-        android:layout_marginTop="@dimen/title_top_margin"
-        android:layout_below="@+id/profile_description"
-        android:clickable="true">
-
-        <View
+        <!-- Root layout for activity -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/separator_dark" />
-
-        <TextView
-            android:id="@+id/profile_myshelf_title"
-            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:gravity="center_vertical"
-            android:text="@string/myshelf"
-            android:textSize="@dimen/font_title_minor" />
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:gravity="center_vertical"
-            android:text="@string/more"
-            android:textColor="@color/clickable_text"
-            android:textSize="@dimen/font_title_minor"
-            android:clickable="true"
-            android:onClick="invokeShelfView" />
-    </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/profile_avatar"
+                    android:layout_width="@dimen/profile_avatar_width"
+                    android:layout_height="@dimen/profile_avatar_height"
+                    android:contentDescription="@string/profile_avatar_description"
+                    android:padding="@dimen/profile_avatar_padding"
+                    android:src="@color/error" />
+
+                <TextView
+                    android:id="@+id/profile_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/profile_name_top_margin"
+                    android:paddingLeft="@dimen/profile_name_horizontal_padding"
+                    android:paddingRight="@dimen/profile_name_horizontal_padding"
+
+                    android:text="username"
+                    android:textStyle="bold|italic" />
+
+                <TextView
+                    android:id="@+id/profile_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/profile_name_top_margin"
+                    android:maxLines="4"
+                    android:paddingLeft="@dimen/profile_name_horizontal_padding"
+
+                    android:paddingRight="@dimen/profile_name_horizontal_padding"
+                    android:text="description long"
+                    android:textSize="@dimen/font_title_minor" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/vertical_spacer_height" />
+
+            <!-- myShelf Fragment, should fill missing space from profile info -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <!-- this layout is clickable and leads to the full shelf -->
+                <RelativeLayout
+                    android:id="@+id/shelf_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/vertical_header_height"
+                    android:layout_marginLeft="@dimen/vertical_header_horizontal_margin"
+                    android:layout_marginRight="@dimen/vertical_header_horizontal_margin">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:text="@string/profile_shelf" />
+                </RelativeLayout>
+
+                <FrameLayout
+                    android:id="@+id/profile_myshelf"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+        </LinearLayout>
 
 
-    <!-- myShelf Fragment -->
-    <FrameLayout
-        android:id="@+id/profile_myshelf"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/profile_myshelf_banner" />
-
-</RelativeLayout>
+    </LinearLayout>
+    <!-- Drawer -->
+    <include
+        layout="@layout/drawer_default"
+        android:visibility="gone" />
+</android.support.v4.widget.DrawerLayout>
