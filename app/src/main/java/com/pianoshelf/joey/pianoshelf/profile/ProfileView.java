@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,10 +35,8 @@ public class ProfileView extends BaseActivity {
     private String username;
     private Profile mProfile;
 
-    private ProgressBar progressBar;
     private SheetArrayListFragment myShelf;
 
-    private TextView fullName;
     private TextView userName;
     private TextView description;
 
@@ -49,10 +46,8 @@ public class ProfileView extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profileview);
-        progressBar = (ProgressBar) findViewById(R.id.profile_progress);
 
 
-        fullName = (TextView) findViewById(R.id.profile_fullname);
         userName = (TextView) findViewById(R.id.profile_username);
         description = (TextView) findViewById(R.id.profile_description);
 
@@ -73,7 +68,6 @@ public class ProfileView extends BaseActivity {
                 public void onFailure(Call<RW<Profile, DetailMeta>> call, Throwable t) {
                     t.printStackTrace();
                     Log.e(C.NET, "User " + username + " failed to load" + t.getLocalizedMessage());
-                    progressBar.setVisibility(View.GONE);
                 }
             });
         }
@@ -88,11 +82,9 @@ public class ProfileView extends BaseActivity {
 
     @Subscribe
     public void onProfileReceived(Profile profile) {
-        progressBar.setVisibility(View.GONE);
         mProfile = profile;
 
         // user info
-        fullName.setText(profile.getFull_name());
         userName.setText(profile.getUsername());
         description.setText(profile.getDescription());
 
@@ -115,7 +107,6 @@ public class ProfileView extends BaseActivity {
 
     @Subscribe
     public void onProfileError(DetailMeta meta) {
-        progressBar.setVisibility(View.GONE);
         Log.e(LOG_TAG, "Requested user " + username + " does not exist");
         Toast.makeText(this,
                 "User " + username + " does not exist",

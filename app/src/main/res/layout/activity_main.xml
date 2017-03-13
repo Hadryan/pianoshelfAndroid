@@ -19,59 +19,53 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sheet View Entry Point"
-            android:onClick="invokeSheetView" />
+            android:onClick="invokeSheetView"
+            android:text="Sheet View Entry Point" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Composer View Entry Point"
-            android:onClick="invokeComposerView" />
+            android:onClick="invokeSheetList"
+            android:text="SheetListView Entry Point" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SheetListView Entry Point"
-            android:onClick="invokeSheetList" />
+            android:onClick="invokeLogin"
+            android:text="Login" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login"
-            android:onClick="invokeLogin" />
+            android:onClick="invokeLogout"
+            android:text="Logout" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Logout"
-            android:onClick="invokeLogout" />
+            android:onClick="invokeRegistration"
+            android:text="Sign Up" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sign Up"
-            android:onClick="invokeRegistration" />
-
+            android:onClick="invokeProfile"
+            android:text="Profile" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Profile"
-            android:onClick="invokeProfile" />
+            android:onClick="randomizeToken"
+            android:text="set random token" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="set random token"
-            android:onClick="randomizeToken"/>
+            android:onClick="updateDescription"
+            android:text="set random profile description" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="set random profile description"
-            android:onClick="updateDescription"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="set profile picture"
-            android:onClick="updateProfileImage"/>
+            android:onClick="updateProfileImage"
+            android:text="set profile picture" />
 
     </LinearLayout>
 

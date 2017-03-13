@@ -32,12 +32,18 @@
     <dimen name="nav_header_height">160dp</dimen>
 
     <!-- Profile -->
-    <dimen name="profile_avatar_width">150dp</dimen>
+    <dimen name="profile_avatar_width">130dp</dimen>
     <dimen name="profile_avatar_height">@dimen/profile_avatar_width</dimen>
-    <dimen name="profile_avatar_padding">10dp</dimen>
+    <dimen name="profile_avatar_padding">14dp</dimen>
     <dimen name="profile_name_horizontal_padding">10dp</dimen>
     <dimen name="profile_name_top_padding">20dp</dimen>
     <dimen name="profile_name_top_margin">5dp</dimen>
+
+    <!-- Header and Spacer -->
+    <dimen name="vertical_spacer_height">6dp</dimen>
+    <dimen name="vertical_header_height">40dp</dimen>
+    <dimen name="vertical_header_horizontal_margin">15dp</dimen>
+    <dimen name="header_text_margin">5dp</dimen>
 
     <!-- Material Design -->
     <dimen name="subtitle_height">48dp</dimen>

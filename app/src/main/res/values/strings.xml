@@ -45,7 +45,6 @@
     <string name="overflow_pdf_download">Download PDF</string>
     <string name="overflow_add_to_shelf">Add to MyShelf</string>
 
-
     <!-- Drawer -->
     <string name="home">Home</string>
     <string name="myshelf">MyShelf</string>
@@ -63,4 +62,7 @@
     <!-- Sheet list strings -->
     <string name="sheet_music_tab_name">SheetMusic</string>
     <string name="composer_tab_name">Composers</string>
+
+    <string name="profile_shelf">Shelf</string>
+
 </resources>

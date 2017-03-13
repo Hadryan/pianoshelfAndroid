@@ -4,25 +4,7 @@ package com.pianoshelf.joey.pianoshelf.composition;
  * Created by joey on 27/04/16.
  */
 public class CommentInfo {
-    /*
-        {
-            "id":44,
-            "message":"i wrote dis",
-            "upvotes":1,
-            "date":"2016-01-15 16:07:31",
-            "user":19103,
-            "recipient":26,
-            "recipient_username":"aa",
-            "sheetmusic":304,
-            "sheetmusic_title":"op.27 no.2 Moonlight Sonata",
-            "sheetmusic_uniqueurl":"beethoven-op.27-no.2-moonlight-sonata-304",
-            "profile_picture":"https://sheetmusic.pianoshelf.com/profilepicture/poopoo_small.jpg",
-            "status":"active",
-            "last_modified":"2016-01-15T16:07:45.685116Z",
-            "name":"poopoo",
-            "replies":[ 52, 33 ]
-        }
-    */
+    //  https://www.pianoshelf.com/api/sheetmusic/1/
     private int id; // comment unique id
     private String message; // comment
     private int upvotes;
