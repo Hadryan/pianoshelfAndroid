@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import com.pianoshelf.joey.pianoshelf.rest_api.RetroShelf;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 /**
  * Created by Me on 3/13/2017.
@@ -23,6 +24,10 @@ public class BaseFragment extends Fragment {
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void bootstrapEventBus(BaseFragment f) {
     }
 
     public RetroShelf getApiService() {
