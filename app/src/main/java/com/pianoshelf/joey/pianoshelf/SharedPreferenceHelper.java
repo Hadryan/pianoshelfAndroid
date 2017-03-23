@@ -20,12 +20,11 @@ import java.util.Set;
  * Created by joey on 12/21/14.
  */
 public class SharedPreferenceHelper {
-    private Context context;
-    private SharedPreferences mSP;
-
     private static final String PIANOSHELF = "pianoshelf";
     private static final String COMPOSITION_JSON_KEY = "COMPOSITION_JSON_KEY";
     private static final String OFFLINE_COMPOSITIONS = "offline_compositions";
+    private Context context;
+    private SharedPreferences mSP;
 
     public SharedPreferenceHelper(Context context) {
         this.context = context;
@@ -34,7 +33,7 @@ public class SharedPreferenceHelper {
     }
 
     /** Key Value Pairs **/
-    public boolean userLoggedIn() {
+    public boolean isLoggedIn() {
         return null != getUser();
     }
 
@@ -163,14 +162,12 @@ public class SharedPreferenceHelper {
         }
     }
 
-
-
-
-    /*** EventBus Actions ***/
-    public static class RemoveUserAndToken {}
-
     @Subscribe
     public void onUserRemoveRequest(RemoveUserAndToken request) {
         removeUserAndToken();
+    }
+
+    /*** EventBus Actions ***/
+    public static class RemoveUserAndToken {
     }
 }

@@ -69,7 +69,7 @@ public class SheetArrayListFragment extends SheetArrayFragment {
             holder.mRootView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent openSheet = new Intent(getContext(), SheetFragment.class);
+                    Intent openSheet = new Intent(getContext(), SheetFrameView.class);
                     openSheet.putExtra(SheetFragment.SHEET_ID_INTENT, sheetId);
                     startActivity(openSheet);
                 }

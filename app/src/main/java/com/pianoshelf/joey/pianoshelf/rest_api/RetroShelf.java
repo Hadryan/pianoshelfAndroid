@@ -20,8 +20,8 @@ import java.util.Map;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -95,7 +95,8 @@ public interface RetroShelf {
     @POST(SHELF_EP)
     Call<RW<Shelf, MetaData>> shelfAddSheet(@Body ShelfSheetMusic sheetId);
 
-    @DELETE(SHELF_EP)
+    // @DELETE annotation does not support body
+    @HTTP(method = "DELETE", path = SHELF_EP, hasBody = true)
     Call<RW<Shelf, MetaData>> shelfRemoveSheet(@Body ShelfSheetMusic sheetId);
 
     /* Profile */

@@ -35,6 +35,7 @@ public abstract class RWCallback<T extends RW> implements Callback<T> {
             T body = response.body();
             // Never post to EventBus an empty data field
             if (body.getData() != null) {
+                Log.v("RWC", "data " + body.getData().getClass().toString());
                 EventBus.getDefault().post(body.getData());
             } else {
                 EventBus.getDefault().post(body.getMeta());

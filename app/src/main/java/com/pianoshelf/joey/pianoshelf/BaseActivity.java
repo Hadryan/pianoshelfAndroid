@@ -86,17 +86,7 @@ public class BaseActivity extends AppCompatActivity
         mSPHelper = new SharedPreferenceHelper(this);
         mSPHelper.announceUserAndToken();
 
-        // Base activity should never define the toolbar
-        //setContentView(R.layout.activity_base);
 
-        //firstItem = (TextView) findViewById(R.id.drawer_first_item);
-
-        // Set the values for the rest of the list
-        /*ListView drawerList = (ListView) findViewById(R.id.drawer_list);
-        listItems = getResources().getStringArray(R.array.drawer_text);
-        drawerList.setAdapter(new DrawerAdapter(this,
-                R.layout.adapter_drawer_list_item, listItems));
-        drawerList.setOnItemClickListener(new DrawerItemClickListener());*/
     }
 
     @Override
@@ -303,11 +293,12 @@ public class BaseActivity extends AppCompatActivity
 
     // Authentication
     public void logout() {
-        if (!mSPHelper.userLoggedIn()) {
+        if (!mSPHelper.isLoggedIn()) {
             Log.w(C.AUTH, "Attempt to logout without login token! Logout aborted.");
             return;
         }
 
+        Log.i(C.AUTH, "logout started");
         apiService.logout()
                 .enqueue(new RWCallback<RW<LogoutResponse, LogoutMeta>>() {
                     @Override
@@ -320,6 +311,7 @@ public class BaseActivity extends AppCompatActivity
                         } else {
                             Log.e(C.AUTH, "Invalid Response from logout request! " + statusCode);
                         }
+                        Log.i(C.AUTH, "logout complete");
                     }
 
                     @Override
