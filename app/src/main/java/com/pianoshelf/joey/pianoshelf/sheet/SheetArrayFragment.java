@@ -18,12 +18,6 @@ import java.util.List;
  * Created by joey on 21/11/15.
  */
 public class SheetArrayFragment extends Fragment {
-    private static final String LOG_TAG = "SheetArrayListFragment";
-    private static final String JSON_ARRAY = "JSON_ARRAY";
-    private static final String JSON_LIST = "JSON_LIST";
-
-    protected final String SERVER_SHEETMUSIC_SUFFIX = "api/sheetmusic/";
-
     protected List<Composition> mSheetList = new ArrayList<>();
 
     protected RecyclerView mRecyclerView;
@@ -42,7 +36,7 @@ public class SheetArrayFragment extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.sheet_recycler);
     }
 
-    public void setSheetList(Collection<Composition> jsonCollection) {
+    public void setSheetList(Collection<? extends Composition> jsonCollection) {
         mSheetList.clear();
         mSheetList.addAll(jsonCollection);
         if (mAdapter != null) {

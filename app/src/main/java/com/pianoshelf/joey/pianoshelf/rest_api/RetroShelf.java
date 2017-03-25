@@ -9,7 +9,8 @@ import com.pianoshelf.joey.pianoshelf.authentication.RegistrationMeta;
 import com.pianoshelf.joey.pianoshelf.authentication.RegistrationResponse;
 import com.pianoshelf.joey.pianoshelf.authentication.UserInfo;
 import com.pianoshelf.joey.pianoshelf.comment.Comment;
-import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.composition.FullComposition;
+import com.pianoshelf.joey.pianoshelf.composition.SimpleComposition;
 import com.pianoshelf.joey.pianoshelf.profile.Profile;
 import com.pianoshelf.joey.pianoshelf.profile.ProfileDescription;
 import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
@@ -50,20 +51,20 @@ public interface RetroShelf {
     /* Sheet */
 
     @GET(SHEET_EP + "{id}")
-    Call<RW<Composition, MetaData>> getSheet(@Path("id") int sheetId);
+    Call<RW<FullComposition, MetaData>> getSheet(@Path("id") int sheetId);
 
     @GET(SHEET_EP)
-    Call<RW<List<Composition>, PagedMeta>> sheetListQuery(
+    Call<RW<List<SimpleComposition>, PagedMeta>> sheetListQuery(
             @QueryMap Map<String, String> order,
             @Query("page") int pageNumber,
+
             @Query("page_size") int pageSize);
 
     @GET(SHEET_EP)
-    Call<RW<List<Composition>, PagedMeta>> sheetListTrendingQuery(
+    Call<RW<List<SimpleComposition>, PagedMeta>> sheetListTrendingQuery(
             @QueryMap Map<String, String> order,
             @Query("days") int days,
             @Query("results") int sheetCount);
-
     /* Comment */
 
     @GET(COMMENT_EP)

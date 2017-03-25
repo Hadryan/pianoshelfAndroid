@@ -19,12 +19,12 @@ import com.pianoshelf.joey.pianoshelf.composition.CompositionUtil;
 public class CompositionViewHolder extends RecyclerView.ViewHolder {
     private static final String LOG_TAG = "Sheet ViewHolder";
     public View mRootView;
-    private TextView mTitle;
-    private TextView mComposerName;
-    private TextView mDownloadCount;
-    private TextView mDifficulty;
     public ImageView mDeleteButton;
     protected Composition mComposition;
+    private TextView mTitle;
+    private TextView mComposerName;
+    private TextView mViewCount;
+    private TextView mDifficulty;
 
     public CompositionViewHolder(View view) {
         super(view);
@@ -35,7 +35,7 @@ public class CompositionViewHolder extends RecyclerView.ViewHolder {
         mRootView = view;
         mTitle = (TextView) view.findViewById(R.id.sheet_list_item_title);
         mComposerName = (TextView) view.findViewById(R.id.sheet_list_item_composer_name);
-        mDownloadCount = (TextView) view.findViewById(R.id.sheet_list_item_download_count);
+        mViewCount = (TextView) view.findViewById(R.id.sheet_list_item_download_count);
         mDifficulty = (TextView) view.findViewById(R.id.sheet_list_item_difficulty);
         mDeleteButton = (ImageView) view.findViewById(R.id.sheet_list_item_delete);
     }
@@ -51,7 +51,7 @@ public class CompositionViewHolder extends RecyclerView.ViewHolder {
         //((TextView) parentView.findViewById(R.id.sheet_list_item_style)).setText(style);
         //((TextView) parentView.findViewById(R.id.sheet_list_item_key)).setText(key);
         //((TextView) parentView.findViewById(R.id.sheet_list_item_date)).setText(date);
-        mDownloadCount.setText(CompositionUtil.ParseDownloadCount(mComposition.getPop()));
+        mViewCount.setText(CompositionUtil.parseViews(mComposition.getView_count()));
         mDifficulty.setText(CompositionUtil.ParseDifficulty(mComposition.getDifficulty()));
         mDifficulty.setTextColor(CompositionUtil.ParseDifficultyColor(mComposition.getDifficulty()));
     }

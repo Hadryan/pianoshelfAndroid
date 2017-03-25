@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
-import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.composition.SimpleComposition;
 import com.pianoshelf.joey.pianoshelf.rest_api.DetailMeta;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
@@ -29,6 +29,7 @@ import retrofit2.Call;
  * Created by joey on 12/29/14.
  */
 public class ProfileView extends BaseActivity {
+    public static final String USERNAME_INTENT = "username";
     private static final String LOG_TAG = "ProfileView";
     private static final int PREVIEW_VALUE = 5;
 
@@ -59,7 +60,7 @@ public class ProfileView extends BaseActivity {
                 .commit();
 
         Intent intent = getIntent();
-        username = intent.getStringExtra("username");
+        username = intent.getStringExtra(USERNAME_INTENT);
         if (TextUtils.isEmpty(username)) {
             throw new RuntimeException("Empty username given to ProfileView.");
         } else {
@@ -97,7 +98,7 @@ public class ProfileView extends BaseActivity {
             Glide.with(this).load(avatarUrl).into(mAvatar);
         }
         // Load a preview of the user's shelf
-        List<Composition> sheetList = profile.getShelf().getSheetmusic();
+        List<SimpleComposition> sheetList = profile.getShelf().getSheetmusic();
         if (sheetList.size() > PREVIEW_VALUE) {
             sheetList.subList(sheetList.size() - 1 - PREVIEW_VALUE, sheetList.size()).clear();
         }

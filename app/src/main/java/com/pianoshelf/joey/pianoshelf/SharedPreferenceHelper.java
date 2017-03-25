@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.pianoshelf.joey.pianoshelf.authentication.UserToken;
-import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.composition.FullComposition;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -95,7 +95,7 @@ public class SharedPreferenceHelper {
      * @param compositionName
      * @return
      */
-    Composition getOfflineComposition(String compositionName, Composition defaultValue) {
+    FullComposition getOfflineComposition(String compositionName, FullComposition defaultValue) {
         if (!getOfflineCompositionKeys().contains(compositionName)) {
             return defaultValue;
         } else {
@@ -105,16 +105,16 @@ public class SharedPreferenceHelper {
             if (compositionJsonString == null) {
                 return defaultValue;
             } else {
-                return new Gson().fromJson(compositionJsonString, Composition.class);
+                return new Gson().fromJson(compositionJsonString, FullComposition.class);
             }
         }
     }
 
-    void setOfflineCompositions(String compositionsName, Composition composition) {
+    void setOfflineCompositions(String compositionsName, FullComposition composition) {
         SharedPreferences.Editor compositionEditor = context.
                 getSharedPreferences(compositionsName, Context.MODE_PRIVATE).edit();
         compositionEditor.putString(COMPOSITION_JSON_KEY,
-                new Gson().toJson(composition, Composition.class));
+                new Gson().toJson(composition, FullComposition.class));
         compositionEditor.apply();
         // Check if the composition exists in the set of keys. Create it if it does not exist.
         HashSet<String> offlineCompositionKeys = (HashSet<String>) getOfflineCompositionKeys();
@@ -133,7 +133,7 @@ public class SharedPreferenceHelper {
      * @return
      */
     public List<String> getOfflineCompositionImages(String compositionName, List<String> defaultValue) {
-        Composition offlineComposition = getOfflineComposition(compositionName, null);
+        FullComposition offlineComposition = getOfflineComposition(compositionName, null);
         if (offlineComposition == null) {
             return defaultValue;
         } else {
@@ -153,7 +153,7 @@ public class SharedPreferenceHelper {
      * @param compositionImages
      */
     void setOfflineCompositionImages(String compositionName, List<String> compositionImages) {
-        Composition offlineComposition = getOfflineComposition(compositionName, null);
+        FullComposition offlineComposition = getOfflineComposition(compositionName, null);
         if (offlineComposition == null) {
             throw new RuntimeException(compositionName + " does not exist");
         } else {

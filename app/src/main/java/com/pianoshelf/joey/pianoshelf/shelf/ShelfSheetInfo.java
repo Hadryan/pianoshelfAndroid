@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Created by joey on 05/09/16.
- * Should be a subset of Composition
+ * Should be a subset of FullComposition
  * But due to submitted_by having a conflicting type definition this is here as a workaround
  */
 public class ShelfSheetInfo {

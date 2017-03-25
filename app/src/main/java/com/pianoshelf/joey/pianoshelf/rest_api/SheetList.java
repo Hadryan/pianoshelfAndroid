@@ -1,6 +1,6 @@
 package com.pianoshelf.joey.pianoshelf.rest_api;
 
-import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.composition.FullComposition;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class SheetList {
     private PagedMeta meta;
-    private List<Composition> data;
+    private List<FullComposition> data;
 
     public PagedMeta getMeta() {
         return meta;
@@ -33,11 +33,11 @@ public class SheetList {
         this.meta = meta;
     }
 
-    public List<Composition> getData() {
+    public List<FullComposition> getData() {
         return data;
     }
 
-    public void setData(List<Composition> data) {
+    public void setData(List<FullComposition> data) {
         this.data = data;
     }
 }

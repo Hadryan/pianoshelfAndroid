@@ -3,6 +3,7 @@ package com.pianoshelf.joey.pianoshelf.rest_api;
 import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.pianoshelf.joey.pianoshelf.C;
 
 import org.greenrobot.eventbus.EventBus;
@@ -23,7 +24,8 @@ public abstract class RWCallback<T extends RW> implements Callback<T> {
         Log.i(C.NET, "Response body: " + response.body());
         Log.i(C.NET, "Response error body: " + response.errorBody());
         try {
-            String json = new ObjectMapper().writeValueAsString(response.body());
+            String json = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT)
+                    .writeValueAsString(response.body());
             Log.i(C.NET, json);
         } catch (IOException e) {
             Log.e(C.NET, "Error while converting body to string" + e.getLocalizedMessage());

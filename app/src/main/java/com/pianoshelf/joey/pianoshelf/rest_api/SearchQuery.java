@@ -2,7 +2,7 @@ package com.pianoshelf.joey.pianoshelf.rest_api;
 
 import android.util.Log;
 
-import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.composition.SimpleComposition;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -19,21 +19,17 @@ import retrofit2.Response;
  * Created by joey on 02/05/16.
  */
 public class SearchQuery {
-    private static final String QUERY_TAG = "API_Query";
     public static final int PAGE_SIZE = 12;
-
+    private static final String QUERY_TAG = "API_Query";
     // TODO maybe change this to a user setting
     private static final int TRENDING_SHEET_SIZE = 30;
 
     private static final String
             ORDER = "order_by",
             SORT = "sort_by";
-
-    private RetroShelf mApiService;
-
-    Callback<RW<List<Composition>, PagedMeta>> queryFinishedAction = new Callback<RW<List<Composition>, PagedMeta>>() {
+    Callback<RW<List<SimpleComposition>, PagedMeta>> queryFinishedAction = new Callback<RW<List<SimpleComposition>, PagedMeta>>() {
         @Override
-        public void onResponse(Call<RW<List<Composition>, PagedMeta>> call, Response<RW<List<Composition>, PagedMeta>> response) {
+        public void onResponse(Call<RW<List<SimpleComposition>, PagedMeta>> call, Response<RW<List<SimpleComposition>, PagedMeta>> response) {
             if (response == null || response.body() == null) {
                 onFailure(call, null);
                 return;
@@ -49,16 +45,17 @@ public class SearchQuery {
         }
 
         @Override
-        public void onFailure(Call<RW<List<Composition>, PagedMeta>> call, Throwable t) {
-            Log.e(QUERY_TAG, "Sheet music request failed");
+        public void onFailure(Call<RW<List<SimpleComposition>, PagedMeta>> call, Throwable t) {
+            Log.e(QUERY_TAG, "Sheet music request failed " + t.getLocalizedMessage());
         }
     };
+    private RetroShelf mApiService;
 
     public SearchQuery(RetroShelf apiService) {
         mApiService = apiService;
     }
 
-    public SearchQuery(RetroShelf apiService, Callback<RW<List<Composition>, PagedMeta>> cb) {
+    public SearchQuery(RetroShelf apiService, Callback<RW<List<SimpleComposition>, PagedMeta>> cb) {
         mApiService = apiService;
         queryFinishedAction = cb;
     }

@@ -3,7 +3,7 @@ package com.pianoshelf.joey.pianoshelf.sdcard;
 import android.util.Log;
 
 import com.pianoshelf.joey.pianoshelf.C;
-import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.composition.FullComposition;
 
 import java.io.File;
 
@@ -25,7 +25,7 @@ public class LibraryManager {
         }
     }
 
-    public static String getSheetDirPath(Composition sheetInfo) {
+    public static String getSheetDirPath(FullComposition sheetInfo) {
         String offlinePath = C.OFFLINE_ROOT_DIRECTORY + File.separator +
                 sheetInfo.getUniqueurl() + File.separator + sheetInfo.getTitle() + File.separator;
         File offlineFile = new File(offlinePath);

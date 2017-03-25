@@ -1,6 +1,5 @@
 package com.pianoshelf.joey.pianoshelf.rest_api;
 
-import java.net.URL;
 import java.util.Date;
 
 /**
@@ -9,8 +8,8 @@ import java.util.Date;
 public class SubmittedBy {
     String username;
     String full_name;
-    URL small_profile_picture;
-    URL large_profile_picture;
+    String small_profile_picture;
+    String large_profile_picture;
     // ISO 8601
     Date user_since;
 
@@ -30,19 +29,19 @@ public class SubmittedBy {
         this.full_name = full_name;
     }
 
-    public URL getSmall_profile_picture() {
+    public String getSmall_profile_picture() {
         return small_profile_picture;
     }
 
-    public void setSmall_profile_picture(URL small_profile_picture) {
+    public void setSmall_profile_picture(String small_profile_picture) {
         this.small_profile_picture = small_profile_picture;
     }
 
-    public URL getLarge_profile_picture() {
+    public String getLarge_profile_picture() {
         return large_profile_picture;
     }
 
-    public void setLarge_profile_picture(URL large_profile_picture) {
+    public void setLarge_profile_picture(String large_profile_picture) {
         this.large_profile_picture = large_profile_picture;
     }
 

@@ -3,6 +3,7 @@ package com.pianoshelf.joey.pianoshelf.sheet;
 import android.support.v7.widget.RecyclerView;
 
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.composition.SimpleComposition;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,11 +16,11 @@ public abstract class JsonRecycler<VH extends RecyclerView.ViewHolder> extends R
     private static final String LOG_TAG = "Json Recycler";
     protected List<Composition> mSheetList = new ArrayList<>();
 
-    public JsonRecycler(List<Composition> sheets) {
+    public JsonRecycler(List<? extends Composition> sheets) {
         mSheetList.addAll(sheets);
     }
 
-    public void setJsonList(Collection<Composition> jsonCollection) {
+    public void setJsonList(Collection<SimpleComposition> jsonCollection) {
         mSheetList.clear();
         mSheetList.addAll(jsonCollection);
         notifyDataSetChanged();

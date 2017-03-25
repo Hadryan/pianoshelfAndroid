@@ -20,6 +20,7 @@ import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.VolleySingleton;
 import com.pianoshelf.joey.pianoshelf.composition.ComposerListFragment;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.composition.FullComposition;
 import com.pianoshelf.joey.pianoshelf.rest_api.PageInfo;
 import com.pianoshelf.joey.pianoshelf.rest_api.PagedMeta;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
@@ -40,32 +41,18 @@ import java.util.concurrent.Semaphore;
 // View for basically everything. - Responsible for swapping fragments
 public class SheetListView extends BaseActivity {
     private static final String LOG_TAG = "Sheet_list";
-
-    private String composerUrl;
-
     SheetArrayListFragment mSheetList;
     SheetArrayGridFragment mSheetGrid;
-
-    // Current state of list view
-    private enum SheetListState {
-        INVALID, SHEETMUSIC, COMPOSER
-    }
-
-    private SheetListState mState = SheetListState.INVALID;
-    private Semaphore mStateSem = new Semaphore(1);
-
-    private int mListIconResource = R.drawable.ic_list_24dp;
-    private MenuItem mListIcon;
-
-    // set iteration order will be based on insertion order
-    private Set<Composition> mSheets = new LinkedHashSet<>();
-
-    private ProgressBar mSpinner;
-
-
     TextView mSheetMusicText;
     TextView mComposerText;
-
+    private String composerUrl;
+    private SheetListState mState = SheetListState.INVALID;
+    private Semaphore mStateSem = new Semaphore(1);
+    private int mListIconResource = R.drawable.ic_list_24dp;
+    private MenuItem mListIcon;
+    // set iteration order will be based on insertion order
+    private Set<Composition> mSheets = new LinkedHashSet<>();
+    private ProgressBar mSpinner;
     private PageInfo mPageInfo = null;
 
     @Override
@@ -197,7 +184,7 @@ public class SheetListView extends BaseActivity {
     }
 
     @Subscribe
-    void onQueryFinished(RW<List<Composition>, PagedMeta> sheetList) {
+    void onQueryFinished(RW<List<FullComposition>, PagedMeta> sheetList) {
         mState = SheetListState.SHEETMUSIC;
 
         //Populate the list with JSON objects
@@ -210,6 +197,11 @@ public class SheetListView extends BaseActivity {
 
         mSpinner.setVisibility(View.GONE);
         mStateSem.release();
+    }
+
+    // Current state of list view
+    private enum SheetListState {
+        INVALID, SHEETMUSIC, COMPOSER
     }
 
 }

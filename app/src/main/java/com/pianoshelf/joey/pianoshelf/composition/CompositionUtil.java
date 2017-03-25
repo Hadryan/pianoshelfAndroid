@@ -11,7 +11,7 @@ import java.io.File;
  * Created by joey on 13/11/15.
  */
 public class CompositionUtil {
-    public static final String LOG_TAG = "Composition Parser";
+    public static final String LOG_TAG = "FullComposition Parser";
 
     // Parse a difficulty integer to a difficulty string
     public static String ParseDifficulty(int difficulty) {
@@ -49,8 +49,8 @@ public class CompositionUtil {
         }*/
     }
 
-    public static String ParseDownloadCount(int downloadCount) {
-        int thousandth = downloadCount;
+    public static String parseViews(int views) {
+        int thousandth = views;
         int thousandthPrev = 0;
         int counter = -1;
         while (thousandth != 0) {
@@ -58,20 +58,20 @@ public class CompositionUtil {
             thousandth = thousandth / 1000;
             ++counter;
         }
-        String parsedDownloadCount = Integer.toString(thousandthPrev);
+        String view = Integer.toString(thousandthPrev);
         switch (counter) {
             case -1:
-                return parsedDownloadCount;
+                return view;
             case 0:
-                return parsedDownloadCount;
+                return view;
             case 1:
-                return parsedDownloadCount + 'K';
+                return view + 'K';
             case 2:
-                return parsedDownloadCount + 'M';
+                return view + 'M';
             case 3:
-                return parsedDownloadCount + 'B';
+                return view + 'B';
             default:
-                return parsedDownloadCount + 'T';
+                return view + 'T';
         }
     }
 
@@ -79,12 +79,12 @@ public class CompositionUtil {
         return sheetUrl.substring(sheetUrl.lastIndexOf('/') + 1);
     }
 
-    public static String offlineDirPath(Composition sheetInfo) {
+    public static String offlineDirPath(FullComposition sheetInfo) {
         return C.OFFLINE_ROOT_DIRECTORY + File.separator +
                 sheetInfo.getUniqueurl() + File.separator + sheetInfo.getId();
     }
 
-    public static String offlineSheetPath(Composition sheetInfo, int pos) {
+    public static String offlineSheetPath(FullComposition sheetInfo, int pos) {
         String sheetUrl = sheetInfo.getImages().get(pos);
         return offlineDirPath(sheetInfo) + offlineSheetFilename(sheetUrl);
     }

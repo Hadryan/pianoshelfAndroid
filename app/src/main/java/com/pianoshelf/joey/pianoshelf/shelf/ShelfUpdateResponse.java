@@ -1,6 +1,6 @@
 package com.pianoshelf.joey.pianoshelf.shelf;
 
-import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.composition.FullComposition;
 
 import java.util.List;
 
@@ -8,13 +8,13 @@ import java.util.List;
  * Created by joey on 07/08/16.
  */
 public class ShelfUpdateResponse {
-    List<Composition> sheetmusic;
+    List<FullComposition> sheetmusic;
 
-    public List<Composition> getSheetmusic() {
+    public List<FullComposition> getSheetmusic() {
         return sheetmusic;
     }
 
-    public void setSheetmusic(List<Composition> sheetmusic) {
+    public void setSheetmusic(List<FullComposition> sheetmusic) {
         this.sheetmusic = sheetmusic;
     }
 }

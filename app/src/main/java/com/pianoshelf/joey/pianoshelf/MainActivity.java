@@ -32,6 +32,8 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 
+import static com.pianoshelf.joey.pianoshelf.profile.ProfileView.USERNAME_INTENT;
+
 /**
  * This is the main logic page
  * This does not have to be the front page
@@ -109,7 +111,7 @@ public class MainActivity extends BaseActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(C.PIANOSHELF, MODE_PRIVATE);
         String username = sharedPreferences.getString(C.USERNAME, null);
         Intent intent = new Intent(this, ProfileView.class);
-        intent.putExtra("username", "hello");
+        intent.putExtra(USERNAME_INTENT, "hello");
         startActivity(intent);
     }
 

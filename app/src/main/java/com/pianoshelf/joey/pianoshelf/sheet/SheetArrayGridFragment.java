@@ -59,7 +59,7 @@ public class SheetArrayGridFragment extends SheetArrayFragment {
     public class PreviewRecycler extends JsonRecycler<PreviewHolder> {
         protected int mLayout;
 
-        public PreviewRecycler(int layout, List<Composition> composition) {
+        public PreviewRecycler(int layout, List<? extends Composition> composition) {
             super(composition);
             mLayout = layout;
         }

@@ -11,7 +11,8 @@ import android.widget.Toast;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
-import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.composition.FullComposition;
+import com.pianoshelf.joey.pianoshelf.composition.SimpleComposition;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
@@ -19,7 +20,9 @@ import com.pianoshelf.joey.pianoshelf.rest_api.ShelfSheetMusic;
 import com.pianoshelf.joey.pianoshelf.sheet_media.MediaFragment;
 import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -46,6 +49,7 @@ public class SheetFrameView extends BaseActivity {
     private ImageView mComment;
     private ImageView mInfo;
     private SheetFrameState mState = SheetFrameState.UNKNOWN;
+
     // Fragments
     private SheetFragment mSheetFragment;
     private MediaFragment mInfoFragment;
@@ -53,6 +57,9 @@ public class SheetFrameView extends BaseActivity {
 
     // States
     private boolean mSheetInShelf = false;
+
+    // Variables
+    private FullComposition mComposition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +111,13 @@ public class SheetFrameView extends BaseActivity {
         requestSheet();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Kill sticky event regardless
+        EventBus.getDefault().removeStickyEvent(FullComposition.class);
+    }
+
     private void replaceMainView(Fragment frag) {
         if (frag instanceof SheetState) {
             if (((SheetState) frag).getState() == mState) {
@@ -126,26 +140,33 @@ public class SheetFrameView extends BaseActivity {
 
     private void requestSheet() {
         apiService.getSheet((int) mSheetId)
-                .enqueue(new RWCallback<RW<Composition, MetaData>>() {
+                .enqueue(new RWCallback<RW<FullComposition, MetaData>>() {
                     @Override
-                    public void onResponse(Call<RW<Composition, MetaData>> call, Response<RW<Composition, MetaData>> response) {
+                    public void onResponse(Call<RW<FullComposition, MetaData>> call, Response<RW<FullComposition, MetaData>> response) {
                         int statusCode = response.body().getMeta().getCode();
                         // Do not announce to EventBus if status code check failed
                         if (statusCode != 200) {
                             setTitle("Invalid sheet response");
                             Log.w(C.NET, "Sheet music request invalid. " + statusCode);
                         } else {
-                            super.onResponse(call, response);
+                            EventBus.getDefault().postSticky(response.body().getData());
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<RW<Composition, MetaData>> call, Throwable t) {
+                    public void onFailure(Call<RW<FullComposition, MetaData>> call, Throwable t) {
                         setTitle("Error while loading sheet");
                         t.printStackTrace();
                         Log.e(C.NET, "Sheet music request failed. " + t.getLocalizedMessage());
                     }
                 });
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCompositionEvent(FullComposition sheetInfo) {
+        mComposition = sheetInfo;
+        // Set actionbar title
+        setTitle(sheetInfo.getTitle());
     }
 
     public void requestShelf() {
@@ -158,6 +179,8 @@ public class SheetFrameView extends BaseActivity {
                             logout();
                         }
                     });
+        } else {
+            Log.e(LOG_TAG, "Triggered shelf request without authentication");
         }
     }
 
@@ -166,7 +189,7 @@ public class SheetFrameView extends BaseActivity {
     public void handleShelf(Shelf shelf) {
         Log.e(LOG_TAG, "GOT a shelf " + shelf.getClass().toString());
         int index = 0;
-        List<Composition> compositionList = shelf.getSheetmusic();
+        List<SimpleComposition> compositionList = shelf.getSheetmusic();
         for (; index < compositionList.size(); ++index) {
             if (compositionList.get(index).getId() == mSheetId) {
                 Log.d(C.AUTH, "Sheet found in shelf");

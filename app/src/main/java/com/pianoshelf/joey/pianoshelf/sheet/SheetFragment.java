@@ -12,10 +12,11 @@ import android.view.ViewGroup;
 
 import com.pianoshelf.joey.pianoshelf.BaseFragment;
 import com.pianoshelf.joey.pianoshelf.R;
-import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.composition.FullComposition;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Created by joey on 24/10/14.
@@ -30,7 +31,7 @@ public class SheetFragment extends BaseFragment {
     private final String LOG_TAG = "SheetFragment";
     private ViewPager mViewPager;
 
-    private Composition mComposition = null;
+    private FullComposition mComposition = null;
 
     public static SheetFragment newInstance() {
         SheetFragment sheet = new SheetFragment();
@@ -66,24 +67,21 @@ public class SheetFragment extends BaseFragment {
         }
     }
 
-    @Subscribe
-    public void onSheetInfoEvent(Composition sheetInfo) {
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onCompositionEvent(FullComposition sheetInfo) {
         mComposition = sheetInfo;
 
         // Refresh ViewPager's adapter
         if (mViewPager != null) {
             mViewPager.setAdapter(new SheetViewPagerAdapter(getChildFragmentManager(), sheetInfo));
         }
-
-        // Set actionbar title
-        setTitle(sheetInfo.getTitle());
     }
 
 
     private class SheetViewPagerAdapter extends FragmentPagerAdapter {
-        private Composition mComposition;
+        private FullComposition mComposition;
 
-        public SheetViewPagerAdapter(FragmentManager fragmentManager, Composition composition) {
+        public SheetViewPagerAdapter(FragmentManager fragmentManager, FullComposition composition) {
             super(fragmentManager);
             mComposition = composition;
         }
