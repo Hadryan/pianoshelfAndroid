@@ -201,6 +201,9 @@ public class SheetFrameView extends BaseActivity {
         if (index == compositionList.size()) {
             mSheetInShelf = false;
         }
+
+        // update shelf status
+        shelfStatusUpdate();
     }
 
     public void addToShelf(final Context context) {
@@ -253,6 +256,14 @@ public class SheetFrameView extends BaseActivity {
                         Log.e(C.NET, "Shelf add request failed. " + t.getLocalizedMessage());
                     }
                 });
+    }
+
+    public void shelfStatusUpdate() {
+        if (mSheetInShelf) {
+            mShelfStatus.setImageResource(R.drawable.ic_star_black_24dp);
+        } else {
+            mShelfStatus.setImageResource(R.drawable.ic_star_border_black_24dp);
+        }
     }
 
     // State
