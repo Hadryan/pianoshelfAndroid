@@ -40,7 +40,6 @@ public class MediaFragment extends BaseFragment {
 
     private FullComposition mComposition;
 
-
     public static MediaFragment newInstance() {
         MediaFragment sheet = new MediaFragment();
         Bundle args = new Bundle();

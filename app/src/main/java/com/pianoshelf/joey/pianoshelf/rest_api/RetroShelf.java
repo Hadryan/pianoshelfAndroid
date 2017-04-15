@@ -9,6 +9,7 @@ import com.pianoshelf.joey.pianoshelf.authentication.RegistrationMeta;
 import com.pianoshelf.joey.pianoshelf.authentication.RegistrationResponse;
 import com.pianoshelf.joey.pianoshelf.authentication.UserInfo;
 import com.pianoshelf.joey.pianoshelf.comment.Comment;
+import com.pianoshelf.joey.pianoshelf.comment.CommentPost;
 import com.pianoshelf.joey.pianoshelf.composition.FullComposition;
 import com.pianoshelf.joey.pianoshelf.composition.SimpleComposition;
 import com.pianoshelf.joey.pianoshelf.profile.Profile;
@@ -46,7 +47,7 @@ public interface RetroShelf {
             LOGOUT_EP = "api/auth/logout/",
             REGISTER_EP = "api/auth/register/",
             PROFILE_EP = "api/profile/",
-            COMMENT_EP = "/api/comment/";
+            COMMENT_EP = "api/comment/";
 
     /* Sheet */
 
@@ -65,16 +66,14 @@ public interface RetroShelf {
             @QueryMap Map<String, String> order,
             @Query("days") int days,
             @Query("results") int sheetCount);
+
     /* Comment */
 
     @GET(COMMENT_EP)
-    Call<RW<List<Comment>, DetailMeta>> getComment(
-            @Query("username") String username,
-            @Query("orderby") String order,
-            @Query("results") Integer resultCount);
+    Call<RW<List<Comment>, DetailMeta>> getComment(@Query("sheetmusicId") Integer sheetId);
 
-    //@POST(COMMENT_EP)
-    //Call<RW<>> commentPost()
+    @POST(COMMENT_EP)
+    Call<RW<List<Comment>, DetailMeta>> commentAdd(@Body CommentPost comment);
 
     /* Auth */
 

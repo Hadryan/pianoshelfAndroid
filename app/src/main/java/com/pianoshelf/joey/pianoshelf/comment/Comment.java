@@ -2,7 +2,6 @@ package com.pianoshelf.joey.pianoshelf.comment;
 
 import com.pianoshelf.joey.pianoshelf.rest_api.SubmittedBy;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,9 +20,7 @@ public class Comment {
     String sheetmusic_title;
     String sheetmusic_uniqueurl;
     String status;
-    Date last_modified;
+    String last_modified;
     SubmittedBy submitted_by;
     List<Integer> replies; // comment id of replies
-
-
 }

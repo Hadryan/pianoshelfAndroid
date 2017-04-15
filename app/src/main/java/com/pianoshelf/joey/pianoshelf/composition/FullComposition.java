@@ -189,7 +189,6 @@ public class FullComposition implements Composition {
         this.videos = videos;
     }
 
-    @Deprecated
     public List<CommentInfo> getComments() {
         return comments;
     }

@@ -1,7 +1,5 @@
 package com.pianoshelf.joey.pianoshelf.rest_api;
 
-import java.util.Date;
-
 /**
  * Created by joey on 05/09/16.
  */
@@ -11,7 +9,7 @@ public class SubmittedBy {
     String small_profile_picture;
     String large_profile_picture;
     // ISO 8601
-    Date user_since;
+    String user_since;
 
     public String getUsername() {
         return username;
@@ -45,11 +43,11 @@ public class SubmittedBy {
         this.large_profile_picture = large_profile_picture;
     }
 
-    public Date getUser_since() {
+    public String getUser_since() {
         return user_since;
     }
 
-    public void setUser_since(Date user_since) {
+    public void setUser_since(String user_since) {
         this.user_since = user_since;
     }
 }

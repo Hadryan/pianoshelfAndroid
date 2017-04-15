@@ -36,7 +36,6 @@ import java.net.URL;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
@@ -256,6 +255,11 @@ public class BaseActivity extends AppCompatActivity
         }
     }
 
+    @Subscribe
+    public void cleanupAuthInfo(LogoutResponse response) {
+        mSPHelper.removeUserAndToken();
+    }
+
 
     /**
      * Handle when a drawer item is selected
@@ -300,20 +304,7 @@ public class BaseActivity extends AppCompatActivity
 
         Log.i(C.AUTH, "logout started");
         apiService.logout()
-                .enqueue(new RWCallback<RW<LogoutResponse, LogoutMeta>>() {
-                    @Override
-                    public void onResponse(Call<RW<LogoutResponse, LogoutMeta>> call, Response<RW<LogoutResponse, LogoutMeta>> response) {
-                        super.onResponse(call, response);
-                        int statusCode = response.body().getMeta().getCode();
-                        if (statusCode == 200) {
-                            mSPHelper.removeUserAndToken();
-                            Log.i(C.AUTH, "Auth token removed");
-                        } else {
-                            Log.e(C.AUTH, "Invalid Response from logout request! " + statusCode);
-                        }
-                        Log.i(C.AUTH, "logout complete");
-                    }
-
+                .enqueue(new RWCallback<RW<LogoutResponse, LogoutMeta>>(200) {
                     @Override
                     public void onFailure(Call<RW<LogoutResponse, LogoutMeta>> call, Throwable t) {
                         t.printStackTrace();

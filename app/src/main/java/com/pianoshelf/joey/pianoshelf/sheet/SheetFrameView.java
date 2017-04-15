@@ -11,8 +11,10 @@ import android.widget.Toast;
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
+import com.pianoshelf.joey.pianoshelf.comment.Comment;
 import com.pianoshelf.joey.pianoshelf.composition.FullComposition;
 import com.pianoshelf.joey.pianoshelf.composition.SimpleComposition;
+import com.pianoshelf.joey.pianoshelf.rest_api.DetailMeta;
 import com.pianoshelf.joey.pianoshelf.rest_api.MetaData;
 import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
@@ -109,6 +111,7 @@ public class SheetFrameView extends BaseActivity {
 
         requestShelf();
         requestSheet();
+        requestCommentList();
     }
 
     @Override
@@ -140,19 +143,7 @@ public class SheetFrameView extends BaseActivity {
 
     private void requestSheet() {
         apiService.getSheet((int) mSheetId)
-                .enqueue(new RWCallback<RW<FullComposition, MetaData>>() {
-                    @Override
-                    public void onResponse(Call<RW<FullComposition, MetaData>> call, Response<RW<FullComposition, MetaData>> response) {
-                        int statusCode = response.body().getMeta().getCode();
-                        // Do not announce to EventBus if status code check failed
-                        if (statusCode != 200) {
-                            setTitle("Invalid sheet response");
-                            Log.w(C.NET, "Sheet music request invalid. " + statusCode);
-                        } else {
-                            EventBus.getDefault().postSticky(response.body().getData());
-                        }
-                    }
-
+                .enqueue(new RWCallback<RW<FullComposition, MetaData>>(200, true) {
                     @Override
                     public void onFailure(Call<RW<FullComposition, MetaData>> call, Throwable t) {
                         setTitle("Error while loading sheet");
@@ -208,18 +199,13 @@ public class SheetFrameView extends BaseActivity {
 
     public void addToShelf(final Context context) {
         apiService.shelfAddSheet(new ShelfSheetMusic((int) mSheetId))
-                .enqueue(new RWCallback<RW<Shelf, MetaData>>() {
+                .enqueue(new RWCallback<RW<Shelf, MetaData>>(new Integer[]{200, 201}) {
                     @Override
                     public void onResponse(Call<RW<Shelf, MetaData>> call, Response<RW<Shelf, MetaData>> response) {
-                        int statusCode = response.body().getMeta().getCode();
-                        if (statusCode == 201 || statusCode == 200) {
-                            super.onResponse(call, response);
-                            Toast.makeText(context,
-                                    R.string.add_sheet_shelf_success,
-                                    Toast.LENGTH_LONG).show();
-                        } else {
-                            Log.e(C.NET, "Invalid Response from shelf add request! Meta: " + statusCode);
-                        }
+                        super.onResponse(call, response);
+                        Toast.makeText(context,
+                                R.string.add_sheet_shelf_success,
+                                Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -234,18 +220,13 @@ public class SheetFrameView extends BaseActivity {
 
     public void removeFromShelf(final Context context) {
         apiService.shelfRemoveSheet(new ShelfSheetMusic((int) mSheetId))
-                .enqueue(new RWCallback<RW<Shelf, MetaData>>() {
+                .enqueue(new RWCallback<RW<Shelf, MetaData>>(200) {
                     @Override
                     public void onResponse(Call<RW<Shelf, MetaData>> call, Response<RW<Shelf, MetaData>> response) {
-                        int statusCode = response.body().getMeta().getCode();
-                        if (statusCode == 200) {
-                            super.onResponse(call, response);
-                            Toast.makeText(context,
-                                    R.string.remove_sheet_shelf_success,
-                                    Toast.LENGTH_LONG).show();
-                        } else {
-                            Log.e(C.NET, "Invalid Response from shelf add request! Meta: " + statusCode);
-                        }
+                        super.onResponse(call, response);
+                        Toast.makeText(context,
+                                R.string.remove_sheet_shelf_success,
+                                Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -264,6 +245,15 @@ public class SheetFrameView extends BaseActivity {
         } else {
             mShelfStatus.setImageResource(R.drawable.ic_star_border_black_24dp);
         }
+    }
+
+    private void requestCommentList() {
+        apiService.getComment((int) mSheetId).enqueue(new RWCallback<RW<List<Comment>, DetailMeta>>() {
+            @Override
+            public void onFailure(Call<RW<List<Comment>, DetailMeta>> call, Throwable t) {
+                Log.e(C.NET, "Failed to retrieve comments " + t.getLocalizedMessage());
+            }
+        });
     }
 
     // State

@@ -19,8 +19,9 @@ import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetArrayListFragment;
 import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
 
+import org.greenrobot.eventbus.Subscribe;
+
 import retrofit2.Call;
-import retrofit2.Response;
 
 /**
  * Created by joey on 1/2/15.
@@ -63,24 +64,19 @@ public class ShelfView extends BaseActivity {
         if (!TextUtils.isEmpty(intentUser)) {
             Log.v(LOG_TAG, "Loading user " + intentUser);
 
-            apiService.getShelf(intentUser).enqueue(new RWCallback<RW<Shelf, MetaData>>() {
-                @Override
-                public void onResponse(Call<RW<Shelf, MetaData>> call, Response<RW<Shelf, MetaData>> response) {
-                    int statusCode = response.body().getMeta().getCode();
-                    if (statusCode == 200) {
-                        mShelf = response.body().getData();
-                        mSheetList.setSheetList(response.body().getData().getSheetmusic());
-                    } else {
-                        Log.e(C.NET, "Profile request invalid response " + statusCode);
-                    }
-                }
-
+            apiService.getShelf(intentUser).enqueue(new RWCallback<RW<Shelf, MetaData>>(200) {
                 @Override
                 public void onFailure(Call<RW<Shelf, MetaData>> call, Throwable t) {
                     Log.e(C.NET, "Profile request failed " + t.getLocalizedMessage());
                 }
             });
         }
+    }
+
+    @Subscribe
+    public void onShelfEvent(Shelf shelf) {
+        mShelf = shelf;
+        mSheetList.setSheetList(shelf.getSheetmusic());
     }
 
     @Override
