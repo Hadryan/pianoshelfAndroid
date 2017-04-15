@@ -54,7 +54,7 @@ public class SheetArrayListFragment extends SheetArrayFragment {
         }
     }
 
-    public class PreviewRecycler extends JsonRecycler<CompositionViewHolder> {
+    public class PreviewRecycler extends ListRecycler<CompositionViewHolder, Composition> {
         protected int mLayout;
 
         public PreviewRecycler(int layout, List<? extends Composition> composition) {

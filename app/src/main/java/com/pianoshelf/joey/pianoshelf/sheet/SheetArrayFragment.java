@@ -22,7 +22,7 @@ public class SheetArrayFragment extends Fragment {
 
     protected RecyclerView mRecyclerView;
     protected RecyclerView.LayoutManager mLayoutManager;
-    protected JsonRecycler mAdapter;
+    protected ListRecycler mAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,7 +40,7 @@ public class SheetArrayFragment extends Fragment {
         mSheetList.clear();
         mSheetList.addAll(jsonCollection);
         if (mAdapter != null) {
-            mAdapter.setJsonList(mSheetList);
+            mAdapter.setList(mSheetList);
         }
     }
 

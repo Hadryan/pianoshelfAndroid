@@ -71,8 +71,6 @@ public class MediaFragment extends BaseFragment {
         mSubmitterDetails = view.findViewById(R.id.media_submitter_details);
         mSubmitterAvatar = (ImageView) view.findViewById(R.id.media_submitter_avatar);
         mSubmitterUsername = (TextView) view.findViewById(R.id.media_submitter_username);
-
-
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)

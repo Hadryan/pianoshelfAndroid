@@ -1,6 +1,7 @@
 package com.pianoshelf.joey.pianoshelf.comment;
 
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetFrameView;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,10 @@ import java.util.List;
 public class CommentFragment extends BaseFragment {
     public static final SheetFrameView.SheetFrameState mState =
             SheetFrameView.SheetFrameState.COMMENT;
+
+    // views
+    private RecyclerView mRecyclerView;
+
 
     private List<Comment> mCommentList = new ArrayList<>();
 
@@ -49,7 +56,12 @@ public class CommentFragment extends BaseFragment {
 
         EventBus.getDefault().post(mState);
 
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.sheet_recycler);
     }
 
 
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onCommentListEvent(List<Comment> commentList) {
+
+    }
 }
