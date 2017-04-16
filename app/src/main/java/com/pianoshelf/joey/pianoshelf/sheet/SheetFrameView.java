@@ -12,6 +12,7 @@ import com.pianoshelf.joey.pianoshelf.BaseActivity;
 import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.comment.Comment;
+import com.pianoshelf.joey.pianoshelf.comment.CommentFragment;
 import com.pianoshelf.joey.pianoshelf.composition.FullComposition;
 import com.pianoshelf.joey.pianoshelf.composition.SimpleComposition;
 import com.pianoshelf.joey.pianoshelf.rest_api.DetailMeta;
@@ -54,6 +55,7 @@ public class SheetFrameView extends BaseActivity {
 
     // Fragments
     private SheetFragment mSheetFragment;
+    private CommentFragment mCommentFragment;
     private MediaFragment mInfoFragment;
     private long mSheetId;
 
@@ -75,6 +77,7 @@ public class SheetFrameView extends BaseActivity {
 
         mSheetId = getIntent().getLongExtra(SHEET_ID_INTENT, -1);
         mSheetFragment = SheetFragment.newInstance();
+        mCommentFragment = CommentFragment.newInstance();
         mInfoFragment = MediaFragment.newInstance();
 
         replaceMainView(mSheetFragment);
@@ -84,6 +87,12 @@ public class SheetFrameView extends BaseActivity {
             @Override
             public void onClick(View v) {
                 replaceMainView(mSheetFragment);
+            }
+        });
+        mComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                replaceMainView(mCommentFragment);
             }
         });
         mInfo.setOnClickListener(new View.OnClickListener() {

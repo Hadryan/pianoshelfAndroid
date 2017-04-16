@@ -18,20 +18,17 @@ import com.pianoshelf.joey.pianoshelf.composition.CompositionUtil;
  */
 public class CompositionViewHolder extends RecyclerView.ViewHolder {
     private static final String LOG_TAG = "Sheet ViewHolder";
-    public View mRootView;
-    public ImageView mDeleteButton;
-    protected Composition mComposition;
-    private TextView mTitle;
-    private TextView mComposerName;
-    private TextView mViewCount;
-    private TextView mDifficulty;
+    View mRootView;
+    ImageView mDeleteButton;
+    Composition mComposition;
+    TextView mTitle;
+    TextView mComposerName;
+    TextView mViewCount;
+    TextView mDifficulty;
 
     public CompositionViewHolder(View view) {
         super(view);
-        init(view);
-    }
 
-    private void init(View view) {
         mRootView = view;
         mTitle = (TextView) view.findViewById(R.id.sheet_list_item_title);
         mComposerName = (TextView) view.findViewById(R.id.sheet_list_item_composer_name);
@@ -39,7 +36,6 @@ public class CompositionViewHolder extends RecyclerView.ViewHolder {
         mDifficulty = (TextView) view.findViewById(R.id.sheet_list_item_difficulty);
         mDeleteButton = (ImageView) view.findViewById(R.id.sheet_list_item_delete);
     }
-
 
     public void bindSheetJson(Composition sheet) {
         // Unwrapping the JSON object

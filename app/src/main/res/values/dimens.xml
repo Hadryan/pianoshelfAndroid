@@ -59,6 +59,23 @@
     <dimen name="media_submitted_by_avatar_margin">10dp</dimen>
     <dimen name="media_rating_margin">60dp</dimen>
 
+    <!-- Comment List Elements -->
+    <dimen name="comment_list_element_height">80dp</dimen>
+    <dimen name="comment_list_element_margin_horizontal">10dp</dimen>
+    <dimen name="comment_list_element_margin_vertical">5dp</dimen>
+
+    <dimen name="comment_start_depth_margin">7dp</dimen>
+    <dimen name="comment_start_depth_width">3dp</dimen>
+
+    <dimen name="comment_info_height">25dp</dimen>
+    <dimen name="comment_info_margin_horizontal">10dp</dimen>
+
+    <dimen name="comment_avatar_size">40dp</dimen>
+    <dimen name="comment_avatar_margin">7dp</dimen>
+
+    <dimen name="comment_buttons_height">30dp</dimen>
+    <dimen name="comment_buttons_margin_horizontal">10dp</dimen>
+
     <!-- Material Design -->
     <dimen name="subtitle_height">48dp</dimen>
 </resources>

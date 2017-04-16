@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.recycler.ListRecycler;
+import com.pianoshelf.joey.pianoshelf.recycler.SheetArrayFragment;
 
 import java.util.List;
 
@@ -64,7 +66,7 @@ public class SheetArrayListFragment extends SheetArrayFragment {
 
         @Override
         public void onBindViewHolder(final CompositionViewHolder holder, final int position) {
-            holder.bindSheetJson(mSheetList.get(position));
+            holder.bindSheetJson(mList.get(position));
             final long sheetId = getItemId(position);
             holder.mRootView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -78,9 +80,9 @@ public class SheetArrayListFragment extends SheetArrayFragment {
             holder.mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mSheetList.remove(position);
+                    mList.remove(position);
                     notifyItemRemoved(position);
-                    notifyItemRangeChanged(position, mSheetList.size());
+                    notifyItemRangeChanged(position, mList.size());
                     // TODO remove the actual shelf from server
                 }
             });

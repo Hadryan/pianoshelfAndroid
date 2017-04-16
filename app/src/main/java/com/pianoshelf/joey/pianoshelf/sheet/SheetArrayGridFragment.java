@@ -14,8 +14,10 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.recycler.ListRecycler;
+import com.pianoshelf.joey.pianoshelf.recycler.SheetArrayFragment;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Created by joey on 17/10/15.
@@ -59,14 +61,14 @@ public class SheetArrayGridFragment extends SheetArrayFragment {
     public class PreviewRecycler extends ListRecycler<PreviewHolder, Composition> {
         protected int mLayout;
 
-        public PreviewRecycler(int layout, List<? extends Composition> composition) {
+        public PreviewRecycler(int layout, Collection<? extends Composition> composition) {
             super(composition);
             mLayout = layout;
         }
 
         @Override
         public void onBindViewHolder(PreviewHolder holder, int position) {
-            holder.bindSheetJson(mSheetList.get(position));
+            holder.bindSheetJson(mList.get(position));
             final long sheetId = getItemId(position);
             holder.mRootView.setOnClickListener(new View.OnClickListener() {
                 @Override

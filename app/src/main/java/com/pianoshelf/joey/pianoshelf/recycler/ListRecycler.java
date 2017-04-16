@@ -1,4 +1,4 @@
-package com.pianoshelf.joey.pianoshelf.sheet;
+package com.pianoshelf.joey.pianoshelf.recycler;
 
 import android.support.v7.widget.RecyclerView;
 
@@ -17,7 +17,11 @@ public abstract class ListRecycler<VH extends RecyclerView.ViewHolder, T> extend
         mList.addAll(list);
     }
 
-    public void setList(Collection<T> coll) {
+    public List<T> getList() {
+        return mList;
+    }
+
+    public void setList(Collection<? extends T> coll) {
         mList.clear();
         mList.addAll(coll);
         notifyDataSetChanged();

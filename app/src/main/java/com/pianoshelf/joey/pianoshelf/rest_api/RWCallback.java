@@ -21,6 +21,7 @@ import retrofit2.Response;
  * Created by joey on 04/05/16.
  */
 public abstract class RWCallback<T extends RW> implements Callback<T> {
+    private static final String LOG_TAG = "ResponseWrapperCallback";
     private Set<Integer> mValidStatusCodeList = new HashSet<>();
     private boolean mStickyData = false;
 
@@ -67,27 +68,34 @@ public abstract class RWCallback<T extends RW> implements Callback<T> {
             // need to read the actual http status code in the metadata
             T body = response.body();
 
-            // perform http status code checking
-            if (mValidStatusCodeList.size() != 0) {
-                if (!mValidStatusCodeList.contains(body.getMeta().getCode())) {
-                    onFailure(call, new StatusCodeMismatchException(
-                            "Request response not handled.\n" +
-                                    " Code: " + response.code() +
-                                    " Body: " + response.errorBody()));
+            Object data = body.getData();
+            MetaData meta = body.getMeta();
+            if (meta != null) {
+                Log.i(C.NET, "Request meta code: " + meta.getCode());
+                // perform http status code checking
+                if (mValidStatusCodeList.size() != 0) {
+                    if (!mValidStatusCodeList.contains(meta.getCode())) {
+                        onFailure(call, new StatusCodeMismatchException(
+                                "Request response not handled.\n" +
+                                        " Code: " + response.code() +
+                                        " Body: " + response.errorBody()));
+                    }
                 }
             }
 
             // Never post to EventBus an empty data field
-            if (body.getData() != null) {
-                Log.v("RWC", "data " + body.getData().getClass().toString());
+            if (data != null) {
+                Log.v("RWC", "data class " + data.getClass().toString());
                 if (mStickyData) {
-                    EventBus.getDefault().post(body.getData());
-                } else {
                     Log.e("YAZE", "sticky event!");
-                    EventBus.getDefault().postSticky(body.getData());
+                    EventBus.getDefault().postSticky(data);
+                } else {
+                    EventBus.getDefault().post(data);
                 }
-            } else {
+            } else if (meta != null) {
                 EventBus.getDefault().post(body.getMeta());
+            } else {
+                Log.e(LOG_TAG, "response null");
             }
         } else {
             // shouldn't fire an event in the else case since metadata's type is usually the base type
