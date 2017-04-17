@@ -2,6 +2,7 @@ package com.pianoshelf.joey.pianoshelf.sheet;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.pianoshelf.joey.pianoshelf.BaseActivity;
+import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.composition.SimpleComposition;
 import com.pianoshelf.joey.pianoshelf.recycler.RecyclerFragment;
@@ -60,6 +62,7 @@ public class SheetListView extends BaseActivity {
 
         // Default action, opens the first page of popular sheets
         mSpinner.setVisibility(View.VISIBLE);
+
         mQueryInfo = new SearchQuery(apiService, 1);
         mQueryInfo.getDefault();
     }
@@ -109,13 +112,11 @@ public class SheetListView extends BaseActivity {
 
     @Subscribe(sticky = true)
     void onScrollEnd(RecyclerFragment.EndlessScrollEnd event) {
-        // fire off request to load another page
-        if (mQueryInfo != null) {
-            // end of pages check present in mQueryInfo object
-            mQueryInfo.queryNextPage();
-            // clear sticky event, if we have not made an api call
-            // then this event would never fire again
-        }
+        Log.e(C.NET, "SheetList view got event");
+        // end of pages check present in mQueryInfo object
+        mQueryInfo.queryNextPage();
+        // clear sticky event, if we have not made an api call
+        // then this event would never fire again
         EventBus.getDefault().removeStickyEvent(RecyclerFragment.EndlessScrollEnd.class);
     }
 

@@ -4,11 +4,13 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.pianoshelf.joey.pianoshelf.BaseFragment;
+import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.R;
 
 import org.greenrobot.eventbus.EventBus;
@@ -40,7 +42,6 @@ public class RecyclerFragment extends BaseFragment {
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
                 if (dy > 0) {
                     int visibleItems = mLayoutManager.getChildCount();
                     int totalItems = mLayoutManager.getItemCount();
@@ -57,9 +58,14 @@ public class RecyclerFragment extends BaseFragment {
                         }
                     }
                     if (!mAdapter.moreItemsRequested()) {
-                        mAdapter.setMoreItemsRequested(true);
                         int shownItems = visibleItems + pastVisibleItems;
-                        if (totalItems - shownItems >= mEndlessThreshold) {
+                        Log.e(C.NET, "requesting more pages " + visibleItems + " " + pastVisibleItems
+                                + " " + shownItems + " " + totalItems + " " + (totalItems - shownItems)
+                                + " " + mEndlessThreshold);
+                        //E/Network: requesting more pages 12 1 13 24 11 5
+                        if (totalItems - shownItems <= mEndlessThreshold) {
+                            Log.e(C.NET, "requesting more pages EVENT");
+                            mAdapter.setMoreItemsRequested(true);
                             EventBus.getDefault().postSticky(new EndlessScrollEnd());
                         }
                     }

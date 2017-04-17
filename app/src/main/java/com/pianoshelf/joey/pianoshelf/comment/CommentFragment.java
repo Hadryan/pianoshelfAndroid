@@ -24,6 +24,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -65,9 +66,9 @@ public class CommentFragment extends RecyclerFragment {
 
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void onCommentListEvent(List<Comment> commentList) {
+    public void onCommentListEvent(Comment[] commentList) {
         mCommentList.clear();
-        mCommentList.addAll(commentList);
+        mCommentList.addAll(Arrays.asList(commentList));
         mAdapter.setList(mCommentList);
     }
 

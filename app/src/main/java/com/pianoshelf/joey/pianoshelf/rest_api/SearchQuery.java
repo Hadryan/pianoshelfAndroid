@@ -2,6 +2,7 @@ package com.pianoshelf.joey.pianoshelf.rest_api;
 
 import android.util.Log;
 
+import com.pianoshelf.joey.pianoshelf.C;
 import com.pianoshelf.joey.pianoshelf.composition.SimpleComposition;
 
 import org.greenrobot.eventbus.EventBus;
@@ -53,6 +54,7 @@ public class SearchQuery {
     }
 
     public void queryNextPage() {
+        Log.e(C.NET, "pageinfo " + mPageInfo.getPage() + " " + mPageInfo.getPages() + " " + mPageInfo.getCount());
         if (mPageInfo.getPage() < mPageInfo.getPages()) {
             mPageInfo.setPage(mPageInfo.getPage() + 1);
             if (mPrevQueryType != null) {
@@ -79,6 +81,7 @@ public class SearchQuery {
 
     // orderBy: 'popular', sortBy: 'desc' page size: PAGE_SIZE
     public void getPopular() {
+        Log.e(C.NET, "Fetching popular sheets " + mPageInfo.getPage());
         Map<String, String> order = new HashMap<>();
         order.put(ORDER, "popular");
         order.put(SORT, "desc");

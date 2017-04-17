@@ -258,9 +258,9 @@ public class SheetFrameView extends BaseActivity {
 
     private void requestCommentList() {
         apiService.getComment((int) mSheetId)
-                .enqueue(new RWCallback<RW<List<Comment>, DetailMeta>>(true) {
+                .enqueue(new RWCallback<RW<Comment[], DetailMeta>>(true) {
                     @Override
-                    public void onFailure(Call<RW<List<Comment>, DetailMeta>> call, Throwable t) {
+                    public void onFailure(Call<RW<Comment[], DetailMeta>> call, Throwable t) {
                         Log.e(C.NET, "Failed to retrieve comments " + t.getLocalizedMessage());
                     }
         });

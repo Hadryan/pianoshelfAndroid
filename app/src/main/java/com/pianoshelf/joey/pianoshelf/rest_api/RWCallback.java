@@ -92,9 +92,13 @@ public abstract class RWCallback<T extends RW> implements Callback<T> {
                 } else {
                     EventBus.getDefault().post(data);
                 }
-            } else if (meta != null) {
+            }
+
+            if (meta != null) {
                 EventBus.getDefault().post(body.getMeta());
-            } else {
+            }
+
+            if (data == null && meta == null) {
                 Log.e(LOG_TAG, "response null");
             }
         } else {

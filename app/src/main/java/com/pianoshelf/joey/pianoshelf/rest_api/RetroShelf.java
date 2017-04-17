@@ -16,7 +16,6 @@ import com.pianoshelf.joey.pianoshelf.profile.Profile;
 import com.pianoshelf.joey.pianoshelf.profile.ProfileDescription;
 import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
 
-import java.util.List;
 import java.util.Map;
 
 import okhttp3.MultipartBody;
@@ -69,10 +68,10 @@ public interface RetroShelf {
     /* Comment */
 
     @GET(COMMENT_EP)
-    Call<RW<List<Comment>, DetailMeta>> getComment(@Query("sheetmusicId") Integer sheetId);
+    Call<RW<Comment[], DetailMeta>> getComment(@Query("sheetmusicId") Integer sheetId);
 
     @POST(COMMENT_EP)
-    Call<RW<List<Comment>, DetailMeta>> commentAdd(@Body CommentPost comment);
+    Call<RW<Comment[], DetailMeta>> commentAdd(@Body CommentPost comment);
 
     /* Auth */
 
