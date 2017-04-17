@@ -69,7 +69,7 @@ public class SheetArrayGridFragment extends SheetArrayFragment {
         @Override
         public void onBindViewHolder(PreviewHolder holder, int position) {
             holder.bindSheetJson(mList.get(position));
-            final long sheetId = getItemId(position);
+            final long sheetId = mList.get(position).getId();
             holder.mRootView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

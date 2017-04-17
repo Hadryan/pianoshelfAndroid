@@ -12,7 +12,6 @@ import java.util.List;
 public class SheetArrayFragment extends RecyclerFragment {
     protected List<Composition> mSheetList = new ArrayList<>();
 
-
     public void setSheetList(Collection<? extends Composition> jsonCollection) {
         mSheetList.clear();
         mSheetList.addAll(jsonCollection);
