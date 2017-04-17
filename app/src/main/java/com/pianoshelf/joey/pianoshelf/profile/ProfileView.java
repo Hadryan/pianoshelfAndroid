@@ -19,6 +19,7 @@ import com.pianoshelf.joey.pianoshelf.rest_api.RW;
 import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetArrayListFragment;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
@@ -102,8 +103,8 @@ public class ProfileView extends BaseActivity {
         if (sheetList.size() > PREVIEW_VALUE) {
             sheetList.subList(sheetList.size() - 1 - PREVIEW_VALUE, sheetList.size()).clear();
         }
-
-        myShelf.setSheetList(sheetList);
+        // Announce list to fragment
+        EventBus.getDefault().post(sheetList);
     }
 
     @Subscribe

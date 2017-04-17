@@ -14,15 +14,19 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.composition.SimpleComposition;
 import com.pianoshelf.joey.pianoshelf.recycler.ListRecycler;
-import com.pianoshelf.joey.pianoshelf.recycler.SheetArrayFragment;
+import com.pianoshelf.joey.pianoshelf.recycler.RecyclerFragment;
 
-import java.util.Collection;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.util.Arrays;
 
 /**
  * Created by joey on 17/10/15.
  */
-public class SheetArrayGridFragment extends SheetArrayFragment {
+public class SheetArrayGridFragment extends RecyclerFragment {
     private static final String LOG_TAG = "Sheet Grid Fragment";
 
     public static SheetArrayGridFragment newInstance() {
@@ -34,7 +38,7 @@ public class SheetArrayGridFragment extends SheetArrayFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mAdapter = new PreviewRecycler(R.layout.adapter_sheet_array_with_image, mSheetList);
+        mAdapter = new PreviewRecycler(R.layout.adapter_sheet_array_with_image);
         mRecyclerView.setAdapter(mAdapter);
 
         int columns = calculateOptimalColumnNumber();
@@ -61,10 +65,20 @@ public class SheetArrayGridFragment extends SheetArrayFragment {
     public class PreviewRecycler extends ListRecycler<PreviewHolder, Composition> {
         protected int mLayout;
 
-        public PreviewRecycler(int layout, Collection<? extends Composition> composition) {
-            super(composition);
+        public PreviewRecycler(int layout) {
+            super();
             mLayout = layout;
+            EventBus.getDefault().register(this);
         }
+
+        @Subscribe
+        void onQueryFinished(SimpleComposition[] sheetList) {
+            mList.addAll(Arrays.asList(sheetList));
+
+            notifyDataSetChanged();
+            setMoreItemsRequested(false);
+        }
+
 
         @Override
         public void onBindViewHolder(PreviewHolder holder, int position) {

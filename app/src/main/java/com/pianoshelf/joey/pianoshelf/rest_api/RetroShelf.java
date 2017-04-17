@@ -55,14 +55,13 @@ public interface RetroShelf {
     Call<RW<FullComposition, MetaData>> getSheet(@Path("id") int sheetId);
 
     @GET(SHEET_EP)
-    Call<RW<List<SimpleComposition>, PagedMeta>> sheetListQuery(
+    Call<RW<SimpleComposition[], PagedMeta>> sheetListQuery(
             @QueryMap Map<String, String> order,
             @Query("page") int pageNumber,
-
             @Query("page_size") int pageSize);
 
     @GET(SHEET_EP)
-    Call<RW<List<SimpleComposition>, PagedMeta>> sheetListTrendingQuery(
+    Call<RW<SimpleComposition[], PagedMeta>> sheetListTrendingQuery(
             @QueryMap Map<String, String> order,
             @Query("days") int days,
             @Query("results") int sheetCount);

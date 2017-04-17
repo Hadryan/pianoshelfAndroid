@@ -9,17 +9,21 @@ import android.view.ViewGroup;
 
 import com.pianoshelf.joey.pianoshelf.R;
 import com.pianoshelf.joey.pianoshelf.composition.Composition;
+import com.pianoshelf.joey.pianoshelf.composition.SimpleComposition;
 import com.pianoshelf.joey.pianoshelf.recycler.ListRecycler;
-import com.pianoshelf.joey.pianoshelf.recycler.SheetArrayFragment;
+import com.pianoshelf.joey.pianoshelf.recycler.RecyclerFragment;
 
-import java.util.List;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.util.Arrays;
 
 /**
  * Created by root on 11/8/14.
  * This class deals with displaying a list of sheet music
  * This class reacts in a query format
  */
-public class SheetArrayListFragment extends SheetArrayFragment {
+public class SheetArrayListFragment extends RecyclerFragment {
     private static final String LOG_TAG = "SheetArrayListFragment";
     private int mDeleteButtonVisibility = View.GONE;
 
@@ -32,7 +36,7 @@ public class SheetArrayListFragment extends SheetArrayFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mAdapter = new PreviewRecycler(R.layout.adapter_sheet_list_item_3, mSheetList);
+        mAdapter = new PreviewRecycler(R.layout.adapter_sheet_list_item_3);
         mRecyclerView.setAdapter(mAdapter);
 
         mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -59,9 +63,18 @@ public class SheetArrayListFragment extends SheetArrayFragment {
     public class PreviewRecycler extends ListRecycler<CompositionViewHolder, Composition> {
         protected int mLayout;
 
-        public PreviewRecycler(int layout, List<? extends Composition> composition) {
-            super(composition);
+        public PreviewRecycler(int layout) {
+            super();
             mLayout = layout;
+            EventBus.getDefault().register(this);
+        }
+
+        @Subscribe
+        void onQueryFinished(SimpleComposition[] sheetList) {
+            mList.addAll(Arrays.asList(sheetList));
+
+            notifyDataSetChanged();
+            setMoreItemsRequested(false);
         }
 
         @Override

@@ -19,6 +19,7 @@ import com.pianoshelf.joey.pianoshelf.rest_api.RWCallback;
 import com.pianoshelf.joey.pianoshelf.sheet.SheetArrayListFragment;
 import com.pianoshelf.joey.pianoshelf.shelf.Shelf;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import retrofit2.Call;
@@ -76,7 +77,9 @@ public class ShelfView extends BaseActivity {
     @Subscribe
     public void onShelfEvent(Shelf shelf) {
         mShelf = shelf;
-        mSheetList.setSheetList(shelf.getSheetmusic());
+
+        // Announce list to fragment
+        EventBus.getDefault().post(shelf.getSheetmusic());
     }
 
     @Override
