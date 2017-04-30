@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.pianoshelf.joey.pianoshelf.R;
@@ -108,6 +109,21 @@ public class SheetArrayGridFragment extends RecyclerFragment {
         public PreviewHolder(View view) {
             super(view);
             mPreviewImage = (ImageView) view.findViewById(R.id.sheet_music_preview_image);
+            mPreviewImage.post(new Runnable() {
+                @Override
+                public void run() {
+                    // Visual fix for UI elements expanding
+                    // without this code the imageview will expand when Glide finishes loading
+                    // this is rather annoying when scrolling up and down the list
+                    // A4 paper size 210mm x 297mm
+                    // Letter size 8.5inch by 11inch
+                    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
+                            mPreviewImage.getLayoutParams();
+                    Log.e("YAZE", "size " + params.height + " " + params.width);
+                    params.height = mPreviewImage.getWidth() * 22 / 17;
+                    mPreviewImage.setLayoutParams(params);
+                }
+            });
         }
 
         @Override
