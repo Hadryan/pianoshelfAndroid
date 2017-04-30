@@ -42,6 +42,9 @@ public class RecyclerFragment extends BaseFragment {
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (mLayoutManager == null) {
+                    return;
+                }
                 if (dy > 0) {
                     int visibleItems = mLayoutManager.getChildCount();
                     int totalItems = mLayoutManager.getItemCount();

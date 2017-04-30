@@ -82,6 +82,8 @@ public class CommentFragment extends RecyclerFragment {
         View deleteButton;
         private LinearLayout mRootView;
 
+        private boolean mLeftPadInit = false;
+
         public CommentViewHolder(View view) {
             super(view);
 
@@ -104,16 +106,19 @@ public class CommentFragment extends RecyclerFragment {
             CharSequence timeAgo = DateUtils.getRelativeTimeSpanString(comment.getDate().getTime());
             date.setText(timeAgo);
 
-            // dynamically create and add padding to start of comment view
-            int pixelPadMargin = mRootView.getResources().getDimensionPixelSize(R.dimen.comment_start_depth_margin);
-            int pixelPadWidth = mRootView.getResources().getDimensionPixelSize(R.dimen.comment_start_depth_width);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    pixelPadWidth, ViewGroup.LayoutParams.MATCH_PARENT);
-            layoutParams.setMarginStart(pixelPadMargin);
-            for (int i = 0; i < comment.getDepth(); i++) {
-                View leftPadding = new View(mRootView.getContext());
-                leftPadding.setBackgroundResource(R.color.pianoshelf_grey_dark);
-                mRootView.addView(leftPadding, 0, layoutParams);
+            if (!mLeftPadInit) {
+                // dynamically create and add padding to start of comment view
+                int pixelPadMargin = mRootView.getResources().getDimensionPixelSize(R.dimen.comment_start_depth_margin);
+                int pixelPadWidth = mRootView.getResources().getDimensionPixelSize(R.dimen.comment_start_depth_width);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        pixelPadWidth, ViewGroup.LayoutParams.MATCH_PARENT);
+                layoutParams.setMarginStart(pixelPadMargin);
+                for (int i = 0; i < comment.getDepth(); i++) {
+                    View leftPadding = new View(mRootView.getContext());
+                    leftPadding.setBackgroundResource(R.color.pianoshelf_grey_dark);
+                    mRootView.addView(leftPadding, 0, layoutParams);
+                }
+                mLeftPadInit = true;
             }
         }
     }
