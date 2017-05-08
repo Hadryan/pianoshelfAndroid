@@ -27,6 +27,4 @@ public class BaseFragment extends Fragment {
     @Subscribe
     public void bootstrapEventBus(BaseFragment f) {
     }
-
-
 }

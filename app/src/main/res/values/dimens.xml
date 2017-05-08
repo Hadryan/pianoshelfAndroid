@@ -76,6 +76,8 @@
     <dimen name="comment_buttons_height">30dp</dimen>
     <dimen name="comment_buttons_margin_horizontal">10dp</dimen>
 
+    <dimen name="comment_reply_submit_button_size">35dp</dimen>
+
     <!-- Material Design -->
     <dimen name="subtitle_height">48dp</dimen>
 </resources>

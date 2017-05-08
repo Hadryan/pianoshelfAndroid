@@ -10,6 +10,7 @@ import com.pianoshelf.joey.pianoshelf.authentication.RegistrationResponse;
 import com.pianoshelf.joey.pianoshelf.authentication.UserInfo;
 import com.pianoshelf.joey.pianoshelf.comment.Comment;
 import com.pianoshelf.joey.pianoshelf.comment.CommentPost;
+import com.pianoshelf.joey.pianoshelf.comment.CommentText;
 import com.pianoshelf.joey.pianoshelf.composition.FullComposition;
 import com.pianoshelf.joey.pianoshelf.composition.SimpleComposition;
 import com.pianoshelf.joey.pianoshelf.profile.Profile;
@@ -21,9 +22,11 @@ import java.util.Map;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Multipart;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
@@ -73,6 +76,12 @@ public interface RetroShelf {
     @POST(COMMENT_EP)
     Call<RW<Comment[], DetailMeta>> commentAdd(@Body CommentPost comment);
 
+    @DELETE(COMMENT_EP + "{id}")
+    Call<RW<Comment[], DetailMeta>> commentDelete(@Path("id") int commentId);
+
+    @PATCH(COMMENT_EP + "{id}")
+    Call<RW<Comment[], DetailMeta>> commentEdit(@Path("id") int commentId, CommentText commentBody);
+
     /* Auth */
 
     @POST(LOGIN_EP)
@@ -93,7 +102,7 @@ public interface RetroShelf {
     @POST(SHELF_EP)
     Call<RW<Shelf, MetaData>> shelfAddSheet(@Body ShelfSheetMusic sheetId);
 
-    // @DELETE annotation does not support body
+    // @DELETE annotation does not support body, this is a workaround
     @HTTP(method = "DELETE", path = SHELF_EP, hasBody = true)
     Call<RW<Shelf, MetaData>> shelfRemoveSheet(@Body ShelfSheetMusic sheetId);
 

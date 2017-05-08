@@ -29,9 +29,6 @@ public class Comment {
     SubmittedBy submitted_by;
     List<Integer> replies; // comment id of replies
 
-    /* ANDROID FIELDS */
-    int depth = 0;
-
     public int getId() {
         return id;
     }
@@ -142,13 +139,5 @@ public class Comment {
 
     public void setReplies(List<Integer> replies) {
         this.replies = replies;
-    }
-
-    public int getDepth() {
-        return depth;
-    }
-
-    public void setDepth(int depth) {
-        this.depth = depth;
     }
 }

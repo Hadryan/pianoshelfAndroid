@@ -57,13 +57,13 @@ public class SheetFrameView extends BaseActivity {
     private SheetFragment mSheetFragment;
     private CommentFragment mCommentFragment;
     private MediaFragment mInfoFragment;
-    private long mSheetId;
 
     // States
     private boolean mSheetInShelf = false;
 
     // Variables
     private FullComposition mComposition;
+    private long mSheetId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -263,6 +263,16 @@ public class SheetFrameView extends BaseActivity {
                     public void onFailure(Call<RW<Comment[], DetailMeta>> call, Throwable t) {
                         Log.e(C.NET, "Failed to retrieve comments " + t.getLocalizedMessage());
                     }
+                });
+    }
+
+    @Subscribe
+    public void deleteComment(CommentFragment.CommentDeleteEvent event) {
+        apiService.commentDelete((int) mSheetId).enqueue(new RWCallback<RW<Comment[], DetailMeta>>() {
+            @Override
+            public void onFailure(Call<RW<Comment[], DetailMeta>> call, Throwable t) {
+                Log.e(C.NET, "comment delete failed " + t.getLocalizedMessage());
+            }
         });
     }
 

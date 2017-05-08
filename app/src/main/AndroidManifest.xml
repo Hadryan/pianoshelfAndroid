@@ -51,6 +51,9 @@
         <activity
             android:name=".profile.ShelfView">
         </activity>
+        <!-- Reply Page -->
+        <activity android:name=".comment.CommentReplyView"></activity>
+
     </application>
 
 </manifest>
