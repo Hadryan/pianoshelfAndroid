@@ -64,8 +64,8 @@
     <dimen name="comment_list_element_margin_horizontal">10dp</dimen>
     <dimen name="comment_list_element_margin_vertical">5dp</dimen>
 
-    <dimen name="comment_start_depth_margin">7dp</dimen>
-    <dimen name="comment_start_depth_width">3dp</dimen>
+    <dimen name="comment_start_depth_margin">4dp</dimen>
+    <dimen name="comment_start_depth_width">4dp</dimen>
 
     <dimen name="comment_info_height">25dp</dimen>
     <dimen name="comment_info_margin_horizontal">10dp</dimen>

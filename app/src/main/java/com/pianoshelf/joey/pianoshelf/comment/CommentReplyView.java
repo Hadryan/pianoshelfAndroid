@@ -55,6 +55,10 @@ public class CommentReplyView extends BaseActivity {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mOriginalComment = mapper.readValue(commentJson, Comment.class);
+            // disable depth finding algorithm
+            mOriginalComment.setRecipient(null);
+            mOriginalComment.setReplies(null);
+            commentJson = mapper.writeValueAsString(mOriginalComment);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Jackson failed while mangling comment json " + e.getLocalizedMessage());
             abortOnFailure();

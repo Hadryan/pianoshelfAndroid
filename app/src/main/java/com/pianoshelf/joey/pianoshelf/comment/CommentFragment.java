@@ -46,6 +46,8 @@ public class CommentFragment extends RecyclerFragment {
     // views
     private List<Comment> mCommentList = new ArrayList<>();
 
+    private boolean mStaticPage = false;
+
     public static CommentFragment newInstance() {
         CommentFragment sheet = new CommentFragment();
         Bundle args = new Bundle();
@@ -74,7 +76,9 @@ public class CommentFragment extends RecyclerFragment {
             if (!"".equals(commentInit)) {
                 Log.e(LOG_TAG, "in equals");
                 Comment initComment = new ObjectMapper().readValue(commentInit, Comment.class);
+                mCommentList.clear();
                 mCommentList.add(initComment);
+                mStaticPage = true;
             }
         } catch (IOException e) {
             Log.e(LOG_TAG, "Failed to deserialize comment json " + e.getLocalizedMessage());
@@ -85,7 +89,8 @@ public class CommentFragment extends RecyclerFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mAdapter = new CommentRecycler(R.layout.adapter_comment_list_item, mCommentList);
+        mAdapter = new CommentRecycler(R.layout.adapter_comment_list_item);
+        mAdapter.setList(mCommentList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -95,15 +100,17 @@ public class CommentFragment extends RecyclerFragment {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onCommentListEvent(Comment[] commentList) {
-        mCommentList.clear();
-        mCommentList.addAll(Arrays.asList(commentList));
-        mAdapter.setList(mCommentList);
+        // Static page mode ignores all updates
+        if (!mStaticPage) {
+            mCommentList.clear();
+            mCommentList.addAll(Arrays.asList(commentList));
+            mAdapter.setList(mCommentList);
 
-        EventBus.getDefault().removeStickyEvent(Comment[].class);
+            EventBus.getDefault().removeStickyEvent(Comment[].class);
+        }
     }
 
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
-        public boolean mLeftPadInit = false;
         TextView username;
         TextView body;
         ImageView avatar;
@@ -111,6 +118,7 @@ public class CommentFragment extends RecyclerFragment {
         View replyButton;
         View editButton;
         View deleteButton;
+        View startDepth;
         private LinearLayout mRootView;
 
         public CommentViewHolder(View view) {
@@ -124,9 +132,10 @@ public class CommentFragment extends RecyclerFragment {
             replyButton = view.findViewById(R.id.comment_reply);
             editButton = view.findViewById(R.id.comment_edit);
             deleteButton = view.findViewById(R.id.comment_delete);
+            startDepth = view.findViewById(R.id.comment_depth);
         }
 
-        public void bind(Comment comment) {
+        public void bind(Comment comment, int depth) {
             username.setText(comment.getSubmitted_by().getUsername());
             body.setText(comment.getMessage());
             Glide.with(mRootView.getContext())
@@ -134,6 +143,17 @@ public class CommentFragment extends RecyclerFragment {
                     .into(avatar);
             CharSequence timeAgo = DateUtils.getRelativeTimeSpanString(comment.getDate().getTime());
             date.setText(timeAgo);
+
+            if (depth > 0) {
+                // dynamically set margin size
+                int pixelPadMargin = mRootView.getResources().getDimensionPixelSize(R.dimen.comment_start_depth_margin);
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) startDepth.getLayoutParams();
+                layoutParams.setMarginStart(pixelPadMargin * depth);
+                startDepth.setLayoutParams(layoutParams);
+                startDepth.setVisibility(View.VISIBLE);
+            } else {
+                startDepth.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -141,13 +161,14 @@ public class CommentFragment extends RecyclerFragment {
         private int mLayout;
         private SparseIntArray mIdDepthMap = new SparseIntArray();
 
-        public CommentRecycler(int layout, Collection<Comment> commentColl) {
-            super(commentColl);
+        public CommentRecycler(int layout) {
+            super();
             mLayout = layout;
         }
 
         @Override
         public void setList(Collection<? extends Comment> coll) {
+            Log.e(LOG_TAG, "setList " + coll.size());
             // maps commentId -> Comment
             SparseArray<Comment> idCommentMap = new SparseArray<>();
             for (Comment comment : coll) {
@@ -173,6 +194,9 @@ public class CommentFragment extends RecyclerFragment {
                                     SparseArray<Comment> idCommentMap,
                                     SparseIntArray idDepthMap,
                                     Comment comment, int depth) {
+            if (comment.getReplies() == null) {
+                return;
+            }
             for (int replyId : comment.getReplies()) {
                 Comment replyComment = idCommentMap.get(replyId);
                 if (replyComment != null) {
@@ -190,26 +214,9 @@ public class CommentFragment extends RecyclerFragment {
 
         @Override
         public void onBindViewHolder(CommentViewHolder holder, final int position) {
+            Log.e(LOG_TAG, "onBindViewHolder");
             Comment comment = mList.get(position);
-            holder.bind(comment);
-
-            if (!holder.mLeftPadInit) {
-                // dynamically create and add padding to start of comment view
-                // NOTE bind() gets called every time the root view is recycled.
-                // However 2nd time and onwards the padding is already present
-                int pixelPadMargin = holder.mRootView.getResources().getDimensionPixelSize(R.dimen.comment_start_depth_margin);
-                int pixelPadWidth = holder.mRootView.getResources().getDimensionPixelSize(R.dimen.comment_start_depth_width);
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                        pixelPadWidth, ViewGroup.LayoutParams.MATCH_PARENT);
-                layoutParams.setMarginStart(pixelPadMargin);
-                for (int i = 0; i < mIdDepthMap.get(comment.getId()); i++) {
-                    View leftPadding = new View(holder.mRootView.getContext());
-                    leftPadding.setBackgroundResource(R.color.pianoshelf_grey_dark);
-                    holder.mRootView.addView(leftPadding, 0, layoutParams);
-                }
-                holder.mLeftPadInit = true;
-            }
-
+            holder.bind(comment, mIdDepthMap.get(comment.getId()));
             // no auth no reply
             holder.replyButton.setOnClickListener(
                     new AuthClickWrapper(getContext(), new View.OnClickListener() {
@@ -234,7 +241,7 @@ public class CommentFragment extends RecyclerFragment {
                 }
             });
         }
-        
+
         @Override
         public CommentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())

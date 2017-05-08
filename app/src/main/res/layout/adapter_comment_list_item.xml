@@ -4,13 +4,13 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/comment_avatar"
-        android:layout_width="@dimen/comment_avatar_size"
-        android:layout_height="@dimen/comment_avatar_size"
-        android:layout_margin="@dimen/comment_avatar_margin"
-        android:scaleType="fitStart"
-        android:src="@drawable/pianoshelf_logo_solid" />
+    <View
+        android:id="@+id/comment_depth"
+        android:layout_width="@dimen/comment_start_depth_width"
+        android:layout_height="match_parent"
+        android:layout_marginStart="0dp"
+        android:background="@color/pianoshelf_grey_dark"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,58 +20,85 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/comment_list_element_margin_vertical"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/comment_username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/comment_info_margin_horizontal"
-                android:text="username" />
+            <ImageView
+                android:id="@+id/comment_avatar"
+                android:layout_width="@dimen/comment_avatar_size"
+                android:layout_height="@dimen/comment_avatar_size"
+                android:layout_margin="@dimen/comment_avatar_margin"
+                android:scaleType="fitStart"
+                android:src="@drawable/pianoshelf_logo_solid" />
 
-            <TextView
-                android:id="@+id/comment_date"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/comment_info_margin_horizontal"
-                android:layout_marginRight="@dimen/comment_info_margin_horizontal"
-                android:text="date" />
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/comment_list_element_margin_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/comment_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/comment_info_margin_horizontal"
+                        android:text="username" />
+
+                    <TextView
+                        android:id="@+id/comment_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/comment_info_margin_horizontal"
+                        android:layout_marginRight="@dimen/comment_info_margin_horizontal"
+                        android:text="date" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/comment_body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/comment_list_element_margin_vertical"
+                    android:text="body body body " />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/comment_list_element_margin_vertical"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:visibility="invisible" />
+
+                    <ImageView
+                        android:id="@+id/comment_reply"
+                        style="@style/comment_action_button"
+                        android:src="@drawable/ic_reply_black_24dp" />
+
+                    <ImageView
+                        android:id="@+id/comment_edit"
+                        style="@style/comment_action_button"
+                        android:src="@drawable/ic_edit_black_24dp" />
+
+                    <ImageView
+                        android:id="@+id/comment_delete"
+                        style="@style/comment_action_button"
+                        android:src="@drawable/ic_delete_black_24dp" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/comment_body"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/comment_list_element_margin_vertical"
-            android:text="body body body " />
-
-        <LinearLayout
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/comment_list_element_margin_vertical"
-            android:orientation="horizontal">
+            android:layout_height="1px"
+            android:background="@color/pianoshelf_grey_normal" />
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:visibility="invisible" />
-
-            <ImageView
-                android:id="@+id/comment_reply"
-                style="@style/comment_action_button"
-                android:src="@drawable/ic_reply_black_24dp" />
-
-            <ImageView
-                android:id="@+id/comment_edit"
-                style="@style/comment_action_button"
-                android:src="@drawable/ic_edit_black_24dp" />
-
-            <ImageView
-                android:id="@+id/comment_delete"
-                style="@style/comment_action_button"
-                android:src="@drawable/ic_delete_black_24dp" />
-        </LinearLayout>
     </LinearLayout>
+
 </LinearLayout>

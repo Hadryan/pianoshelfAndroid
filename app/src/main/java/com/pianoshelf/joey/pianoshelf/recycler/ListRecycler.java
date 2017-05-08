@@ -15,13 +15,6 @@ public abstract class ListRecycler<VH extends RecyclerView.ViewHolder, T>
     protected List<T> mList = new ArrayList<>();
     private boolean mMoreItemsRequested = false;
 
-    public ListRecycler() {
-    }
-
-    public ListRecycler(Collection<? extends T> list) {
-        mList.addAll(list);
-    }
-
     public List<T> getList() {
         return mList;
     }
