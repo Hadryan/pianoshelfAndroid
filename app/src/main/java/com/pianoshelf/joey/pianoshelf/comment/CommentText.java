@@ -7,6 +7,10 @@ package com.pianoshelf.joey.pianoshelf.comment;
 public class CommentText {
     String commentText;
 
+    public CommentText(String commentText) {
+        this.commentText = commentText;
+    }
+
     public String getCommentText() {
         return commentText;
     }

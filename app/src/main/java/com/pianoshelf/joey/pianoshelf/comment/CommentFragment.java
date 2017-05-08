@@ -16,9 +16,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pianoshelf.joey.pianoshelf.R;
+import com.pianoshelf.joey.pianoshelf.SharedPreferenceHelper;
 import com.pianoshelf.joey.pianoshelf.authentication.AuthClickWrapper;
 import com.pianoshelf.joey.pianoshelf.recycler.ListRecycler;
 import com.pianoshelf.joey.pianoshelf.recycler.RecyclerFragment;
@@ -33,6 +33,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import static com.pianoshelf.joey.pianoshelf.comment.CommentReplyView.COMMENT_REPLY_MODE;
+import static com.pianoshelf.joey.pianoshelf.comment.CommentReplyView.COMMENT_REPLY_MODE_EDIT;
+import static com.pianoshelf.joey.pianoshelf.comment.CommentReplyView.COMMENT_REPLY_MODE_REPLY;
 
 /**
  * Created by Me on 3/13/2017.
@@ -107,6 +111,24 @@ public class CommentFragment extends RecyclerFragment {
             mAdapter.setList(mCommentList);
 
             EventBus.getDefault().removeStickyEvent(Comment[].class);
+        }
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onSingleCommentEvent(Comment commentUpdate) {
+        // delete has propagated an update
+        if (!mStaticPage) {
+            // Forward Linear Scanning Algorithm
+            for (int i = 0; i < mCommentList.size(); i++) {
+                Comment comment = mCommentList.get(i);
+                if (comment.getId() == commentUpdate.getId()) {
+                    mCommentList.set(i, commentUpdate);
+                    break;
+                }
+            }
+
+            mAdapter.setList(mCommentList);
+            EventBus.getDefault().removeStickyEvent(Comment.class);
         }
     }
 
@@ -214,8 +236,7 @@ public class CommentFragment extends RecyclerFragment {
 
         @Override
         public void onBindViewHolder(CommentViewHolder holder, final int position) {
-            Log.e(LOG_TAG, "onBindViewHolder");
-            Comment comment = mList.get(position);
+            final Comment comment = mList.get(position);
             holder.bind(comment, mIdDepthMap.get(comment.getId()));
             // no auth no reply
             holder.replyButton.setOnClickListener(
@@ -225,21 +246,53 @@ public class CommentFragment extends RecyclerFragment {
                     try {
                         Comment original = mList.get(position);
                         Intent intent = new Intent(getContext(), CommentReplyView.class);
+                        intent.putExtra(COMMENT_REPLY_MODE, COMMENT_REPLY_MODE_REPLY);
                         String commentString = new ObjectMapper().writeValueAsString(original);
                         intent.putExtra(COMMENT_INIT, commentString);
                         startActivity(intent);
-                    } catch (JsonProcessingException e) {
+                    } catch (IOException e) {
                         Log.e(LOG_TAG, "Failed while serializing comment json " + e.getLocalizedMessage());
                     }
                 }
                     }));
-            // TODO the authenticated user is only allowed to edit or delete their own posts
-            holder.deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    EventBus.getDefault().post(new CommentDeleteEvent());
-                }
-            });
+
+            // the authenticated user is only allowed to edit or delete their own posts
+            SharedPreferenceHelper spHelper = new SharedPreferenceHelper(getContext());
+            Log.i(LOG_TAG, "onBindViewHolder \n"
+                    + spHelper.getUser() + "| loggedin user \n"
+                    + comment.getSubmitted_by().getUsername() + "| submit user \n"
+                    + comment.getMessage());
+            if (spHelper.isLoggedIn() &&
+                    spHelper.getUser().equals(comment.getSubmitted_by().getUsername())) {
+                holder.editButton.setVisibility(View.VISIBLE);
+                holder.deleteButton.setVisibility(View.VISIBLE);
+
+                holder.editButton.setOnClickListener(new AuthClickWrapper(
+                        getContext(), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            Comment original = mList.get(position);
+                            Intent intent = new Intent(getContext(), CommentReplyView.class);
+                            intent.putExtra(COMMENT_REPLY_MODE, COMMENT_REPLY_MODE_EDIT);
+                            String commentString = new ObjectMapper().writeValueAsString(original);
+                            intent.putExtra(COMMENT_INIT, commentString);
+                            startActivity(intent);
+                        } catch (IOException e) {
+                            Log.e(LOG_TAG, "Failed while serializing comment json " + e.getLocalizedMessage());
+                        }
+                    }
+                }));
+                holder.deleteButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EventBus.getDefault().post(new CommentDeleteEvent(comment.getId()));
+                    }
+                });
+            } else {
+                holder.editButton.setVisibility(View.GONE);
+                holder.deleteButton.setVisibility(View.GONE);
+            }
         }
 
         @Override
@@ -251,5 +304,10 @@ public class CommentFragment extends RecyclerFragment {
     }
 
     public class CommentDeleteEvent {
+        public int commentId;
+
+        public CommentDeleteEvent(int commentId) {
+            this.commentId = commentId;
+        }
     }
 }

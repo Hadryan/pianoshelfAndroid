@@ -53,7 +53,7 @@ public interface RetroShelf {
 
     /* Sheet */
 
-    @GET(SHEET_EP + "{id}")
+    @GET(SHEET_EP + "{id}/")
     Call<RW<FullComposition, MetaData>> getSheet(@Path("id") int sheetId);
 
     @GET(SHEET_EP)
@@ -76,11 +76,11 @@ public interface RetroShelf {
     @POST(COMMENT_EP)
     Call<RW<Comment[], DetailMeta>> commentAdd(@Body CommentPost comment);
 
-    @DELETE(COMMENT_EP + "{id}")
-    Call<RW<Comment[], DetailMeta>> commentDelete(@Path("id") int commentId);
+    @DELETE(COMMENT_EP + "{id}/")
+    Call<RW<Comment, MetaData>> commentDelete(@Path("id") int commentId);
 
-    @PATCH(COMMENT_EP + "{id}")
-    Call<RW<Comment[], DetailMeta>> commentEdit(@Path("id") int commentId, CommentText commentBody);
+    @PATCH(COMMENT_EP + "{id}/")
+    Call<RW<Comment, MetaData>> commentEdit(@Path("id") int commentId, @Body CommentText commentBody);
 
     /* Auth */
 

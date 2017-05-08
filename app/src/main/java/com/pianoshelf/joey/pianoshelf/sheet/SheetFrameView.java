@@ -268,9 +268,10 @@ public class SheetFrameView extends BaseActivity {
 
     @Subscribe
     public void deleteComment(CommentFragment.CommentDeleteEvent event) {
-        apiService.commentDelete((int) mSheetId).enqueue(new RWCallback<RW<Comment[], DetailMeta>>() {
+        apiService.commentDelete(event.commentId).enqueue(
+                new RWCallback<RW<Comment, MetaData>>(true) {
             @Override
-            public void onFailure(Call<RW<Comment[], DetailMeta>> call, Throwable t) {
+            public void onFailure(Call<RW<Comment, MetaData>> call, Throwable t) {
                 Log.e(C.NET, "comment delete failed " + t.getLocalizedMessage());
             }
         });
